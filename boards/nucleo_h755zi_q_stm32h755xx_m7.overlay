@@ -1,0 +1,10 @@
+/ {
+	chosen {
+		zephyr,ipc_shm = &sram4;
+		zephyr,ipc = &mailbox;
+	};
+};
+
+&mailbox {
+	status = "okay";
+};

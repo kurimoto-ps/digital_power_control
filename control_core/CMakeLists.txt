@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: Apache-2.0
+
+cmake_minimum_required(VERSION 3.20.0)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(control_core)
+
+target_include_directories(app PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/../shared
+  ${CMAKE_CURRENT_SOURCE_DIR}/customer_code/pwm
+  ${CMAKE_CURRENT_SOURCE_DIR}/customer_code/adc
+  ${CMAKE_CURRENT_SOURCE_DIR}/customer_code/feedback
+)
+target_sources(app PRIVATE
+  platform/main.c
+  customer_code/pwm/pwm_control.c
+  customer_code/adc/adc_input.c
+  customer_code/feedback/feedback_control.c
+)

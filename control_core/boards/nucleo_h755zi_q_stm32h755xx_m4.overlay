@@ -1,0 +1,69 @@
+#include <zephyr/dt-bindings/adc/adc.h>
+#include <zephyr/dt-bindings/pwm/pwm.h>
+#include <zephyr/dt-bindings/pwm/stm32_pwm.h>
+
+/ {
+	chosen {
+		zephyr,ipc_shm = &sram4;
+		zephyr,ipc = &mailbox;
+	};
+
+	pwm_outputs {
+		compatible = "pwm-leds";
+
+		pwm_high: pwm_high {
+			pwms = <&pwm1 1 PWM_USEC(50) PWM_POLARITY_NORMAL>;
+		};
+
+		pwm_low: pwm_low {
+			pwms = <&pwm1 1 PWM_USEC(50)
+				(PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>;
+		};
+	};
+
+	aliases {
+		control-led = &green_led;
+		pwm-high = &pwm_high;
+		pwm-low = &pwm_low;
+	};
+};
+
+&mailbox {
+	status = "okay";
+};
+
+&timers1 {
+	st,prescaler = <239>;
+	st,deadtime = <0>;
+	status = "okay";
+
+	pwm1: pwm {
+		pinctrl-0 = <&tim1_ch1_pe9 &tim1_ch1n_pe8>;
+		pinctrl-names = "default";
+		status = "okay";
+	};
+};
+
+/ {
+	zephyr,user {
+		io-channels = <&adc1 15>;
+	};
+};
+
+&adc1 {
+	st,adc-clock-source = "SYNC";
+	st,adc-prescaler = <4>;
+	pinctrl-0 = <&adc1_inp15_pa3>;
+	pinctrl-names = "default";
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "okay";
+
+	channel@f {
+		reg = <15>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_MAX>;
+		zephyr,resolution = <16>;
+	};
+};

@@ -1,0 +1,14 @@
+manifest:
+  remotes:
+    - name: zephyrproject
+      url-base: https://github.com/zephyrproject-rtos
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject
+      revision: d9c3a39174fdc96b5177faa41c62b056c224512b
+      path: zephyr
+      import: true
+
+  self:
+    path: digital_power_control
