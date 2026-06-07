@@ -118,6 +118,28 @@ int pwm_control_off(void)
 	return (ret_high != 0) ? ret_high : ret_low;
 }
 
+int pwm_control_set_duty_percent(uint32_t duty_percent)
+{
+	uint32_t compare;
+
+	if (duty_percent > 100U) {
+		return -EINVAL;
+	}
+
+	k_mutex_lock(&pwm_lock, K_FOREVER);
+	if (!current_state.enabled) {
+		k_mutex_unlock(&pwm_lock);
+		return -EACCES;
+	}
+
+	compare = (uint32_t)(((uint64_t)(LL_TIM_GetAutoReload(PWM_TIMER) + 1U) *
+			      duty_percent) / 100U);
+	LL_TIM_OC_SetCompareCH1(PWM_TIMER, compare);
+	current_state.duty_percent = duty_percent;
+	k_mutex_unlock(&pwm_lock);
+	return 0;
+}
+
 void pwm_control_get(struct pwm_control_state *state)
 {
 	k_mutex_lock(&pwm_lock, K_FOREVER);

@@ -67,3 +67,20 @@
 		zephyr,resolution = <16>;
 	};
 };
+
+&timers6 {
+	st,prescaler = <239>;
+	status = "okay";
+
+	counter {
+		status = "okay";
+	};
+};
+
+&dma1 {
+	status = "okay";
+};
+
+&dmamux1 {
+	status = "okay";
+};

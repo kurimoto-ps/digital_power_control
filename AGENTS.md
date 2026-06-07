@@ -40,10 +40,10 @@ into platform or network code.
 - Do not add network access, sleeps, dynamic allocation, or unbounded waits to
   customer real-time code.
 - Keep network parsing and logging off the real-time control path.
-- The current feedback demonstration updates every 10 ms. This is only a
-  demonstration rate, not a production digital-power control-loop rate.
-- Prefer timer-triggered ADC/DMA and deterministic scheduling when implementing
-  production feedback loops.
+- ADC1 is triggered by the TIM6 update event at a fixed 10 kHz rate and
+  transferred by DMA. DMA and interrupt handling belong in ``control_core/platform``.
+- The customer feedback function runs in a dedicated M4 thread after each 10 kHz DMA
+  sample. Its latency, jitter, and CPU load must be verified on hardware.
 
 ## Safety Rules
 

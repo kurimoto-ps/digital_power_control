@@ -38,8 +38,8 @@ Control modes
 
 ``FEEDBACK``
   Uses frequency and dead time from ``SET``. The duty argument is retained as
-  the feedforward value but ignored while feedback mode is active. Duty is
-  calculated from the ADC input every 10 ms.
+  the feedforward value but ignored while feedback mode is active. Duty is calculated by the customer-editable pass-through function after
+  each fixed-rate 10 kHz ADC DMA sample.
 
 PWM
 ===
@@ -60,7 +60,11 @@ ADC and feedback demonstration
 * Reference: VDDA, configured/documented as approximately 3.3 V on the board
 * Mapping: ADC raw 0..65535 maps linearly to high-side duty 0..100%
 * Examples: 0 V -> 0%, 1.65 V -> approximately 50%, 3.3 V -> 100%
-* ADC read failure in feedback mode stops PWM and sets fault bit 1.
+* ADC DMA failure stops PWM and sets fault bit 1.
+* TIM6 update triggers ADC1 at a fixed 10 kHz rate, independent of PWM
+  frequency. The nominal ADC and feedback period is 100 us.
+* DMA completion interrupt handling is contained in ``control_core/platform``.
+  A dedicated M4 feedback thread calls customer code and updates PWM duty.
 * The feedback implementation is currently a pass-through mapping, not a closed
   loop controller.
 
@@ -68,7 +72,7 @@ Fault bits
 ==========
 
 * Bit 0: M7 communication heartbeat timeout
-* Bit 1: ADC read failure
+* Bit 1: ADC DMA failure
 
 Build and recovery status
 *************************
@@ -86,8 +90,8 @@ Verified
 
 * M7 and M4 sysbuild configuration succeeds.
 * M7 image builds with Ethernet, TCP server, and RPMsg client.
-* M4 image builds with STM32 ADC, complementary PWM, RPMsg remote endpoint, and
-  feedback-mode logic.
+* M4 image builds with STM32 ADC, DMA/DMAMUX, TIM1-synchronized sampling,
+  complementary PWM, RPMsg remote endpoint, and feedback-mode logic.
 * A fresh local Git clone can initialize a west workspace using
   ``west init -l digital_power_control``.
 
@@ -105,10 +109,10 @@ Not yet verified on hardware
 Known limitations
 *****************
 
-* The 10 ms feedback update loop is not appropriate for production high-speed
-  digital power conversion.
-* ADC sampling is software-triggered and blocking. It is not synchronized to
-  PWM and does not use DMA.
+* ADC sampling is hardware-triggered at 10 kHz, but feedback-thread latency,
+  missed notifications, jitter, and CPU load have not yet been measured on hardware.
+* Every 10 kHz ADC sample produces a DMA interrupt and wakes the feedback thread. At
+  high PWM frequencies this may need batching or a lower interrupt rate.
 * Feedback control is only ADC-to-duty pass-through; no PI/PID or regulation is
   implemented.
 * Commands and RPMsg protocol have no authentication or encryption.
@@ -123,7 +127,7 @@ Recommended next work
 #. Add TIM1 Break input and independent over-current protection before connecting
    a power stage.
 #. Define product-specific safe minimum/maximum duty and dead-time limits.
-#. Replace the 10 ms polling loop with PWM-synchronized ADC sampling and DMA.
+#. Measure ADC trigger phase, DMA-to-duty latency, jitter, and CPU load on hardware.
 #. Define measured-value scaling and calibration interfaces for voltage/current.
 #. Implement a bounded PI/PID feedback controller with saturation and anti-windup.
 #. Add automated tests for command parsing, protocol compatibility, mapping, and

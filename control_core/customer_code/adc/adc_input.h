@@ -11,7 +11,6 @@ struct adc_input_sample {
 	uint32_t millivolts;
 };
 
-int adc_input_init(void);
-int adc_input_read(struct adc_input_sample *sample);
+uint32_t adc_input_raw_to_millivolts(uint32_t raw);
 
 #endif

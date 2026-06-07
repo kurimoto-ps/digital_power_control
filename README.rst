@@ -9,7 +9,7 @@ Git、west workspace、コンテナ再構築後の復旧方法は ``docs/DEVELOP
 電源メーカーがSTM32H755のデュアルコアを使ってデジタル電源制御を開発するための開始環境です。
 
 * Cortex-M7: Ethernet、TCPコマンド、RPMsgクライアント、ハートビート
-* Cortex-M4: PWM、将来のADC取得、フィードバック制御、安全停止
+* Cortex-M4: PWM、固定10 kHz ADC/DMA、フィードバック制御、安全停止
 * コア間通信: OpenAMP/RPMsg、共有SRAM4、HSEM mailbox
 
 Directory structure
@@ -22,20 +22,21 @@ Directory structure
    |-- shared/                   M7/M4共通コマンドプロトコル
    |-- boards/                   M7ボード設定
    |-- control_core/             M4リアルタイムZephyrアプリ
-   |   |-- platform/             IPC、コマンド処理、安全監視（基盤コード）
+   |   |-- platform/             IPC、ADC DMA・割り込み、コマンド処理、安全監視（基盤コード）
    |   |-- boards/               M4 TIM1、RPMsg設定
    |   `-- customer_code/        顧客が変更するリアルタイム制御
    |       |-- pwm/              PWM、デッドタイム
-   |       |-- adc/              将来のADC取得
-   |       `-- feedback/         将来のフィードバック制御
+   |       |-- adc/              ADC値の型・スケーリング
+   |       `-- feedback/         thru、将来のPI/PIDフィードバック制御
    `-- sysbuild.cmake            両コアのビルド定義
 
 Customer-editable area
 **********************
 
 顧客が製品ごとに修正するコードは、原則として ``control_core/customer_code`` 内に置きます。
-現在動作しているPWM処理は ``customer_code/pwm`` にあります。ADC取得は
-``customer_code/adc``、PI/PID等のフィードバック処理は ``customer_code/feedback`` に追加します。
+現在動作しているPWM処理は ``customer_code/pwm``、ADC値のスケーリングは
+``customer_code/adc``、thruおよび将来のPI/PID処理は ``customer_code/feedback`` にあります。
+固定10 kHz ADCトリガ、DMA、割り込みは基盤コード ``control_core/platform`` に分離されています。
 
 通常は ``network_core``、``shared``、``control_core/platform`` を変更しません。
 
@@ -110,6 +111,8 @@ A0入力は必ず0..3.3 Vに制限してください。高電圧を直接入力�
    MODE FEEDBACK
    GET
 
+ADCはPWMから独立したTIM6 updateで10 kHz固定トリガされ、DMA完了割り込みから専用feedbackスレッドへ通知されます。
+ADCサンプリング周期とfeedback処理の公称周期は100 usです。
 ``SET`` は周波数、feedforward duty、デッドタイムを設定します。feedbackモード中は
-SETのduty値ではなくA0入力から算出したdutyを使用します。ADC読取に失敗するとM4はPWMを停止し、
+SETのduty値ではなくA0入力から算出したdutyを使用します。ADC DMAでエラーが発生するとM4はPWMを停止し、
 ``GET`` のfault bit 1をセットします。

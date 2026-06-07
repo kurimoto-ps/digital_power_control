@@ -12,6 +12,7 @@ target_include_directories(app PRIVATE
 )
 target_sources(app PRIVATE
   platform/main.c
+  platform/synchronized_adc.c
   customer_code/pwm/pwm_control.c
   customer_code/adc/adc_input.c
   customer_code/feedback/feedback_control.c
