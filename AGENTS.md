@@ -54,6 +54,9 @@ This repository is a development starter, not a certified power-control product.
 - Preserve PWM shutdown on ADC read failure while feedback mode is active.
 - Inputs connected to Arduino A0 / PA3 / ADC1_INP15 must remain within 0..VDDA,
   normally approximately 0..3.3 V on the Nucleo board.
+- External voltage sources connected to A0 must share a common ground with the
+  Nucleo board. A floating source can produce apparently random full-scale ADC
+  readings and unsafe duty changes.
 - Never connect a power-stage voltage directly to the ADC input. Require external
   scaling, isolation where needed, filtering, and input protection.
 - Before use with a real power stage, require independent hardware protection,
@@ -76,6 +79,8 @@ Current ADC demonstration mapping:
 - ADC resolution: 16 bit
 - 0 V maps to 0% high-side duty
 - VDDA, normally about 3.3 V, maps to 100% high-side duty
+- Hardware verification confirmed stable ADC-to-duty pass-through when the
+  external source ground is connected to Nucleo GND.
 
 ## Build and Verification
 

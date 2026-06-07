@@ -7,6 +7,9 @@ ADCハードウェア設定、固定10 kHzタイマトリガ、DMA、DMA完了�
 
 Feedback入力には、NUCLEO-H755ZI-QのArduinoアナログヘッダ ``A0`` を使います。
 MCUピンは ``PA3``、ADC入力は ``ADC1_INP15`` です。
+外部電圧源を接続する場合は、外部電圧源のGND/COMとNucleoのGNDを必ず共通接続します。
+GNDを共通接続しない浮いた入力は、ADC値とfeedback dutyが0..100%付近まで不規則に
+変動する危険があります。
 
 Electrical range
 ****************

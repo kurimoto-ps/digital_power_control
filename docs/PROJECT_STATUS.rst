@@ -63,6 +63,8 @@ ADC and feedback demonstration
 * ADC DMA failure stops PWM and sets fault bit 1.
 * TIM6 update triggers ADC1 at a fixed 10 kHz rate, independent of PWM
   frequency. The nominal ADC and feedback period is 100 us.
+* ADC1 channel 15 preselection and 810.5-cycle sampling time are configured
+  explicitly. DMAMUX1 channel 0 routes ADC1 requests to a 16-bit DMA buffer.
 * DMA completion interrupt handling is contained in ``control_core/platform``.
   A dedicated M4 feedback thread calls customer code and updates PWM duty.
 * The feedback implementation is currently a pass-through mapping, not a closed
@@ -90,16 +92,18 @@ Verified
 
 * M7 and M4 sysbuild configuration succeeds.
 * M7 image builds with Ethernet, TCP server, and RPMsg client.
-* M4 image builds with STM32 ADC, DMA/DMAMUX, TIM1-synchronized sampling,
+* M4 image builds with STM32 ADC, DMA/DMAMUX, TIM6-triggered sampling,
   complementary PWM, RPMsg remote endpoint, and feedback-mode logic.
 * A fresh local Git clone can initialize a west workspace using
   ``west init -l digital_power_control``.
+* A0 ADC input and feedback pass-through were verified on hardware with an
+  external DC source sharing Nucleo GND. The reported ADC voltage and PWM duty
+  followed the applied voltage.
 
 Not yet verified on hardware
 ****************************
 
-* ADC voltage accuracy and calibration across 0..3.3 V.
-* Duty response to ADC input while feedback mode is active.
+* ADC voltage accuracy and calibration across the complete 0..3.3 V range.
 * Complementary PWM behavior at 0% and 100% duty with the intended gate driver.
 * Dead-time accuracy on an oscilloscope.
 * ADC input behavior under noisy power-electronics conditions.
@@ -123,7 +127,8 @@ Known limitations
 Recommended next work
 *********************
 
-#. Verify A0 voltage-to-duty mapping and complementary PWM waveforms on hardware.
+#. Characterize A0 voltage accuracy across 0..3.3 V and verify complementary
+   PWM waveforms on an oscilloscope.
 #. Add TIM1 Break input and independent over-current protection before connecting
    a power stage.
 #. Define product-specific safe minimum/maximum duty and dead-time limits.

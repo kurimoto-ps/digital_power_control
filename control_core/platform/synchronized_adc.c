@@ -8,11 +8,14 @@
 #include <zephyr/drivers/counter.h>
 #include <zephyr/drivers/dma.h>
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 
 #include <stm32h7xx_ll_adc.h>
 #include <stm32h7xx_ll_dmamux.h>
 #include <stm32h7xx_ll_tim.h>
+
+LOG_MODULE_REGISTER(synchronized_adc, LOG_LEVEL_INF);
 
 #define ADC_INSTANCE ((ADC_TypeDef *)DT_REG_ADDR(DT_NODELABEL(adc1)))
 #define ADC_TRIGGER_TIMER ((TIM_TypeDef *)DT_REG_ADDR(DT_NODELABEL(timers6)))
@@ -23,13 +26,12 @@
 #define ADC_SAMPLE_RATE_HZ 10000U
 
 static const struct adc_dt_spec feedback_adc = ADC_DT_SPEC_GET(DT_PATH(zephyr_user));
-static const struct device *const dma_device = DEVICE_DT_GET(DT_NODELABEL(dma1));
+static const struct device *const dma_device = DEVICE_DT_GET(DT_NODELABEL(dmamux1));
 static const struct device *const trigger_counter = DEVICE_DT_GET(ADC_TRIGGER_COUNTER_NODE);
-static uint32_t dma_samples[DMA_SAMPLE_COUNT];
+static uint16_t dma_samples[DMA_SAMPLE_COUNT];
 static struct adc_input_sample latest_sample;
 static struct k_spinlock sample_lock;
 static struct k_sem sample_ready;
-static uint32_t callback_sample_index;
 static atomic_t dma_error;
 
 static void dma_callback(const struct device *dev, void *user_data,
@@ -48,9 +50,20 @@ static void dma_callback(const struct device *dev, void *user_data,
 		return;
 	}
 
-	sample.raw = MIN(dma_samples[callback_sample_index], ADC_INPUT_MAX_RAW);
+	uint32_t sample_index;
+
+	if (status == DMA_STATUS_BLOCK) {
+		sample_index = 0U;
+	} else if (status == DMA_STATUS_COMPLETE) {
+		sample_index = 1U;
+	} else {
+		atomic_set(&dma_error, -EIO);
+		k_sem_give(&sample_ready);
+		return;
+	}
+
+	sample.raw = MIN(dma_samples[sample_index], ADC_INPUT_MAX_RAW);
 	sample.millivolts = adc_input_raw_to_millivolts(sample.raw);
-	callback_sample_index ^= 1U;
 
 	key = k_spin_lock(&sample_lock);
 	latest_sample = sample;
@@ -64,11 +77,14 @@ static int configure_trigger_timer(void)
 	uint32_t timer_frequency_hz;
 
 	if (!device_is_ready(trigger_counter)) {
+		LOG_ERR("TIM6 counter device is not ready");
 		return -ENODEV;
 	}
 	timer_frequency_hz = counter_get_frequency(trigger_counter);
 	if ((timer_frequency_hz < ADC_SAMPLE_RATE_HZ) ||
 	    ((timer_frequency_hz % ADC_SAMPLE_RATE_HZ) != 0U)) {
+		LOG_ERR("TIM6 counter frequency %u cannot generate %u Hz",
+			timer_frequency_hz, ADC_SAMPLE_RATE_HZ);
 		return -ERANGE;
 	}
 
@@ -76,10 +92,17 @@ static int configure_trigger_timer(void)
 	int ret = counter_set_top_value(trigger_counter, &top_cfg);
 
 	if (ret != 0) {
+		LOG_ERR("TIM6 top configuration failed (%d)", ret);
 		return ret;
 	}
 	LL_TIM_SetTriggerOutput(ADC_TRIGGER_TIMER, LL_TIM_TRGO_UPDATE);
-	return counter_start(trigger_counter);
+	ret = counter_start(trigger_counter);
+	if (ret != 0) {
+		LOG_ERR("TIM6 start failed (%d)", ret);
+	} else {
+		LOG_INF("TIM6 ADC trigger started at %u Hz", ADC_SAMPLE_RATE_HZ);
+	}
+	return ret;
 }
 
 static int configure_dma(void)
@@ -109,9 +132,14 @@ static int configure_dma(void)
 
 	ret = dma_config(dma_device, DMA_CHANNEL, &config);
 	if (ret != 0) {
+		LOG_ERR("ADC DMAMUX configuration failed (%d)", ret);
 		return ret;
 	}
-	return dma_start(dma_device, DMA_CHANNEL);
+	ret = dma_start(dma_device, DMA_CHANNEL);
+	if (ret != 0) {
+		LOG_ERR("ADC DMA start failed (%d)", ret);
+	}
+	return ret;
 }
 
 int synchronized_adc_init(void)
@@ -119,12 +147,18 @@ int synchronized_adc_init(void)
 	int ret;
 
 	k_sem_init(&sample_ready, 0, 1);
-	if (!adc_is_ready_dt(&feedback_adc) || !device_is_ready(dma_device)) {
+	if (!adc_is_ready_dt(&feedback_adc)) {
+		LOG_ERR("ADC1 device is not ready");
+		return -ENODEV;
+	}
+	if (!device_is_ready(dma_device)) {
+		LOG_ERR("DMAMUX1 device is not ready");
 		return -ENODEV;
 	}
 
 	ret = adc_channel_setup_dt(&feedback_adc);
 	if (ret != 0) {
+		LOG_ERR("ADC1 channel setup failed (%d)", ret);
 		return ret;
 	}
 	ret = configure_dma();
@@ -133,10 +167,14 @@ int synchronized_adc_init(void)
 	}
 
 	LL_ADC_SetResolution(ADC_INSTANCE, LL_ADC_RESOLUTION_16B);
+	LL_ADC_SetChannelPreselection(ADC_INSTANCE, LL_ADC_CHANNEL_15);
+	LL_ADC_SetChannelSamplingTime(ADC_INSTANCE, LL_ADC_CHANNEL_15,
+				      LL_ADC_SAMPLINGTIME_810CYCLES_5);
 	LL_ADC_REG_SetSequencerLength(ADC_INSTANCE, LL_ADC_REG_SEQ_SCAN_DISABLE);
 	LL_ADC_REG_SetSequencerRanks(ADC_INSTANCE, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_15);
 	LL_ADC_REG_SetContinuousMode(ADC_INSTANCE, LL_ADC_REG_CONV_SINGLE);
 	LL_ADC_REG_SetDataTransferMode(ADC_INSTANCE, LL_ADC_REG_DMA_TRANSFER_UNLIMITED);
+	LL_ADC_REG_SetOverrun(ADC_INSTANCE, LL_ADC_REG_OVR_DATA_OVERWRITTEN);
 	LL_ADC_REG_SetTriggerSource(ADC_INSTANCE, LL_ADC_REG_TRIG_EXT_TIM6_TRGO);
 
 	LL_ADC_ClearFlag_ADRDY(ADC_INSTANCE);
@@ -144,11 +182,15 @@ int synchronized_adc_init(void)
 	for (uint32_t elapsed_us = 0U;
 	     LL_ADC_IsActiveFlag_ADRDY(ADC_INSTANCE) == 0U; elapsed_us++) {
 		if (elapsed_us >= ADC_READY_TIMEOUT_US) {
+			LOG_ERR("ADC1 ready timeout");
 			return -ETIMEDOUT;
 		}
 		k_busy_wait(1U);
 	}
 	LL_ADC_REG_StartConversion(ADC_INSTANCE);
+	LOG_INF("ADC1 configured: PCSEL=0x%08x SQR1=0x%08x SMPR2=0x%08x CFGR=0x%08x",
+		ADC_INSTANCE->PCSEL, ADC_INSTANCE->SQR1, ADC_INSTANCE->SMPR2,
+		ADC_INSTANCE->CFGR);
 	return configure_trigger_timer();
 }
 
