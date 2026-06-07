@@ -5,6 +5,8 @@ Development environment
 ***********************
 
 Git、west workspace、コンテナ再構築後の復旧方法は ``docs/DEVELOPMENT.rst`` を参照してください。
+VS Code devcontainer内でのビルド、書き込み、動作確認、PWM・ADCコード変更演習は
+``docs/VSCODE_TUTORIAL.rst`` を参照してください。
 
 電源メーカーがSTM32H755のデュアルコアを使ってデジタル電源制御を開発するための開始環境です。
 
