@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define CONTROL_PROTOCOL_MAGIC 0x50574d43U
-#define CONTROL_PROTOCOL_VERSION 2U
+#define CONTROL_PROTOCOL_VERSION 3U
 #define CONTROL_ENDPOINT_NAME "power-control"
 #define CONTROL_HEARTBEAT_INTERVAL_MS 500U
 #define CONTROL_HEARTBEAT_TIMEOUT_MS 2000U
@@ -41,6 +41,7 @@ struct control_response {
 	int32_t result;
 	uint32_t frequency_hz;
 	uint32_t duty_percent;
+	uint32_t target_percent;
 	uint32_t deadtime_ns;
 	uint32_t enabled;
 	uint32_t fault_flags;

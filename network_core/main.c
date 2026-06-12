@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * TCP commands:
- *   SET <frequency_hz> <duty_percent> <deadtime_ns>
+ *   SET <frequency_hz> <duty_or_target_percent> <deadtime_ns>
  *   OFF
  *   GET
  *   HELP
@@ -89,7 +89,7 @@ static void process_command(int client, char *command)
 		    (parse_u32(frequency_text, &frequency_hz) != 0) ||
 		    (parse_u32(duty_text, &duty_percent) != 0) ||
 		    (parse_u32(deadtime_text, &deadtime_ns) != 0)) {
-			send_text(client, "ERR usage: SET <20..20000 Hz> <0..100 duty> <0..4000 ns>\r\n");
+			send_text(client, "ERR usage: SET <20..20000 Hz> <0..100 duty_or_target> <0..4000 ns>\r\n");
 			return;
 		}
 
@@ -102,9 +102,10 @@ static void process_command(int client, char *command)
 				 "ERR cannot set PWM (%d)\r\n", ret);
 		} else {
 			snprintk(response, sizeof(response),
-				 "OK mode=%s frequency=%uHz duty=%u%% deadtime=%uns adc=%umV\r\n",
+				 "OK mode=%s frequency=%uHz target=%u%% duty=%u%% deadtime=%uns adc=%umV\r\n",
 				 mode_name(control_response.mode), control_response.frequency_hz,
-				 control_response.duty_percent, control_response.deadtime_ns,
+				 control_response.target_percent, control_response.duty_percent,
+				 control_response.deadtime_ns,
 				 control_response.adc_mv);
 		}
 		send_text(client, response);
@@ -133,8 +134,9 @@ static void process_command(int client, char *command)
 
 		ret = control_client_set_mode(mode, &state);
 		if (ret == 0) {
-			snprintk(response, sizeof(response), "OK mode=%s adc=%umV duty=%u%%\r\n",
-				 mode_name(state.mode), state.adc_mv, state.duty_percent);
+			snprintk(response, sizeof(response), "OK mode=%s target=%u%% adc=%umV duty=%u%%\r\n",
+				 mode_name(state.mode), state.target_percent, state.adc_mv,
+				 state.duty_percent);
 		} else {
 			snprintk(response, sizeof(response), "ERR cannot set mode (%d)\r\n", ret);
 		}
@@ -162,8 +164,9 @@ static void process_command(int client, char *command)
 			return;
 		}
 		snprintk(response, sizeof(response),
-			 "OK mode=%s enabled=%u frequency=%uHz duty=%u%% deadtime=%uns adc_raw=%u adc=%umV fault=0x%08x\r\n",
-			 mode_name(state.mode), state.enabled, state.frequency_hz, state.duty_percent,
+			 "OK mode=%s enabled=%u frequency=%uHz target=%u%% duty=%u%% deadtime=%uns adc_raw=%u adc=%umV fault=0x%08x\r\n",
+			 mode_name(state.mode), state.enabled, state.frequency_hz,
+			 state.target_percent, state.duty_percent,
 			 state.deadtime_ns, state.adc_raw, state.adc_mv, state.fault_flags);
 		send_text(client, response);
 		return;
@@ -177,7 +180,7 @@ static void process_command(int client, char *command)
 	}
 
 	if (strcmp(verb, "HELP") == 0) {
-		send_text(client, "Commands: SET <frequency_hz> <duty_percent> <deadtime_ns>, MODE <FEEDFORWARD|FEEDBACK>, OFF, GET, STATUS, HELP\r\n");
+		send_text(client, "Commands: SET <frequency_hz> <duty_or_target_percent> <deadtime_ns>, MODE <FEEDFORWARD|FEEDBACK>, OFF, GET, STATUS, HELP\r\n");
 		return;
 	}
 	send_text(client, "ERR unknown command; send HELP\r\n");

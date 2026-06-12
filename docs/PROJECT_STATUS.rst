@@ -1,7 +1,7 @@
 Project status
 ##############
 
-Last updated: 2026-06-07
+Last updated: 2026-06-12
 
 Purpose
 *******
@@ -17,10 +17,10 @@ Dual-core architecture
 ======================
 
 * Cortex-M7 runs Ethernet, a TCP command server, RPMsg client, and heartbeat.
-* Cortex-M4 runs complementary PWM, ADC acquisition, feedback pass-through, and
+* Cortex-M4 runs complementary PWM, ADC acquisition, PI feedback control, and
   communication/ADC-failure shutdown behavior.
 * RPMsg uses shared SRAM4 and the STM32 HSEM mailbox.
-* The shared protocol version is 2.
+* The shared protocol version is 3.
 
 Network interface
 =================
@@ -37,9 +37,9 @@ Control modes
   Uses frequency, duty, and dead time from the latest ``SET`` command.
 
 ``FEEDBACK``
-  Uses frequency and dead time from ``SET``. The duty argument is retained as
-  the feedforward value but ignored while feedback mode is active. Duty is calculated by the customer-editable pass-through function after
-  each fixed-rate 10 kHz ADC DMA sample.
+  Uses frequency and dead time from ``SET``. The second argument is the ADC target
+  percentage. A bounded customer-editable PI controller calculates duty after each
+  fixed-rate 10 kHz ADC DMA sample.
 
 PWM
 ===
@@ -58,8 +58,8 @@ ADC and feedback demonstration
 * MCU input: PA3 / ADC1_INP15
 * ADC resolution: 16 bit
 * Reference: VDDA, configured/documented as approximately 3.3 V on the board
-* Mapping: ADC raw 0..65535 maps linearly to high-side duty 0..100%
-* Examples: 0 V -> 0%, 1.65 V -> approximately 50%, 3.3 V -> 100%
+* Target mapping: 0..100% maps to ADC raw 0..65535 and approximately 0..3.3 V
+* Feedback plant: PWM output through two cascaded 4.7 kOhm / 1 uF RC sections to A0
 * ADC DMA failure stops PWM and sets fault bit 1.
 * TIM6 update triggers ADC1 at a fixed 10 kHz rate, independent of PWM
   frequency. The nominal ADC and feedback period is 100 us.
@@ -67,8 +67,8 @@ ADC and feedback demonstration
   explicitly. DMAMUX1 channel 0 routes ADC1 requests to a 16-bit DMA buffer.
 * DMA completion interrupt handling is contained in ``control_core/platform``.
   A dedicated M4 feedback thread calls customer code and updates PWM duty.
-* The feedback implementation is currently a pass-through mapping, not a closed
-  loop controller.
+* The feedback implementation is a bounded PI controller with Kp=0.5, Ki=50 /s,
+  output saturation, and conditional-integration anti-windup.
 
 Fault bits
 ==========
@@ -96,9 +96,9 @@ Verified
   complementary PWM, RPMsg remote endpoint, and feedback-mode logic.
 * A fresh local Git clone can initialize a west workspace using
   ``west init -l digital_power_control``.
-* A0 ADC input and feedback pass-through were verified on hardware with an
-  external DC source sharing Nucleo GND. The reported ADC voltage and PWM duty
-  followed the applied voltage.
+* A0 ADC acquisition and the former pass-through behavior were verified on hardware
+  with an external DC source sharing Nucleo GND. The new PI loop with the two-stage
+  RC feedback plant has not yet been verified on hardware.
 
 Not yet verified on hardware
 ****************************
@@ -117,8 +117,8 @@ Known limitations
   missed notifications, jitter, and CPU load have not yet been measured on hardware.
 * Every 10 kHz ADC sample produces a DMA interrupt and wakes the feedback thread. At
   high PWM frequencies this may need batching or a lower interrupt rate.
-* Feedback control is only ADC-to-duty pass-through; no PI/PID or regulation is
-  implemented.
+* Initial PI gains are demonstration values and require plant-specific tuning and
+  hardware stability verification.
 * Commands and RPMsg protocol have no authentication or encryption.
 * TCP server handles one client at a time.
 * The demonstration accepts 0% and 100% high-side duty. Real hardware may need
@@ -134,6 +134,6 @@ Recommended next work
 #. Define product-specific safe minimum/maximum duty and dead-time limits.
 #. Measure ADC trigger phase, DMA-to-duty latency, jitter, and CPU load on hardware.
 #. Define measured-value scaling and calibration interfaces for voltage/current.
-#. Implement a bounded PI/PID feedback controller with saturation and anti-windup.
+#. Tune and validate the PI controller against the intended power stage.
 #. Add automated tests for command parsing, protocol compatibility, mapping, and
    fault transitions.

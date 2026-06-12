@@ -12,4 +12,4 @@ M4 platform infrastructure
 * DMA割り込みからfeedbackスレッドへの通知
 
 DMA割り込み内では顧客コードやPWM更新を実行しません。顧客の
-``feedback_control_thru()`` は専用feedbackスレッドから呼ばれます。
+``feedback_control_pi_step()`` は各10 kHz ADCサンプル後に専用feedbackスレッドから1回だけ呼ばれます。

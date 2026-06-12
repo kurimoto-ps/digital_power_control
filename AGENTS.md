@@ -73,14 +73,13 @@ TCP server:
 - Commands: `SET`, `MODE FEEDFORWARD`, `MODE FEEDBACK`, `GET`, `STATUS`, `OFF`,
   and `HELP`
 
-Current ADC demonstration mapping:
+Current feedback demonstration:
 
 - Input: Arduino A0, PA3, ADC1_INP15
 - ADC resolution: 16 bit
-- 0 V maps to 0% high-side duty
-- VDDA, normally about 3.3 V, maps to 100% high-side duty
-- Hardware verification confirmed stable ADC-to-duty pass-through when the
-  external source ground is connected to Nucleo GND.
+- FEEDBACK mode maps target 0..100% to ADC raw 0..65535.
+- PWM output is connected to A0 through two cascaded 4.7 kOhm / 1 uF RC sections.
+- The PI controller runs once per 10 kHz ADC sample; Kp=0.5 and Ki=50 /s are starting values requiring hardware tuning.
 
 ## Build and Verification
 

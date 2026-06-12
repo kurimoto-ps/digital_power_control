@@ -35,7 +35,7 @@ static uint32_t fault_flags;
 static uint32_t control_mode = CONTROL_MODE_FEEDFORWARD;
 static uint32_t configured_frequency_hz = 20000U;
 static uint32_t configured_deadtime_ns;
-static uint32_t feedforward_duty_percent = 50U;
+static uint32_t requested_duty_percent = 50U;
 static bool synchronized_adc_ready;
 
 static void set_latest_adc(const struct adc_input_sample *sample)
@@ -101,6 +101,7 @@ static void send_response(const struct control_command *command, int result)
 	pwm_control_get(&state);
 	response.frequency_hz = state.frequency_hz;
 	response.duty_percent = state.duty_percent;
+	response.target_percent = feedback_control_get_target_percent();
 	response.deadtime_ns = state.deadtime_ns;
 	response.enabled = state.enabled;
 	(void)rpmsg_service_send(endpoint_id, &response, sizeof(response));
@@ -116,17 +117,18 @@ static int set_mode(uint32_t mode)
 	if ((mode == CONTROL_MODE_FEEDBACK) && !synchronized_adc_ready) {
 		return -ENODEV;
 	}
-	control_mode = mode;
 	pwm_control_get(&state);
+	if (mode == CONTROL_MODE_FEEDBACK) {
+		feedback_control_set_target_percent(requested_duty_percent);
+		feedback_control_reset(state.enabled ? state.duty_percent : 0U);
+		control_mode = mode;
+		return 0;
+	}
+	control_mode = mode;
 	if (!state.enabled) {
 		return 0;
 	}
-	if (mode == CONTROL_MODE_FEEDBACK) {
-		struct adc_input_sample sample = get_latest_adc();
-
-		return pwm_control_set_duty_percent(feedback_control_thru(&sample));
-	}
-	return pwm_control_set(configured_frequency_hz, feedforward_duty_percent,
+	return pwm_control_set(configured_frequency_hz, requested_duty_percent,
 			       configured_deadtime_ns);
 }
 
@@ -147,11 +149,13 @@ static void process_command(const struct control_command *command)
 	case CONTROL_COMMAND_SET:
 		configured_frequency_hz = command->frequency_hz;
 		configured_deadtime_ns = command->deadtime_ns;
-		feedforward_duty_percent = command->duty_percent;
+		requested_duty_percent = command->duty_percent;
+		feedback_control_set_target_percent(requested_duty_percent);
 		if (control_mode == CONTROL_MODE_FEEDBACK) {
-			struct adc_input_sample sample = get_latest_adc();
+			struct pwm_control_state state;
 
-			duty_percent = feedback_control_thru(&sample);
+			pwm_control_get(&state);
+			duty_percent = state.enabled ? state.duty_percent : 0U;
 		}
 		result = pwm_control_set(configured_frequency_hz, duty_percent,
 					 configured_deadtime_ns);
@@ -190,7 +194,7 @@ static void feedback_thread(void *arg1, void *arg2, void *arg3)
 		set_latest_adc(&sample);
 		fault_flags &= ~FAULT_ADC_READ;
 		if (control_mode == CONTROL_MODE_FEEDBACK) {
-			(void)pwm_control_set_duty_percent(feedback_control_thru(&sample));
+			(void)pwm_control_set_duty_percent(feedback_control_pi_step(&sample));
 		}
 	}
 }
@@ -222,7 +226,9 @@ int main(void)
 	}
 
 	last_contact_ms = k_uptime_get_32();
-	LOG_INF("M4 control ready; ADC1_INP15 sampled at fixed 10 kHz by TIM6/DMA, feedback=thru");
+	feedback_control_set_target_percent(requested_duty_percent);
+	feedback_control_reset(0U);
+	LOG_INF("M4 control ready; ADC1_INP15 sampled at fixed 10 kHz by TIM6/DMA, feedback=PI");
 
 	while (true) {
 		if (k_msgq_get(&command_queue, &command, K_MSEC(COMMAND_WAIT_INTERVAL_MS)) == 0) {

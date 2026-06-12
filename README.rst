@@ -29,7 +29,7 @@ Directory structure
    |   `-- customer_code/        顧客が変更するリアルタイム制御
    |       |-- pwm/              PWM、デッドタイム
    |       |-- adc/              ADC値の型・スケーリング
-   |       `-- feedback/         thru、将来のPI/PIDフィードバック制御
+   |       `-- feedback/         PIフィードバック制御
    `-- sysbuild.cmake            両コアのビルド定義
 
 Customer-editable area
@@ -37,7 +37,7 @@ Customer-editable area
 
 顧客が製品ごとに修正するコードは、原則として ``control_core/customer_code`` 内に置きます。
 現在動作しているPWM処理は ``customer_code/pwm``、ADC値のスケーリングは
-``customer_code/adc``、thruおよび将来のPI/PID処理は ``customer_code/feedback`` にあります。
+``customer_code/adc``、PI制御とゲイン調整は ``customer_code/feedback`` にあります。
 固定10 kHz ADCトリガ、DMA、割り込みは基盤コード ``control_core/platform`` に分離されています。
 
 通常は ``network_core``、``shared``、``control_core/platform`` を変更しません。
@@ -94,7 +94,8 @@ ADC feedback demonstration
 **************************
 
 Feedback入力はArduinoアナログヘッダ ``A0``、MCUピン ``PA3 / ADC1_INP15`` です。
-16-bit ADCを使用し、通常の3.3 V VDDAをフルスケールとしてhigh-side PWM dutyへ変換します。
+16-bit ADCを使用し、通常の3.3 V VDDAをフルスケールとしてPI制御の目標値と測定値を扱います。
+PWM出力は2段RCフィルタ（R1=R2=4.7 kOhm、C1=C2=1 uF）経由でA0へ接続します。
 
 * 0.000 V -> 0%
 * 0.825 V -> 25%
@@ -117,6 +118,6 @@ ADC値とfeedback dutyが不規則に変動する危険があります。
 
 ADCはPWMから独立したTIM6 updateで10 kHz固定トリガされ、DMA完了割り込みから専用feedbackスレッドへ通知されます。
 ADCサンプリング周期とfeedback処理の公称周期は100 usです。
-``SET`` は周波数、feedforward duty、デッドタイムを設定します。feedbackモード中は
-SETのduty値ではなくA0入力から算出したdutyを使用します。ADC DMAでエラーが発生するとM4はPWMを停止し、
+``SET`` は周波数、第2引数、デッドタイムを設定します。FEEDFORWARDでは第2引数がPWM duty、
+FEEDBACKではADC目標値です。例えば50%は約1.65 Vを意味し、PI制御がPWM dutyを調整します。ADC DMAでエラーが発生するとM4はPWMを停止し、
 ``GET`` のfault bit 1をセットします。
