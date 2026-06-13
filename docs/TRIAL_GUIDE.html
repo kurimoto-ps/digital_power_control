@@ -632,6 +632,22 @@ a { text-decoration: none; }
 PWM出力、電圧測定、出力電圧を目標値へ近づける制御を担当します。
 本書では、この環境を用意する人を「提供元」、このチュートリアルを操作する人を「体験者」と記載します。
 体験者が変更するファイルは、主に <span class="docutils literal">control_core/customer_code</span> フォルダ内にあります。</p>
+</section>
+<section id="section-3">
+<h2>安心してお試しください</h2>
+<p>このお試し版は、体験者が自由に操作し、プログラムを変更して試すことを前提に作成しています。
+このキットでは、「壊さないこと」よりも、実際に手を動かしていろいろ試してみることを重視しています。</p>
+<ul class="simple">
+<li><p>USBケーブルやLANケーブルは、実験の開始時や終了時に抜き差ししても問題ありません。</p></li>
+<li><p>VS Code上のファイルは、自由に編集して保存できます。</p></li>
+<li><p>プログラムを書き換えた後に、期待どおり動かなくなっても問題ありません。</p></li>
+<li><p>操作の途中で分からなくなった場合や、元に戻せなくなった場合は、提供元が復旧を支援します。</p></li>
+</ul>
+<p>提供元では、このお試し版と同じ内容の予備機を保有しています。元に戻せなくなった場合は、
+予備機との交換を基本として対応します。社内ネットワークへ接続する必要はありません。
+体験者が希望し、インターネットを利用できる場合に限り、遠隔での復旧支援も選択できます。</p>
+<p>「壊してしまうかもしれない」と心配せず、ぜひ自由に試してみてください。
+実際にプログラムを変更し、結果を確かめることが、この環境を理解する一番の近道です。</p>
 <p>このチュートリアルは、次の順番で進みます。</p>
 <ol class="arabic simple">
 <li><p>Ubuntuへログインし、VS Codeで専用の作業画面を開く</p></li>
@@ -640,7 +656,7 @@ PWM出力、電圧測定、出力電圧を目標値へ近づける制御を担�
 <li><p>PWMとADCの設定を変更し、変更結果を確認する</p></li>
 </ol>
 </section>
-<section id="section-3">
+<section id="section-4">
 <h2>使用する機器と接続</h2>
 <p>このお試し版では、NUCLEO-H755ZI-Q、付属のRCフィルタ基板、Ethernetケーブル、
 ST-LINK USBケーブルを使用します。PWM波形を確認する場合は、オシロスコープも使用します。
@@ -757,7 +773,7 @@ VS Codeは、前回開いていたこのお試し版の作業フォルダを表�
 ビルドや基板への書き込みを実行中の場合は、その処理が完了してからVS Codeを閉じます。</p>
 </section>
 </section>
-<section id="section-4">
+<section id="section-5">
 <h2>2. 作業フォルダを確認する</h2>
 <p>VS Codeで専用の作業画面が表示された状態で、メニューから
 <span class="docutils literal">Terminal</span> -&gt; <span class="docutils literal">New Terminal</span> を選択します。</p>
@@ -801,7 +817,7 @@ ADC電圧表示の最大値が3300 mVです。次の値になっている状態�
 |-- network_core/                 Ethernet通信
 `-- scripts/                      ビルドと基板書き込み用の命令</code></pre>
 </section>
-<section id="section-5">
+<section id="section-6">
 <h2>3. 初回ビルド</h2>
 <p>先ほど <span class="docutils literal">cd</span> で移動した作業フォルダで、次を実行します。</p>
 <pre class="code console literal-block"><code><span class="generic output">./scripts/build.sh</span></code></pre>
@@ -820,7 +836,7 @@ ADC電圧表示の最大値が3300 mVです。次の値になっている状態�
 </figcaption>
 </figure>
 </section>
-<section id="section-6">
+<section id="section-7">
 <h2>4. 基板への書き込み</h2>
 <p>NUCLEO-H755ZI-QのST-LINK USB端子がPCへ接続されていることを確認し、次を実行します。</p>
 <pre class="code console literal-block"><code><span class="generic output">./scripts/flash.sh</span></code></pre>
@@ -1004,7 +1020,7 @@ GET</code></pre>
 </ul>
 <p>確認後は、 <span class="docutils literal">ADC_INPUT_FULL_SCALE_MV</span> を <span class="docutils literal">3300U</span> へ戻し、 <span class="docutils literal">Ctrl+S</span> で保存します。</p>
 </section>
-<section id="section-7">
+<section id="section-8">
 <h2>10. 変更後の最終確認</h2>
 <p>PWM最大周波数を <span class="docutils literal">20000U</span>、ADC電圧表示の最大値を <span class="docutils literal">3300U</span> へ戻した状態で、最終確認を行います。</p>
 <p>基板操作用ターミナルを選び、 <span class="docutils literal">Ctrl+C</span> を押して <span class="docutils literal">nc</span> 接続を終了します。
@@ -1037,7 +1053,7 @@ OFF</code></pre>
 </figcaption>
 </figure>
 </section>
-<section id="section-8">
+<section id="section-9">
 <h2>11. 実験を終了する</h2>
 <p>最終確認で <span class="docutils literal">OFF</span> を入力し、PWMが停止していることを確認した後、次の順番で実験を終了します。</p>
 <ol class="arabic simple">
@@ -1054,7 +1070,7 @@ OFF</code></pre>
 また、USBケーブルを外したり基板の電源が切れたりしても、NUCLEO-H755ZI-Qへ最後に書き込んだ
 プログラムは消えません。次回USBケーブルを接続すると、最後に書き込んだプログラムで基板が起動します。</p>
 </section>
-<section id="section-9">
+<section id="section-10">
 <h2>トラブルシューティング</h2>
 <section id="mode-feedback-err-cannot-set-mode-19">
 <h3><span class="docutils literal">MODE FEEDBACK</span> が <span class="docutils literal">ERR cannot set mode <span class="pre">(-19)</span></span> になる</h3>
@@ -1069,12 +1085,16 @@ OFF</code></pre>
 接続できない場合は、Ethernetケーブル、PC側IPアドレス、基板への書き込み結果を順番に確認します。
 確認後も接続できない場合は、表示されている画面を残したまま提供元へ確認します。</p>
 </section>
-<section id="section-10">
+<section id="section-11">
 <h3>書き込みできない</h3>
 <p>ST-LINK USBケーブルを挿し直し、他の書き込みソフトを閉じてから、もう一度実行してください。
 解決しない場合は、ノートPCを再起動してから、VS Code、ビルド、書き込みの順にもう一度実行します。
 再実行しても書き込めない場合は、表示されたメッセージを残したまま提供元へ確認します。</p>
 </section>
+</section>
+<section id="section-12">
+<h2>最後に</h2>
+<p>お試しいただいた後に、「こういうこともやってみたい」という要望がありましたら、ぜひ提供元へお知らせください。</p>
 </section>
 </main>
 </body>
