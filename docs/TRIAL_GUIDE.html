@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="generator" content="Docutils 0.22.4: https://docutils.sourceforge.io/" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>デジタル電源制御 お試し版 操作手順書</title>
+<style type="text/css">
+
+/* Minimal style sheet for the HTML output of Docutils.                    */
+/*                                                                         */
+/* :Author: Günter Milde, based on html4css1.css by David Goodger          */
+/* :Id: $Id: minimal.css 10018 2025-03-06 16:19:15Z milde $                                                               */
+/* :Copyright: © 2015, 2021 Günter Milde.                                  */
+/* :License: Released under the terms of the `2-Clause BSD license`_,      */
+/*    in short:                                                            */
+/*                                                                         */
+/*    Copying and distribution of this file, with or without modification, */
+/*    are permitted in any medium without royalty provided the copyright   */
+/*    notice and this notice are preserved.                                */
+/*                                                                         */
+/*    This file is offered as-is, without any warranty.                    */
+/*                                                                         */
+/* .. _2-Clause BSD license: http://www.spdx.org/licenses/BSD-2-Clause     */
+
+/* This CSS3 stylesheet defines rules for Docutils elements without        */
+/* HTML equivalent. It is required to make the document semantics visible. */
+/*                                                                         */
+/* .. _validates: http://jigsaw.w3.org/css-validator/validator$link        */
+
+/* titles */
+p.topic-title,
+p.admonition-title,
+p.system-message-title {
+  font-weight: bold;
+}
+p.sidebar-title,
+p.rubric {
+  font-weight: bold;
+  font-size: larger;
+}
+p.rubric {
+  color: maroon;
+}
+p.subtitle,
+p.section-subtitle,
+p.sidebar-subtitle {
+  font-weight: bold;
+  margin-top: -0.5em;
+}
+h1 + p.subtitle {
+  font-size: 1.6em;
+}
+a.toc-backref {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Warnings, Errors */
+.system-messages h2,
+.system-message-title,
+pre.problematic,
+span.problematic {
+  color: red;
+}
+
+/* Inline Literals */
+.docutils.literal {
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+/* do not wrap at hyphens and similar: */
+.literal > span.pre { white-space: nowrap; }
+
+/* keep line-breaks (\n) visible */
+.pre-wrap { white-space: pre-wrap; }
+
+/* Lists */
+
+/* compact and simple lists: no margin between items */
+.simple  li, .simple  ul, .simple  ol, .simple  > li p,
+.compact li, .compact ul, .compact ol, .compact > li p,
+dl.simple  > dd, dl.compact > dd, dl.docinfo > dd {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+/* Nested Paragraphs */
+p:first-child { margin-top: 0; }
+p:last-child { margin-bottom: 0; }
+details > p:last-child { margin-bottom: 1em; }
+
+/* Table of Contents */
+.contents ul.auto-toc { /* section numbers present */
+  list-style-type: none;
+}
+
+/* Enumerated Lists */
+ol.arabic     { list-style: decimal }
+ol.loweralpha { list-style: lower-alpha }
+ol.upperalpha { list-style: upper-alpha }
+ol.lowerroman { list-style: lower-roman }
+ol.upperroman { list-style: upper-roman }
+
+/* Definition Lists and Derivatives */
+dt .classifier { font-style: italic }
+dt .classifier:before {
+  font-style: normal;
+  margin: 0.5em;
+  content: ":";
+}
+/* Field Lists and similar */
+/* bold field name, content starts on the same line */
+dl.field-list,
+dl.option-list,
+dl.docinfo {
+  display: flow-root;
+}
+dl.field-list > dt,
+dl.option-list > dt,
+dl.docinfo > dt {
+  font-weight: bold;
+  clear: left;
+  float: left;
+  margin: 0;
+  padding: 0;
+  padding-right: 0.25em;
+}
+/* Offset for field content (corresponds to the --field-name-limit option) */
+dl.field-list > dd,
+dl.option-list > dd,
+dl.docinfo > dd {
+  margin-left:  9em; /* ca. 14 chars in the test examples, fit all Docinfo fields */
+}
+/* start nested lists on new line */
+dd > dl:first-child,
+dd > ul:first-child,
+dd > ol:first-child {
+  clear: left;
+}
+/* start field-body on a new line after long field names */
+dl.field-list > dd > *:first-child,
+dl.option-list > dd > *:first-child
+{
+  display: inline-block;
+  width: 100%;
+  margin: 0;
+}
+
+/* Bibliographic Fields (docinfo) */
+dl.docinfo pre.address {
+  font: inherit;
+  margin: 0;
+}
+dl.docinfo > dd.authors > p { margin: 0; }
+
+/* Option Lists */
+dl.option-list > dt { font-weight: normal; }
+span.option { white-space: nowrap; }
+
+/* Footnotes and Citations  */
+
+.footnote, .citation { margin: 1em 0; } /* default paragraph skip (Firefox) */
+/* hanging indent */
+.citation { padding-left: 2em; }
+.footnote { padding-left: 1.7em; }
+.footnote.superscript { padding-left: 1.0em; }
+.citation > .label { margin-left: -2em; }
+.footnote > .label { margin-left: -1.7em; }
+.footnote.superscript > .label { margin-left: -1.0em; }
+
+.footnote > .label + *,
+.citation > .label + * {
+  display: inline-block;
+  margin-top: 0;
+  vertical-align: top;
+}
+.footnote > .backrefs + *,
+.citation > .backrefs + * {
+  margin-top: 0;
+}
+.footnote > .label + p, .footnote > .backrefs + p,
+.citation > .label + p, .citation > .backrefs + p {
+  display: inline;
+  vertical-align: inherit;
+}
+
+.backrefs { user-select: none; }
+.backrefs > a { font-style: italic; }
+
+/* superscript footnotes */
+a[role="doc-noteref"].superscript,
+.footnote.superscript > .label,
+.footnote.superscript > .backrefs {
+  vertical-align: super;
+  font-size: smaller;
+  line-height: 1;
+}
+a[role="doc-noteref"].superscript > .fn-bracket,
+.footnote.superscript > .label > .fn-bracket {
+  /* hide brackets in display but leave for copy/paste */
+  display: inline-block;
+  width: 0;
+  overflow: hidden;
+}
+[role="doc-noteref"].superscript + [role="doc-noteref"].superscript {
+  padding-left: 0.15em; /* separate consecutive footnote references */
+  /* TODO: unfortunately, "+" also selects with text between the references. */
+}
+
+/* Alignment */
+.align-left   {
+  text-align: left;
+  margin-right: auto;
+}
+.align-center {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+.align-right  {
+  text-align: right;
+  margin-left: auto;
+}
+.align-top    { vertical-align: top; }
+.align-middle { vertical-align: middle; }
+.align-bottom { vertical-align: bottom; }
+
+/* reset inner alignment in figures and tables */
+figure.align-left, figure.align-right,
+table.align-left, table.align-center, table.align-right {
+  text-align: inherit;
+}
+
+/* Text Blocks */
+.topic { margin: 1em 2em; }
+.sidebar,
+.admonition,
+.system-message {
+  margin: 1em 2em;
+  border: thin solid;
+  padding: 0.5em 1em;
+}
+div.line-block { display: block; }
+div.line-block div.line-block, pre { margin-left: 2em; }
+
+/* Code line numbers: don't copy with drag-and-drop */
+pre.code .ln { display: none; }
+pre.code code:before {
+  content: attr(data-lineno);
+  font-size: small;
+  color: gray;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+}
+td, th {
+  border: thin solid silver;
+  padding: 0 1ex;
+}
+.borderless td, .borderless th {
+  border: 0;
+  padding: 0;
+  padding-right: 0.5em /* separate table cells */
+}
+
+table > caption, figcaption {
+  text-align: left;
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+table.captionbelow {
+  caption-side: bottom;
+}
+
+/* MathML (see "math.css" for --math-output=HTML) */
+math .boldsymbol { font-weight: bold; }
+math.boxed, math .boxed {padding: 0.25em; border: thin solid; }
+/* style table similar to AMS "align" or "aligned" environment: */
+mtable.cases > mtr > mtd { text-align: left; }
+mtable.ams-align > mtr > mtd { padding-left: 0; padding-right: 0; }
+mtable.ams-align > mtr > mtd:nth-child(2n) { text-align: left; }
+mtable.ams-align > mtr > mtd:nth-child(2n+1) { text-align: right; }
+mtable.ams-align > mtr > mtd:nth-child(2n+3) { padding-left: 2em; }
+.mathscr mi, mi.mathscr {
+  font-family: STIX, XITSMathJax_Script, rsfs10,
+               "Asana Math", Garamond, cursive;
+}
+
+/* Document Header and Footer */
+header { border-bottom: 1px solid black; }
+footer { border-top: 1px solid black; }
+
+/* Images are block-level by default in Docutils */
+/* New HTML5 block elements: set display for older browsers */
+img, svg, header, footer, main, aside, nav, section, figure, video, details {
+  display: block;
+}
+svg { width: auto; height: auto; }  /* enable scaling of SVG images */
+/* inline images */
+
+p img, p svg, p video,
+h1 img, h2 img, h3 img, h4 img, h5 img, h6 img,
+h1 svg, h2 svg, h3 svg, h4 svg, h5 svg, h6 svg {
+  display: inline;
+}
+
+</style>
+<style type="text/css">
+
+/* CSS31_ style sheet for the output of Docutils HTML writers.             */
+/* Rules for easy reading and pre-defined style variants.                  */
+/*                                                                         */
+/* :Author: Günter Milde, based on html4css1.css by David Goodger          */
+/* :Id: $Id: plain.css 10079 2025-04-10 12:01:48Z milde $                                                               */
+/* :Copyright: © 2015 Günter Milde.                                        */
+/* :License: Released under the terms of the `2-Clause BSD license`_,      */
+/*    in short:                                                            */
+/*                                                                         */
+/*    Copying and distribution of this file, with or without modification, */
+/*    are permitted in any medium without royalty provided the copyright   */
+/*    notice and this notice are preserved.                                */
+/*                                                                         */
+/*    This file is offered as-is, without any warranty.                    */
+/*                                                                         */
+/* .. _2-Clause BSD license: http://www.spdx.org/licenses/BSD-2-Clause     */
+/* .. _CSS3: https://www.w3.org/Style/CSS/                                 */
+
+
+/* Document Structure */
+/* ****************** */
+
+/* "page layout" */
+body {
+  margin: 0;
+  background-color: #dbdbdb;
+  --field-indent: 9em; /* default indent of fields in field lists */
+}
+main, footer, header {
+  line-height:1.6;
+  /* avoid long lines --> better reading */
+  /* optimum is 45…75 characters/line <http://webtypography.net/2.1.2> */
+  /* OTOH: lines should not be too short because of missing hyphenation, */
+  max-width: 50rem;
+  padding: 1px 2%; /* 1px on top avoids grey bar above title (mozilla) */
+  margin: auto;
+}
+main {
+  counter-reset: table figure;
+  background-color: white;
+}
+footer, header {
+  font-size: smaller;
+  padding: 0.5em 2%;
+  border: none;
+}
+
+/* Table of Contents */
+ul.auto-toc > li > p {
+  padding-left: 1em;
+  text-indent: -1em;
+}
+nav.contents ul {
+  padding-left: 1em;
+}
+main > nav.contents ul ul ul ul:not(.auto-toc) {
+  list-style-type: '\2B29\ ';
+}
+main > nav.contents ul ul ul ul ul:not(.auto-toc) {
+  list-style-type: '\2B1D\ ';
+}
+
+/* Transitions */
+hr.docutils {
+  width: 80%;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  clear: both;
+}
+
+/* Paragraphs */
+
+/* vertical space (parskip) */
+p, ol, ul, dl, li,
+.footnote, .citation,
+div > math,
+table {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+h1, h2, h3, h4, h5, h6,
+dd, details > p:last-child {
+  margin-bottom: 0.5em;
+}
+
+/* Lists */
+/* ===== */
+
+/* Definition Lists */
+/* Indent lists nested in definition lists */
+dd > ul:only-child, dd > ol:only-child { padding-left: 1em; }
+
+/* Description Lists */
+/* styled like in most dictionaries, encyclopedias etc. */
+dl.description {
+  display: flow-root;
+}
+dl.description > dt {
+  font-weight: bold;
+  clear: left;
+  float: left;
+  margin: 0;
+  padding: 0;
+  padding-right: 0.3em;
+}
+dl.description > dd:after {
+  display: table;
+  content: "";
+  clear: left; /* clearfix for empty descriptions */
+}
+
+/* Field Lists */
+
+dl.field-list > dd,
+dl.docinfo > dd {
+  margin-left: var(--field-indent); /* adapted in media queries or HTML */
+}
+
+/* example for custom field-name width */
+dl.field-list.narrow > dd {
+  --field-indent: 5em;
+}
+/* run-in: start field-body on same line after long field names */
+dl.field-list.run-in > dd p {
+  display: block;
+}
+
+/* Bibliographic Fields */
+
+/* generally, bibliographic fields use dl.docinfo */
+/* but dedication and abstract are placed into divs */
+div.abstract p.topic-title {
+  text-align: center;
+}
+div.dedication {
+  margin: 2em 5em;
+  text-align: center;
+  font-style: italic;
+}
+div.dedication p.topic-title {
+  font-style: normal;
+}
+
+/* disclosures */
+details { padding-left: 1em; }
+summary { margin-left: -1em; }
+
+/* Text Blocks */
+/* =========== */
+
+/* Literal Blocks */
+pre.literal-block, pre.doctest-block,
+pre.math, pre.code {
+  font-family: monospace;
+}
+
+/* Block Quotes and Topics */
+bockquote { margin: 1em 2em; }
+blockquote p.attribution {
+  text-align: right;
+  margin-left: 20%;
+}
+
+/* Tables */
+/* ====== */
+
+/* th { vertical-align: bottom; } */
+
+table tr { text-align: left; }
+
+/* "booktabs" style (no vertical lines) */
+table.booktabs {
+  border: 0;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.booktabs * {
+  border: 0;
+}
+table.booktabs th {
+  border-bottom: thin solid;
+}
+
+/* numbered tables (counter defined in div.document) */
+table.numbered > caption:before {
+  counter-increment: table;
+  content: "Table " counter(table) ": ";
+  font-weight: bold;
+}
+
+/* Explicit Markup Blocks */
+/* ====================== */
+
+/* Footnotes and Citations */
+/* ----------------------- */
+
+/* line on the left */
+.footnote-list {
+  border-left: solid thin;
+  padding-left: 0.25em;
+}
+
+/* Directives */
+/* ---------- */
+
+/* Body Elements */
+/* ~~~~~~~~~~~~~ */
+
+/* Images and Figures */
+
+/* let content flow to the side of aligned images and figures */
+figure.align-left,
+img.align-left,
+svg.align-left,
+video.align-left,
+div.align-left,
+object.align-left {
+  clear: left;
+  float: left;
+  margin-right: 1em;
+}
+figure.align-right,
+img.align-right,
+svg.align-right,
+video.align-right,
+div.align-right,
+object.align-right {
+  clear: right;
+  float: right;
+  margin-left: 1em;
+}
+/* Stop floating sidebars, images and figures */
+h1, h2, h3, h4, footer, header { clear: both; }
+
+/* Numbered figures */
+figure.numbered > figcaption > p:before {
+  counter-increment: figure;
+  content: "Figure " counter(figure) ": ";
+  font-weight: bold;
+}
+
+/* Admonitions and System Messages */
+.caution p.admonition-title,
+.attention p.admonition-title,
+.danger p.admonition-title,
+.error p.admonition-title,
+.warning p.admonition-title,
+div.error {
+  color: red;
+}
+
+/* Sidebar */
+/* Move right. In a layout with fixed margins, */
+/* it can be moved into the margin.            */
+aside.sidebar {
+  width: 30%;
+  max-width: 26em;
+  float: right;
+  clear: right;
+  margin-left: 1em;
+  margin-right: -1%;
+  background-color: #fffffa;
+}
+
+
+/* Code */
+pre.code { padding: 0.7ex }
+pre.code, code { background-color: #eeeeee }
+/* basic highlighting: for a complete scheme, see */
+/* https://docutils.sourceforge.io/sandbox/stylesheets/ */
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+
+/* Epigraph           */
+/* Highlights         */
+/* Pull-Quote         */
+/* Compound Paragraph */
+/* Container          */
+
+/* Inline Markup */
+/* ============= */
+
+sup, sub { line-height: 0.8; } /* do not add leading for lines with sup/sub */
+
+/* Inline Literals                                          */
+/* possible values: normal, nowrap, pre, pre-wrap, pre-line */
+/*   span.docutils.literal { white-space: pre-wrap; }       */
+
+/* Hyperlink References */
+a { text-decoration: none; }
+
+/* External Targets       */
+/*   span.target.external */
+/* Internal Targets       */
+/*   span.target.internal */
+/* Footnote References    */
+/*   a[role="doc-noteref"] */
+/* Citation References    */
+/*   a.citation-reference */
+
+</style>
+</head>
+<body>
+<main id="section-1">
+<h1 class="title">デジタル電源制御 お試し版 操作手順書</h1>
+
+<section id="section-2">
+<h2>概要</h2>
+<p>このチュートリアルでは、NUCLEO-H755ZI-Q向けデジタル電源制御環境を使い、
+プログラムの内容確認、ビルド（書き込み用プログラムの作成）、基板への書き込み、
+動作確認、PWM・ADC設定の変更までを行います。
+手順どおりに進めることで、PWM出力、電圧測定、PI制御、Ethernetからの操作を一通り体験できます。</p>
+<p>基板内の2つのCPUを役割分担して使用します。一方はEthernet通信を担当し、もう一方は
+PWM出力、電圧測定、出力電圧を目標値へ近づける制御を担当します。
+本書では、この環境を用意する人を「提供元」、このチュートリアルを操作する人を「体験者」と記載します。
+体験者が変更するファイルは、主に <span class="docutils literal">control_core/customer_code</span> フォルダ内にあります。</p>
+<p>このチュートリアルは、次の順番で進みます。</p>
+<ol class="arabic simple">
+<li><p>Ubuntuへログインし、VS Codeで専用の作業画面を開く</p></li>
+<li><p>プログラムを作成して基板へ書き込む</p></li>
+<li><p>Ethernetから基板を操作し、PWMとPI制御を確認する</p></li>
+<li><p>PWMとADCの設定を変更し、変更結果を確認する</p></li>
+</ol>
+</section>
+<section id="section-3">
+<h2>使用する機器と接続</h2>
+<p>このお試し版では、NUCLEO-H755ZI-Q、付属のRCフィルタ基板、Ethernetケーブル、
+ST-LINK USBケーブルを使用します。PWM波形を確認する場合は、オシロスコープも使用します。
+インターネットへの接続は不要です。付属のLANケーブルは、ノートPCとNUCLEO-H755ZI-Qを
+直接つなぐために使用します。ADCの確認では、PWM出力を付属のRCフィルタ基板へ接続します。
+まず、写真のように、付属のLANケーブルとマイクロUSBケーブルをPCにつなげます。</p>
+<figure>
+<img alt="NUCLEO-H755ZI-Q全体" src="images/tutorial/01-board-overview.jpg" style="width: 100%;" />
+<figcaption>
+<p>NUCLEO-H755ZI-Q全体。A0、GND、Ethernet、ST-LINK USB、PE9、PE8の位置を確認します。</p>
+</figcaption>
+</figure>
+</section>
+<section id="ubuntupcvs-code">
+<h2>1. UbuntuノートPCでVS Codeを開く</h2>
+<p>ノートPCを開きます。電源が入っていない場合は、電源ボタンを押して起動します。
+Ubuntu 24.04のログイン画面に、氏名 <span class="docutils literal">Demo User</span> が表示されます。
+ユーザー名 <span class="docutils literal">demo</span> を入力する必要はありません。<span class="docutils literal">Demo User</span> を選択し、提供元から案内された
+パスワードを入力してEnterを押します。</p>
+<figure>
+<img alt="UbuntuのDemo Userログイン画面" src="images/tutorial/00-ubuntu-login.jpg" style="width: 100%;" />
+<figcaption>
+<p><span class="docutils literal">Demo User</span> を選択し、提供元から案内されたパスワードを入力します。</p>
+</figcaption>
+</figure>
+<section id="ubuntu">
+<h3>Ubuntuでアプリや操作を探す</h3>
+<p>ログイン後、画面左下のアプリのマークをクリックすると、使用できるアプリの一覧を表示できます。
+画面上部の検索欄へ文字を入力すると、アプリだけでなく、設定や一般的な操作も検索できます。</p>
+<figure>
+<img alt="Ubuntu画面左下のアプリのマーク" src="images/tutorial/00-applications.jpg" style="width: 100%;" />
+<figcaption>
+<p>画面左下のアプリのマークをクリックすると、アプリ一覧と検索欄が表示されます。</p>
+</figcaption>
+</figure>
+<p>例えばノートPCの電源を切る場合は、検索欄へ <span class="docutils literal">電源オフ</span> と入力し、表示された
+<span class="docutils literal">電源オフ</span> を選択します。その後に確認画面が表示された場合は、もう一度 <span class="docutils literal">電源オフ</span> を選択します。</p>
+<figure>
+<img alt="Ubuntuで電源オフを検索した画面" src="images/tutorial/00-power-off-search.jpg" style="width: 100%;" />
+<figcaption>
+<p>アプリ一覧の検索欄へ <span class="docutils literal">電源オフ</span> と入力した状態。</p>
+</figcaption>
+</figure>
+</section>
+<section id="vs-code">
+<h3>VS Codeを開く</h3>
+<p>ログイン後、画面左側のバーにあるVS Codeのアイコンをクリックします。
+VS Codeは、前回開いていたこのお試し版の作業フォルダを表示し、必要な準備を自動的に始めます。
+準備が完了するまで、数十秒から数分かかる場合があります。準備中はVS Codeを閉じずに待ちます。</p>
+<figure>
+<img alt="Ubuntu画面左側のVS Codeアイコン" src="images/tutorial/00-vscode-launch.jpg" style="width: 100%;" />
+<figcaption>
+<p>画面左側のバーに固定されているVS Codeを開きます。</p>
+</figcaption>
+</figure>
+<p>初回起動時や準備中に確認メッセージが表示された場合は、次のように進めます。
+英語表示の場合もあります。表示されたメッセージに対応する行を、次の表から選んで進めます。</p>
+<table>
+<caption>表示される可能性があるメッセージと選択内容</caption>
+<colgroup>
+<col style="width: 45.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr><th class="head"><p>表示例</p></th>
+<th class="head"><p>選択する内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr><td><p><span class="docutils literal">Do you trust the authors of the files in this folder?</span></p></td>
+<td><p><span class="docutils literal">Yes, I trust the authors</span> を選択します。</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">Reopen in Container</span> または <span class="docutils literal">Open Folder in Container</span></p></td>
+<td><p><span class="docutils literal">Reopen in Container</span> または <span class="docutils literal">Open Folder in Container</span> を選択します。</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">Dev Containers extension is required</span> または拡張機能のインストール確認</p></td>
+<td><p><span class="docutils literal">Install</span> または <span class="docutils literal">OK</span> を選択します。</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">Would you like to install the recommended extensions?</span></p></td>
+<td><p><span class="docutils literal">Install</span> を選択します。</p></td>
+</tr>
+<tr><td><p>Ubuntuのパスワード入力画面が表示される</p></td>
+<td><p>ログイン時と同じ、提供元から案内されたパスワードを入力します。</p></td>
+</tr>
+<tr><td><p><span class="docutils literal">Retry</span> またはやり直しを求めるメッセージ</p></td>
+<td><p><span class="docutils literal">Retry</span> を選択します。再び表示された場合は、VS Codeを一度閉じて開き直します。</p></td>
+</tr>
+<tr><td><p>通知欄に <span class="docutils literal">Starting Dev Container</span>、<span class="docutils literal">Opening in Container</span> 等が表示される</p></td>
+<td><p>操作せず、準備が完了するまで待ちます。</p></td>
+</tr>
+<tr><td><p>VS Codeの更新案内など、この作業と関係のない通知</p></td>
+<td><p>このチュートリアルでは操作せず、閉じるかそのままにします。</p></td>
+</tr>
+</tbody>
+</table>
+<p>表にないメッセージが表示され、どれを選ぶか判断できない場合は、画面を閉じずに提供元へ確認します。</p>
+<figure>
+<img alt="VS Codeが専用の作業画面を準備している画面" src="images/tutorial/00-vscode-devcontainer.png" style="width: 100%;" />
+<figcaption>
+<p>VS Codeが専用の作業画面を準備している状態。確認メッセージが表示された場合は、上表に従って進めます。</p>
+</figcaption>
+</figure>
+<p>準備が完了すると、VS Code画面左下に <span class="docutils literal">Dev Container</span> を含む表示が現れ、
+画面左側には <span class="docutils literal">digital_power_control</span> のファイル一覧が表示されます。
+この状態になれば、プログラムの確認や変更を始められます。</p>
+</section>
+<section id="vs-code-1">
+<h3>VS Codeでの保存と終了</h3>
+<p>VS Codeでファイルを変更した後は、キーボードの <span class="docutils literal">Ctrl+S</span> を押して保存します。
+<span class="docutils literal">Ctrl</span> キーを押したまま <span class="docutils literal">S</span> キーを押してください。ファイル名の横に表示されていた丸印が消えれば、
+保存できています。</p>
+<p>変更したファイルを保存していれば、作業の途中でもVS Code画面右上の <span class="docutils literal">×</span> をクリックして閉じることができます。
+次回VS Codeを開くと、このお試し版の作業フォルダが表示され、必要な準備が自動的に始まります。
+ビルドや基板への書き込みを実行中の場合は、その処理が完了してからVS Codeを閉じます。</p>
+</section>
+</section>
+<section id="section-4">
+<h2>2. 作業フォルダを確認する</h2>
+<p>VS Codeで専用の作業画面が表示された状態で、メニューから
+<span class="docutils literal">Terminal</span> -&gt; <span class="docutils literal">New Terminal</span> を選択します。</p>
+<figure>
+<img alt="VS Codeで専用の作業画面を開いた画面" src="images/tutorial/02-vscode-devcontainer.png" style="width: 100%;" />
+<figcaption>
+<p>VS Codeで専用の作業画面を開き、画面下部にコマンド入力欄を表示した状態。</p>
+</figcaption>
+</figure>
+<p><span class="docutils literal">Terminal</span> -&gt; <span class="docutils literal">New Terminal</span> をもう一度選択し、ターミナルを2つ開きます。
+画面下部右側に表示されるターミナル名をクリックすると、使用するターミナルを切り替えられます。
+最初に開いたターミナルを**プログラム作成・書き込み用**、2つ目を**基板操作用**として使います。
+必要になったときは、ターミナル右上の <span class="docutils literal">+</span> ボタンで追加できます。</p>
+<aside class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>ターミナル入力を簡単にする2つのキー</p>
+<p><strong>Tabキー: 入力途中の名前を補完する</strong></p>
+<p>コマンドやフォルダ名を途中まで入力して <span class="docutils literal">Tab</span> キーを押すと、残りの文字が自動入力されます。
+例えば <span class="docutils literal">./scr</span> まで入力して <span class="docutils literal">Tab</span> を押すと、 <span class="docutils literal">./scripts/</span> まで補完されます。
+続けて <span class="docutils literal">b</span> と入力して <span class="docutils literal">Tab</span> を押すと、 <span class="docutils literal">./scripts/build.sh</span> まで補完できます。</p>
+<p><strong>上矢印キー: 以前に入力したコマンドを表示する</strong></p>
+<p>キーボードの上矢印キー <span class="docutils literal">↑</span> を押すと、以前に入力したコマンドが表示されます。
+何度か押すと、さらに前のコマンドへ戻れます。目的のコマンドが表示されたら、Enterを押して再実行します。
+同じビルドや書き込みコマンドを繰り返すときは、すべて入力し直す必要はありません。</p>
+<p>これらは、プログラム作成・書き込み用ターミナルなど、PC用の命令を入力できる状態で使用します。
+基板操作用ターミナルが <span class="docutils literal">nc</span> で接続中のときは、基板操作命令を入力する状態です。</p>
+</aside>
+<p>プログラム作成・書き込み用のターミナルで、次の1行を入力してEnterを押します。</p>
+<pre class="code console literal-block"><code><span class="generic output">cd /workdir/zephyrproject/digital_power_control</span></code></pre>
+<p>チュートリアル開始時の標準設定は、PWM最大周波数が20000 Hz、
+ADC電圧表示の最大値が3300 mVです。次の値になっている状態から演習を始めます。</p>
+<pre class="code c literal-block"><code><span class="comment preproc">#define MAX_FREQUENCY_HZ 20000U
+#define ADC_INPUT_FULL_SCALE_MV 3300U</span></code></pre>
+<p>VS Code画面左側のファイル一覧には、主に次のフォルダがあります。</p>
+<pre class="code text literal-block"><code>digital_power_control/
+|-- control_core/
+|   `-- customer_code/            体験者が変更するファイル
+|       |-- pwm/                  PWM出力の設定
+|       |-- adc/                  測定電圧の換算
+|       `-- feedback/             PI制御の計算
+|-- network_core/                 Ethernet通信
+`-- scripts/                      ビルドと基板書き込み用の命令</code></pre>
+</section>
+<section id="section-5">
+<h2>3. 初回ビルド</h2>
+<p>先ほど <span class="docutils literal">cd</span> で移動した作業フォルダで、次を実行します。</p>
+<pre class="code console literal-block"><code><span class="generic output">./scripts/build.sh</span></code></pre>
+<p>この命令は、以前のビルド結果を消してから、基板内の2つのCPUで動かすプログラムを作成します。
+成功すると、書き込み用ファイルが2つ作成されます。</p>
+<pre class="code text literal-block"><code>/workdir/zephyrproject/build-digital-power-control/digital_power_control/zephyr/zephyr.bin
+/workdir/zephyrproject/build-digital-power-control/control_core_m4/zephyr/zephyr.bin</code></pre>
+<p>ビルド完了後、次の命令を入力して、書き込み用ファイルが2つ表示されることを確認します。</p>
+<pre class="code console literal-block"><code><span class="generic output">ls -lh \
+  /workdir/zephyrproject/build-digital-power-control/digital_power_control/zephyr/zephyr.bin \
+  /workdir/zephyrproject/build-digital-power-control/control_core_m4/zephyr/zephyr.bin</span></code></pre>
+<figure>
+<img alt="M7とM4のビルド成功画面" src="images/tutorial/03-build-success.png" style="width: 100%;" />
+<figcaption>
+<p>VS Code画面下部で、2つのプログラム作成が成功した状態。</p>
+</figcaption>
+</figure>
+</section>
+<section id="section-6">
+<h2>4. 基板への書き込み</h2>
+<p>NUCLEO-H755ZI-QのST-LINK USB端子がPCへ接続されていることを確認し、次を実行します。</p>
+<pre class="code console literal-block"><code><span class="generic output">./scripts/flash.sh</span></code></pre>
+<p>この命令は、直前に作成した2つのプログラムを基板へ書き込みます。
+書き込みに失敗する場合は、USB接続とST-LINKの認識状態を確認してください。</p>
+<figure>
+<img alt="基板への書き込み成功画面" src="images/tutorial/04-flash.png" style="width: 100%;" />
+<figcaption>
+<p><span class="docutils literal">scripts/flash.sh</span> による基板への書き込み成功画面。</p>
+</figcaption>
+</figure>
+</section>
+<section id="ethernet">
+<h2>5. Ethernetで基板を操作する</h2>
+<p>PC側のIPアドレスは設定済みです。NucleoのEthernet端子をPCへ接続します。
+基板のIPアドレスは <span class="docutils literal">192.168.100.2</span> です。</p>
+<p>手順2で開いた基板操作用ターミナルを選択します。
+<span class="docutils literal">nc</span> は、PCからEthernet経由で基板へ文字を送るためのプログラムです。
+基板操作用ターミナルで、次を入力します。</p>
+<pre class="code console literal-block"><code><span class="generic output">nc 192.168.100.2 4242</span></code></pre>
+<p>接続に成功すると、次の案内が表示されます。</p>
+<pre class="code text literal-block"><code>NUCLEO-H755ZI-Q complementary PWM server; send HELP</code></pre>
+<p>この表示後は、基板操作用の欄が <span class="docutils literal">nc</span> で基板へ接続中です。
+この欄へ入力した文字は、PC用の命令として実行されず、Ethernet経由で基板へ送信されます。
+入力待ちを示す記号が表示されなくても正常です。次の基板操作命令を1行ずつ入力し、毎回Enterを押します。</p>
+<pre class="code text literal-block"><code>STATUS
+GET
+MODE FEEDFORWARD
+SET 20000 25 0
+GET
+OFF</code></pre>
+<p><span class="docutils literal">SET</span> の3つの数値は、順番に「周波数Hz」「出力割合%」「上下のPWMを切り替える間の待ち時間ns」です。
+<span class="docutils literal">OFF</span> を入力するとPWMを停止します。</p>
+<p>基板操作用の欄で <span class="docutils literal">Ctrl+C</span> を押すと基板との接続が終了し、PC用の命令を入力できる状態へ戻ります。
+再接続する場合は、同じターミナルで再度 <span class="docutils literal">nc 192.168.100.2 4242</span> を実行します。
+ビルドや書き込みは、 <span class="docutils literal">nc</span> 接続中ではないプログラム作成・書き込み用の欄で実行してください。</p>
+<figure>
+<img alt="ncで基板へ接続した画面" src="images/tutorial/05-network-command.png" style="width: 100%;" />
+<figcaption>
+<p>VS Code画面下部の基板操作用の欄で <span class="docutils literal">nc</span> を実行し、基板へコマンドを送信している状態。</p>
+</figcaption>
+</figure>
+</section>
+<section id="pwm">
+<h2>6. PWM波形を確認する</h2>
+<p>PWM出力は次のピンです。</p>
+<ul class="simple">
+<li><p>PE9: 主に確認するPWM出力</p></li>
+<li><p>PE8: PE9と反対に動作するPWM出力</p></li>
+</ul>
+<p>オシロスコープのGNDをNucleo GNDへ接続し、PE9とPE8を測定します。</p>
+<p>基板操作用の欄が <span class="docutils literal">nc</span> で基板へ接続中であることを確認し、次を入力します。</p>
+<pre class="code text literal-block"><code>MODE FEEDFORWARD
+SET 10000 25 500
+GET</code></pre>
+<p>期待する波形は、周波数約10 kHz、PE9の出力割合約25%です。
+また、PE9とPE8が互いに反対に動作し、切り替え時に約500 nsの待ち時間が入ります。測定後はPWMを停止します。</p>
+<pre class="code text literal-block"><code>OFF</code></pre>
+<figure>
+<img alt="相補PWM波形" src="images/tutorial/06-pwm-waveform.jpg" style="width: 100%;" />
+<figcaption>
+<p>写真はPE9で測定したPWM波形です。2チャンネルのオシロスコープを使用する場合は、
+PE8とPE9を同時に測定し、2つの出力が同時にHighにならないことと、切り替え時に約500 nsの
+待ち時間があることを確認します。PE8は写真手前のコネクタCN10にあり、使用する箇所以外は
+テープで覆っています。1チャンネルで測定する場合は、PE9の波形を確認して次へ進みます。
+写真と大きく異なる波形が表示された場合は、測定画面を残したまま提供元へ確認します。</p>
+</figcaption>
+</figure>
+</section>
+<section id="pwm-1">
+<h2>7. PWMコード変更演習</h2>
+<p>ここでは、体験者が最大PWM周波数を20 kHzから10 kHzへ変更します。
+VS Code画面左側のファイル一覧から、次のファイルを開きます。</p>
+<pre class="code text literal-block"><code>control_core/customer_code/pwm/pwm_control.c</code></pre>
+<p>次の定義を探します。</p>
+<pre class="code c literal-block"><code><span class="comment preproc">#define MAX_FREQUENCY_HZ 20000U</span></code></pre>
+<p>これを次のように変更し、 <span class="docutils literal">Ctrl+S</span> を押して保存します。</p>
+<pre class="code c literal-block"><code><span class="comment preproc">#define MAX_FREQUENCY_HZ 10000U</span></code></pre>
+<figure>
+<img alt="VS CodeでPWM上限を編集する画面" src="images/tutorial/07-edit-pwm-limit.png" style="width: 100%;" />
+<figcaption>
+<p>体験者が変更する <span class="docutils literal">MAX_FREQUENCY_HZ</span> をVS Codeで編集します。</p>
+</figcaption>
+</figure>
+<p><span class="docutils literal">Ctrl+S</span> でファイルを保存したら、まず基板操作用ターミナルを選び、 <span class="docutils literal">Ctrl+C</span> を押して
+<span class="docutils literal">nc</span> 接続を終了します。次にプログラム作成・書き込み用ターミナルを選び、再度ビルドと書き込みを行います。</p>
+<pre class="code console literal-block"><code><span class="generic output">./scripts/build.sh
+./scripts/flash.sh</span></code></pre>
+<p>書き込みが完了したら、基板操作用ターミナルを選び、次を入力して基板へ再接続します。</p>
+<pre class="code console literal-block"><code><span class="generic output">nc 192.168.100.2 4242</span></code></pre>
+<p>接続成功メッセージが表示されたら、変更結果を確認します。</p>
+<pre class="code text literal-block"><code>MODE FEEDFORWARD
+SET 20000 25 0
+SET 10000 25 0
+GET
+OFF</code></pre>
+<p>最初のSET 20000は範囲外としてエラーになり、SET 10000は成功します。
+確認後は、 <span class="docutils literal">MAX_FREQUENCY_HZ</span> を <span class="docutils literal">20000U</span> へ戻し、 <span class="docutils literal">Ctrl+S</span> で保存します。</p>
+<p>基板操作用ターミナルを選び、 <span class="docutils literal">Ctrl+C</span> を押して <span class="docutils literal">nc</span> 接続を終了します。
+次にプログラム作成・書き込み用ターミナルを選び、元の設定を反映したプログラムを作成して基板へ書き込みます。</p>
+<pre class="code console literal-block"><code><span class="generic output">./scripts/build.sh
+./scripts/flash.sh</span></code></pre>
+<p>書き込みが完了したら、基板操作用ターミナルを選び、次を入力して基板へ再接続します。</p>
+<pre class="code console literal-block"><code><span class="generic output">nc 192.168.100.2 4242</span></code></pre>
+<p>接続成功メッセージが表示されたら、最大PWM周波数は20 kHzへ戻っています。次のADCとPI制御の確認へ進みます。</p>
+</section>
+<section id="adcpi">
+<h2>8. ADCとPI制御の確認</h2>
+<p>PWM出力 <span class="docutils literal">PE9</span> を、付属の2段RCフィルタ基板を通してアナログ入力 <span class="docutils literal">A0</span> へ接続します。
+RCフィルタは、PWMの細かなON/OFF波形を、測定しやすい平均電圧へ変える回路です。NucleoのGNDも接続します。</p>
+<pre class="code text literal-block"><code>PE9 PWM -- R1 4.7k --+-- R2 4.7k --+-- A0
+                     |              |
+                    C1 1uF         C2 1uF
+                     |              |
+Nucleo GND ----------+--------------+</code></pre>
+<p>このフィルタ基板は、抵抗R1、R2が各4.7 kΩ、コンデンサC1、C2が各1 µFです。
+写真を参考に、付属のフィルタ基板を接続してください。</p>
+<figure>
+<img alt="PWM出力、2段RCフィルタ、ADC入力の配線" src="images/tutorial/08-adc-wiring.jpg" style="width: 100%;" />
+<figcaption>
+<p>PWM出力を2段RCフィルタ経由でA0へ戻し、GNDを共通接続します。</p>
+</figcaption>
+</figure>
+<figure>
+<img alt="フィルタ回路と接続部" src="images/tutorial/08.5-adc-wiring.jpg" style="width: 100%;" />
+<figcaption>
+<p>使用しない差し込み口はテープで覆っています。写真と見比べながら接続してください。</p>
+</figcaption>
+</figure>
+<p>基板操作用の欄が <span class="docutils literal">nc</span> で基板へ接続中であることを確認し、次を入力します。</p>
+<pre class="code text literal-block"><code>MODE FEEDFORWARD
+SET 20000 0 0
+MODE FEEDBACK
+SET 20000 50 0
+GET</code></pre>
+<p><span class="docutils literal">MODE FEEDBACK</span> を入力すると、出力電圧を目標値へ近づけるPI制御が有効になります。
+この状態では、<span class="docutils literal">SET</span> の2番目の数値は出力割合ではなく、測定電圧の目標値です。
+<span class="docutils literal">SET 20000 50 0</span> の50は、測定範囲3.3 Vの50%、すなわち約1.65 Vを意味します。
+<span class="docutils literal">GET</span> の <span class="docutils literal">target=50%</span> は目標値、<span class="docutils literal"><span class="pre">duty=...%</span></span> はPI制御が決めた実際の出力割合です。</p>
+<p>電圧測定とPI制御は、1秒間に10000回実行されます。測定を一定間隔で行うための処理は、
+体験者が調整するPI制御のファイルとは分けてあります。通常は
+<span class="docutils literal">control_core/customer_code/feedback</span> フォルダ内だけを変更してください。</p>
+<p>目標値を25%、50%、75%へ変更し、ADC表示がそれぞれ約0.825 V、1.65 V、2.475 Vへ
+近づくことを確認します。</p>
+</section>
+<section id="adc">
+<h2>9. ADC電圧表示の変更演習</h2>
+<p>ここでは、A0の測定結果をmVで表示するときの基準値を変更します。
+表示だけが変わり、PI制御の動作は変わりません。</p>
+<p>VS Code画面左側のファイル一覧から、次のファイルを開きます。</p>
+<pre class="code text literal-block"><code>control_core/customer_code/adc/adc_input.h</code></pre>
+<p>次の定義を探します。</p>
+<pre class="code c literal-block"><code><span class="comment preproc">#define ADC_INPUT_FULL_SCALE_MV 3300U</span></code></pre>
+<p>動作を分かりやすく確認するため、一時的に次へ変更し、 <span class="docutils literal">Ctrl+S</span> を押して保存します。</p>
+<pre class="code c literal-block"><code><span class="comment preproc">#define ADC_INPUT_FULL_SCALE_MV 3000U</span></code></pre>
+<figure>
+<img alt="VS CodeでADCスケーリングを編集する画面" src="images/tutorial/09-edit-adc-scale.png" style="width: 100%;" />
+<figcaption>
+<p>体験者が変更する <span class="docutils literal">ADC_INPUT_FULL_SCALE_MV</span> をVS Codeで編集します。</p>
+</figcaption>
+</figure>
+<p>基板操作用ターミナルを選び、 <span class="docutils literal">Ctrl+C</span> を押して <span class="docutils literal">nc</span> 接続を終了します。
+次にプログラム作成・書き込み用ターミナルを選び、再ビルドと再書き込みを行います。</p>
+<pre class="code console literal-block"><code><span class="generic output">./scripts/build.sh
+./scripts/flash.sh</span></code></pre>
+<p>書き込みが完了したら、基板操作用ターミナルを選び、次を入力して基板へ再接続します。</p>
+<pre class="code console literal-block"><code><span class="generic output">nc 192.168.100.2 4242</span></code></pre>
+<p>接続成功メッセージが表示されたら、PWM出力をRCフィルタ経由でA0へ接続したまま、次を入力します。</p>
+<pre class="code text literal-block"><code>MODE FEEDFORWARD
+SET 10000 50 0
+MODE FEEDBACK
+GET</code></pre>
+<p>目標を50%にした場合、表示上の最大値を3000 mVへ変更したため、<span class="docutils literal">adc</span> は約1500 mVと表示されます。
+<span class="docutils literal">target=50%</span> とPI制御の動作は変わりません。</p>
+<p>これは、役割ごとに変更するフォルダを分けているためです。</p>
+<ul class="simple">
+<li><p><span class="docutils literal">customer_code/adc</span> : 測定値を電圧や電流の表示へ換算する</p></li>
+<li><p><span class="docutils literal">customer_code/feedback</span> : 目標値と測定値からPWMの出力割合を計算する</p></li>
+<li><p><span class="docutils literal">customer_code/pwm</span> : PWMの周波数、出力割合、切り替え時の待ち時間を設定する</p></li>
+<li><p><span class="docutils literal">control_core/platform</span> : 一定間隔の測定や、基板内のCPU間通信を行う。通常は変更しない</p></li>
+</ul>
+<p>確認後は、 <span class="docutils literal">ADC_INPUT_FULL_SCALE_MV</span> を <span class="docutils literal">3300U</span> へ戻し、 <span class="docutils literal">Ctrl+S</span> で保存します。</p>
+</section>
+<section id="section-7">
+<h2>10. 変更後の最終確認</h2>
+<p>PWM最大周波数を <span class="docutils literal">20000U</span>、ADC電圧表示の最大値を <span class="docutils literal">3300U</span> へ戻した状態で、最終確認を行います。</p>
+<p>基板操作用ターミナルを選び、 <span class="docutils literal">Ctrl+C</span> を押して <span class="docutils literal">nc</span> 接続を終了します。
+次にプログラム作成・書き込み用ターミナルを選び、ビルドと書き込みを行います。</p>
+<pre class="code console literal-block"><code><span class="generic output">./scripts/build.sh
+./scripts/flash.sh</span></code></pre>
+<p>書き込みが完了したら、基板操作用ターミナルを選び、次を入力して基板へ再接続します。</p>
+<pre class="code console literal-block"><code><span class="generic output">nc 192.168.100.2 4242</span></code></pre>
+<p>接続成功メッセージが表示されたら、次を入力して確認します。</p>
+<pre class="code text literal-block"><code>STATUS
+MODE FEEDFORWARD
+SET 10000 25 500
+GET
+MODE FEEDBACK
+GET
+OFF</code></pre>
+<p>確認項目:</p>
+<ul class="simple">
+<li><p>基板内の2つのCPU用プログラムを両方作成できる</p></li>
+<li><p><span class="docutils literal">STATUS</span> で <span class="docutils literal">rpmsg_bound=1</span> が表示され、基板内の2つのCPUが通信できている</p></li>
+<li><p>FEEDFORWARDモードでは <span class="docutils literal">SET</span> で指定した出力割合が使用される</p></li>
+<li><p>FEEDBACKモードでは測定電圧が目標値へ近づき、PI制御が出力割合を調整する</p></li>
+<li><p><span class="docutils literal">OFF</span> でPWMが停止する</p></li>
+<li><p><span class="docutils literal">fault=0x00000000</span> と表示され、正常に動作している</p></li>
+</ul>
+<figure>
+<img alt="最終動作確認" src="images/tutorial/10-final-verification.jpg" style="width: 100%;" />
+<figcaption>
+<p>ADC入力とPWM出力の最終動作確認。</p>
+</figcaption>
+</figure>
+</section>
+<section id="section-8">
+<h2>11. 実験を終了する</h2>
+<p>最終確認で <span class="docutils literal">OFF</span> を入力し、PWMが停止していることを確認した後、次の順番で実験を終了します。</p>
+<ol class="arabic simple">
+<li><p>基板操作用ターミナルを選び、 <span class="docutils literal">Ctrl+C</span> を押して <span class="docutils literal">nc</span> 接続を終了します。</p></li>
+<li><p>変更したファイルを保存していない場合は、 <span class="docutils literal">Ctrl+S</span> を押して保存します。</p></li>
+<li><p>VS Code画面右上の <span class="docutils literal">×</span> をクリックして、VS Codeを閉じます。</p></li>
+<li><p>NUCLEO-H755ZI-QとノートPCを接続しているUSBケーブルを外します。</p></li>
+<li><p>NUCLEO-H755ZI-QとノートPCを接続しているLANケーブルを外します。</p></li>
+<li><p>ノートPCの電源を切る場合は、手順1の「Ubuntuでアプリや操作を探す」に従い、 <span class="docutils literal">電源オフ</span> を実行します。</p></li>
+</ol>
+<p>VS Code画面右上の <span class="docutils literal">×</span> で閉じて問題ありません。次回VS Codeを開くと、このお試し版の作業フォルダが
+表示され、必要な準備が自動的に始まります。</p>
+<p>ノートPCの電源を切っても、 <span class="docutils literal">Ctrl+S</span> で保存したファイルは消えません。
+また、USBケーブルを外したり基板の電源が切れたりしても、NUCLEO-H755ZI-Qへ最後に書き込んだ
+プログラムは消えません。次回USBケーブルを接続すると、最後に書き込んだプログラムで基板が起動します。</p>
+</section>
+<section id="section-9">
+<h2>トラブルシューティング</h2>
+<section id="mode-feedback-err-cannot-set-mode-19">
+<h3><span class="docutils literal">MODE FEEDBACK</span> が <span class="docutils literal">ERR cannot set mode <span class="pre">(-19)</span></span> になる</h3>
+<p>基板内の電圧測定機能を開始できていません。もう一度ビルドと書き込みを行い、
+どちらもエラーなく完了したことを確認してください。再度同じエラーが表示された場合は、
+エラーメッセージを残したまま提供元へ確認します。</p>
+</section>
+<section id="ethernet-1">
+<h3>Ethernet経由で基板へ接続できない</h3>
+<p>PC側Ethernet接続のIPアドレスが <span class="docutils literal">192.168.100.1</span>、サブネットマスクが
+<span class="docutils literal">255.255.255.0</span> になっていることを確認してください。
+接続できない場合は、Ethernetケーブル、PC側IPアドレス、基板への書き込み結果を順番に確認します。
+確認後も接続できない場合は、表示されている画面を残したまま提供元へ確認します。</p>
+</section>
+<section id="section-10">
+<h3>書き込みできない</h3>
+<p>ST-LINK USBケーブルを挿し直し、他の書き込みソフトを閉じてから、もう一度実行してください。
+解決しない場合は、ノートPCを再起動してから、VS Code、ビルド、書き込みの順にもう一度実行します。
+再実行しても書き込めない場合は、表示されたメッセージを残したまま提供元へ確認します。</p>
+</section>
+</section>
+</main>
+</body>
+</html>
