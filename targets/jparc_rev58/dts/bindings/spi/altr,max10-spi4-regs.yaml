@@ -1,0 +1,3 @@
+description: J-PARC MAX10 SPI4 register test interface v1
+compatible: "altr,max10-spi4-regs"
+include: spi-device.yaml

@@ -17,7 +17,8 @@
 | 同期 | PA0外部周期、PD13トリガ。実周波数・更新周期は未確定 |
 | FPGA通知 | PD11 READY、PJ11 FAULT、PD12 IRQ、PK0 HEARTBEAT |
 
-100 MHz SDRAM／20 MHz SPIは設計目標であり、実機確認済み値ではありません。
+100 MHz SDRAM／20 MHz SPIは初期の設計目標であり、実機確認済み値ではありません。
+MAX10 SPI4レジスタ試験v1は上限2 MHzです。[Ethernet経由の試験](SPI4_TEST.md)では1 MHzを要求します。
 SDRAM初期化前のスタック・BSS・ヒープは内蔵RAMに置きます。
 PD11とPJ11はEXTI11が競合します。PC3 SPI2とPC3_C ADCを区別します。
 UART8 PJ8/PJ9は送受信方向の入替確認が必要です。
@@ -35,7 +36,8 @@ UART8 PJ8/PJ9は送受信方向の入替確認が必要です。
 ## 未確定事項
 
 - チャネル数、点数、数値形式・単位、更新周期、Ethernet転送プロトコル。
-- SPI mode、bit順、フレーム長、CRC、timeout、READY/IRQと受信armの順序。
+- 運用用SPIのmode、bit順、フレーム長、CRC、timeout、READY/IRQと受信armの順序。
+  SPI4レジスタ試験v1のフレームは確定し実装済み、実機確認待ちです。
 - 旧パタン入力とSDRAMの選択、切替可能な状態、異常時出力・復旧条件。
 - SDRAMの実クロック・タイミング、DQM初期化条件、MPU/cacheとDMAバッファ配置。
 - M4の起動方法、共有RAM、周辺所有コア、FPGA通信形式の版管理。

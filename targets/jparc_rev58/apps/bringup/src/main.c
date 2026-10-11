@@ -6,6 +6,9 @@
 #include <stm32_ll_bus.h>
 #include <stm32_ll_pwr.h>
 #include "peripheral_checks.h"
+#ifdef CONFIG_JPARC_SPI4_REGS_TEST
+#include "spi4_test_server.h"
+#endif
 
 /* Read from GDB even when no RTT client is connected. Raw register snapshots. */
 struct bringup_status {
@@ -65,6 +68,13 @@ int main(void)
         printk("Peripheral check failed: %d\n", rev58_status.error);
         return 0;
     }
+#ifdef CONFIG_JPARC_SPI4_REGS_TEST
+    rev58_status.error = spi4_test_server_start();
+    if (rev58_status.error) {
+        printk("SPI4 server initialization failed: %d\n", rev58_status.error);
+        return 0;
+    }
+#endif
     printk("Bring-up ready; inspect rev58_status.ticks and raw GPIO levels\n");
     for (;;) {
         rev58_status.ready_raw = gpio_pin_get_raw(inputs[0].port, inputs[0].pin);

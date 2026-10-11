@@ -1,0 +1,16 @@
+#include "ethernet.overlay"
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+&spi4 {
+    status = "okay";
+    pinctrl-0 = <&spi4_sck_pe2 &spi4_miso_pe5 &spi4_mosi_pe6>;
+    pinctrl-names = "default";
+    cs-gpios = <&gpioe 4 GPIO_ACTIVE_LOW>;
+    max10_spi4: max10@0 {
+        compatible = "altr,max10-spi4-regs";
+        reg = <0>;
+        spi-max-frequency = <1000000>;
+        spi-cs-setup-delay-ns = <1000>;
+        spi-cs-hold-delay-ns = <1000>;
+    };
+};

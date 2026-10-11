@@ -1,0 +1,17 @@
+mainmenu "J-PARC rev58 bring-up"
+source "Kconfig.zephyr"
+
+config JPARC_SPI4_REGS_TEST
+    bool "Ethernet to MAX10 SPI4 register test"
+    depends on NETWORKING && NET_TCP && NET_SOCKETS && SPI
+
+config JPARC_SPI4_TEST_IP
+    string "Static test IPv4 address"
+    default "192.168.100.58"
+    depends on JPARC_SPI4_REGS_TEST
+
+config JPARC_SPI4_TEST_PORT
+    int "TCP test port"
+    range 1024 65535
+    default 4244
+    depends on JPARC_SPI4_REGS_TEST

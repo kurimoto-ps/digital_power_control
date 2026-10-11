@@ -9,3 +9,9 @@ if(NOT CONFIG_BOARD_JPARC_REV58)
   message(FATAL_ERROR "This bring-up application requires jparc_rev58")
 endif()
 target_sources(app PRIVATE src/main.c src/peripheral_checks.c)
+
+if(CONFIG_JPARC_SPI4_REGS_TEST)
+  target_sources(app PRIVATE src/spi4_test_server.c
+    ${REV58_ROOT}/lib/fpga_link/spi4_protocol.c)
+  target_include_directories(app PRIVATE ${REV58_ROOT}/lib/fpga_link)
+endif()

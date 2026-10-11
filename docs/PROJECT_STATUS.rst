@@ -183,3 +183,34 @@ J-PARC rev58 M7 bring-up (2026-10-11)
   clock/VOS1, internal RAM placement, and 38 SDRAM / 9 Ethernet / 13 SPI pins.
 * Build/flash target/profile routing was checked without accessing hardware;
   OpenOCD and STM32CubeProgrammer runner configuration was generated successfully.
+
+J-PARC rev58 Ethernet to SPI4 register test (2026-10-11)
+************************************************************
+
+* Added ``spi4_regs`` bring-up profile: static IPv4 192.168.100.58/24,
+  TCP 4244, INFO/READ/WRITE commands, and a standalone Python host client.
+* Implements MAX10 SPI4 register protocol v1.0 from
+  ``quartus/projects/spi4_regs/SPI4_PROTOCOL.md``. An unchanged reference copy
+  and its checksum are stored in rev58 hardware documents.
+* SPI4 uses Mode 0, MSB-first, single 8-byte full-duplex frames and active-low
+  GPIO CS PE4, with 1 us setup/hold/inter-frame delays. Requested 1 MHz gives
+  a calculated 781.25 kHz from the current 100 MHz kernel clock; measure on hardware.
+* Checks CONF_DONE, waits 10 ms per command, validates FPGA ID/version,
+  and verifies writes with a separate read frame. FPGA errors and transport
+  failures are distinct. Writes are never automatically retried.
+* Host ``test`` overwrites all 16 dummy registers and checks 176 writes,
+  patterns, walking bits, address independence, FPGA error responses,
+  preserved values after invalid requests, and wrapping WRITE_COUNT.
+* Passed 12 host tests using the actual portable firmware C command handler,
+  an independent register model, and loopback TCP for the Python client.
+  Includes dropped write replies, invalid inputs, wrong identity, transport
+  failure, readback mismatch, fragmented replies, and counter wrap.
+* Built and verified all five rev58 profiles (bringup, sdram, ethernet, spi,
+  spi4_regs), including VOS1/internal RAM and netlist checks. New profile has
+  13 active peripheral pins including GPIO CS. Flash routing was checked with
+  a mock west executable; no hardware was accessed.
+* See ``targets/jparc_rev58/docs/SPI4_TEST.md`` for programming prerequisites,
+  host addressing, commands, expected responses, and remaining measurements.
+* Hardware operation, Zephyr TCP runtime, SPI signal timing, FPGA reconfiguration
+  during traffic, and 2 MHz operation remain unverified. M4 and operating control
+  protocols remain pending. Quartus sources and Nucleo code were not modified.

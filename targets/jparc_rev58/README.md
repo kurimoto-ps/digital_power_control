@@ -37,3 +37,6 @@ Zephyrと依存モジュールは既存west workspaceを共有し、この配下
 QSF/SDCは参考ひな形であり、Quartusプロジェクトの実装は今回の対象外です。
 
 [ビルド・初回立ち上げ手順](docs/BRINGUP.md)に、電源初期化の修正と実機確認事項を記載しています。
+
+Ethernet経由のMAX10 SPI4書込み／読戻し試験は `spi4_regs` プロファイル。
+[操作手順](docs/SPI4_TEST.md)。

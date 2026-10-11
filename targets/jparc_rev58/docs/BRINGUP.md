@@ -4,7 +4,7 @@
 
 専用ボード `jparc_rev58/stm32h745xx/m7` とM7単体の試験アプリを用意した。
 基板なしでのビルド確認用であり、起動・通信・SDRAM性能の実機合格を意味しない。
-M4アプリ、FPGA通信フレーム、周期制御、PLC出力、UART8、ADC3、HRTIMは未実装。
+M4アプリ、運用用FPGAプロトコル、周期制御、PLC出力、UART8、ADC3、HRTIMは未実装。
 
 ソースは `apps/bringup/`、ボード定義は `boards/jparc/jparc_rev58/`。
 NucleoのLED、UART、PWM、Ethernetピン割当は継承していない。
@@ -18,6 +18,7 @@ NucleoのLED、UART、PWM、Ethernetピン割当は継承していない。
 ./scripts/build.sh jparc_rev58 sdram
 ./scripts/build.sh jparc_rev58 ethernet
 ./scripts/build.sh jparc_rev58 spi
+./scripts/build.sh jparc_rev58 spi4_regs
 ```
 
 | プロファイル | 有効にする機能と実行内容 |
@@ -26,6 +27,7 @@ NucleoのLED、UART、PWM、Ethernetピン割当は継承していない。
 | sdram | 上記＋FMC SDRAM初期化、8 MiB全域を破壊するメモリ試験 |
 | ethernet | 上記＋RMII MAC・LAN8742 PHY、PHY ID読出し、リンク状態表示 |
 | spi | 上記＋SPI1〜4のドライバ初期化・ready確認。転送は行わない |
+| spi4_regs | 上記＋Ethernet TCPコマンドからSPI4レジスタ書込み／読戻し。[操作手順](SPI4_TEST.md) |
 
 出力先はwest workspace内の `build-jparc-rev58-<プロファイル>/zephyr/`。
 `zephyr.elf`（デバッグ用）、`zephyr.bin`、`zephyr.hex` を生成する。
@@ -118,22 +120,25 @@ Ethernet DMA用SRAM3はZephyrのSTM32H7 SoC定義を使用し、AXI SRAMと分�
 
 試験用のランダムMACを使用し、このプロファイルでHSI48とハードウェアRNGを有効化する。
 ネットワークスタック用にUDPを有効にするが、UDPアプリや転送処理は実装していない。
-固定IP、パタン転送プロトコル、製品MAC割当は未実装。
+この `ethernet` プロファイルには固定IP・転送アプリを設定していない。
+`spi4_regs` は固定IPのTCP試験を提供する。パタン転送プロトコルと製品MAC割当は未実装。
 PHY IDとリンクの確認だけで転送の合格とはしない。
 
 ### SPI
 
 SPI1: FPGA master→MCU slave受信用の配線。
-SPI2/3: MCU master送信用。SPI4: 双方向、MCU masterは初期案。
+SPI2/3: MCU master送信用。SPI4: 双方向、レジスタ試験v1はMCU master。
 SPI1〜3にはMISOを追加しない。NSSはAFで定義し、cs-gpiosは指定しない。
 採用版では `CONFIG_SPI_SLAVE` と `spi_config.operation` でslaveを選択し、
 cs-gpios/st,soft-nssがなければハードウェアNSSを使う。
 資料の旧版用 `CONFIG_SPI_STM32_USE_HW_SS` は採用版には存在しない。
 
-現段階はドライバとピン設定の準備のみ。NSS極性、CPOL/CPHA、フレーム長、
+`spi` プロファイルはドライバとピン設定の準備のみ。NSS極性、CPOL/CPHA、フレーム長、
 受信armとREADY/IRQの順序を決めてから転送アプリを追加する。
 kernel clockは100 MHzなので通常の2冪分周で20 MHzぴったりにはならない。
-低速試験から始め、目標20 MHzへのクロック設計は別途行う。
+SPI1〜3の目標20 MHzへのクロック設計は別途行う。
+`spi4_regs` は別のoverlayでPE4をGPIO CSに変更し、指定1 MHzで8バイト転送する。
+MAX10レジスタ試験v1の上限は2 MHzであり、20 MHzを適用しない。[詳細](SPI4_TEST.md)。
 
 ## 基板なしの検証
 

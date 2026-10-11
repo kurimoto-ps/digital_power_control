@@ -1,5 +1,6 @@
-# lib/fpga_link
+# MAX10 SPI4試験プロトコル
 
-SPI1受信、SPI2/3送信、SPI4双方向、READY/FAULT/IRQの通信基盤。
-
-ディレクトリ準備段階です。実装・ビルド・実機確認は未実施です。
+`spi4_protocol.c/.h` は8バイトフレームの構築・応答確認とTCPテキストコマンドの処理。
+Zephyrに依存しない転送callbackを使い、ホスト側でも同じCコードを試験する。
+SPIアクセスとCONF_DONE待ちは `apps/bringup/src/spi4_test_server.c` が担当し、単一スレッドで所有する。
+SPI1〜3、運用プロトコルと状態通知は未実装。[手順](../../docs/SPI4_TEST.md)。

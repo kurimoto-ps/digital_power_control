@@ -110,3 +110,6 @@ Each profile builds to ``../build-jparc-rev58-<profile>`` (default ``bringup``).
 Pass the same target/profile to ``scripts/flash.sh`` when hardware is available.
 Review ``targets/jparc_rev58/docs/BRINGUP.md`` before first programming, especially
 Direct SMPS/VOS1 and the requirement to disable M4 boot via BCM4 option bytes.
+
+The ``spi4_regs`` profile adds a static-IP TCP to MAX10 register test.
+See ``targets/jparc_rev58/docs/SPI4_TEST.md`` for host commands and validation.

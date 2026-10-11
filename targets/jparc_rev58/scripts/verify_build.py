@@ -74,7 +74,22 @@ for label in ('fmc', 'mac', 'mdio', 'spi1', 'spi2', 'spi3', 'spi4'):
             require(any(c['net'].endswith('/' + signal) for c in pin['series_connections']),
                     'SPI net mismatch: ' + signal + ' on ' + physical)
     if label.startswith('spi'):
-        require('cs-gpios' not in n.props and not n.props['st,soft-nss'].val, 'hardware NSS')
+        if label == 'spi4' and 'cs-gpios' in n.props:
+            cs = n.props['cs-gpios'].val
+            require(len(cs) == 1 and cs[0].controller == node['gpioe'] and
+                    cs[0].data == {'pin': 4, 'flags': 1}, 'SPI4 active-low GPIO CS PE4')
+            require('PE4' not in seen, 'SPI4 NSS must not also use alternate function')
+            seen.add('PE4')
+            require(any(c['net'].endswith('/SPI4_NSS') and 'U5.A12' in c['connections']
+                        for c in pins['PE4']['series_connections']), 'SPI4 CS FPGA connection')
+            fpga = node['max10_spi4']
+            require(fpga.regs[0].addr == 0, 'SPI4 CS index')
+            require(fpga.props['spi-max-frequency'].val == 1000000, 'SPI4 requested clock')
+            for prop in ('spi-cs-setup-delay-ns', 'spi-cs-hold-delay-ns'):
+                require(fpga.props[prop].val >= 1000, prop)
+            require('CONFIG_JPARC_SPI4_REGS_TEST=y' in config, 'SPI4 server enabled')
+        else:
+            require('cs-gpios' not in n.props and not n.props['st,soft-nss'].val, 'hardware NSS')
 
 patched = args.build_dir / 'jparc_rev58/clock_stm32_ll_h7_vos1.c'
 source = patched.read_text()
