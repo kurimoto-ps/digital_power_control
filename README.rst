@@ -121,3 +121,11 @@ ADCサンプリング周期とfeedback処理の公称周期は100 usです。
 ``SET`` は周波数、第2引数、デッドタイムを設定します。FEEDFORWARDでは第2引数がPWM duty、
 FEEDBACKではADC目標値です。例えば50%は約1.65 Vを意味し、PI制御がPWM dutyを調整します。ADC DMAでエラーが発生するとM4はPWMを停止し、
 ``GET`` のfault bit 1をセットします。
+
+J-PARC rev58 development
+************************
+
+STM32H745 + MAX10の新基板向け開発領域は ``jparc_rev58/`` です。
+構成は ``jparc_rev58/README.md``、条件と着手順は
+``jparc_rev58/docs/DEVELOPMENT.md`` を参照してください。
+現在はディレクトリと設計資料の準備段階で、rev58向けビルドは未実装です。

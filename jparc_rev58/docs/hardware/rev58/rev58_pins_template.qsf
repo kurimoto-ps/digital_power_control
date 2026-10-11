@@ -1,0 +1,699 @@
+# rev58 physical pin assignments. TEMPLATE, not compiled.
+# Port names are proposed scalar HDL names. Remove unused ports after review.
+# Dedicated configuration/JTAG pins are intentionally excluded.
+# 3.3-V LVTTL is a proposed standard consistent with VCCIO=3.3 V; validate in Fitter.
+set_global_assignment -name FAMILY "MAX 10"
+set_global_assignment -name DEVICE 10M16DCF484I7G
+# /Interface Sheet/ACC_12MHZ
+set_location_assignment PIN_M9 -to ACC_12MHZ
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ACC_12MHZ
+# /Interface Sheet/ACC_TRIG
+set_location_assignment PIN_A8 -to ACC_TRIG
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ACC_TRIG
+# /Interface Sheet/DA0
+set_location_assignment PIN_C4 -to DA0
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA0
+# /Interface Sheet/DA1
+set_location_assignment PIN_C7 -to DA1
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA1
+# /Interface Sheet/DA2
+set_location_assignment PIN_A6 -to DA2
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA2
+# /Interface Sheet/DA3
+set_location_assignment PIN_F1 -to DA3
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA3
+# /Interface Sheet/DA4
+set_location_assignment PIN_A5 -to DA4
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA4
+# /Interface Sheet/DA5
+set_location_assignment PIN_F3 -to DA5
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA5
+# /Interface Sheet/DA6
+set_location_assignment PIN_J1 -to DA6
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA6
+# /Interface Sheet/DA7
+set_location_assignment PIN_A4 -to DA7
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA7
+# /Interface Sheet/DA8
+set_location_assignment PIN_J3 -to DA8
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA8
+# /Interface Sheet/DA9
+set_location_assignment PIN_K1 -to DA9
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA9
+# /Interface Sheet/DA10
+set_location_assignment PIN_K2 -to DA10
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA10
+# /Interface Sheet/DA11
+set_location_assignment PIN_A3 -to DA11
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA11
+# /Interface Sheet/DA12
+set_location_assignment PIN_F5 -to DA12
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA12
+# /Interface Sheet/DA13
+set_location_assignment PIN_L1 -to DA13
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA13
+# /Interface Sheet/DA14
+set_location_assignment PIN_L2 -to DA14
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA14
+# /Interface Sheet/DA15
+set_location_assignment PIN_C3 -to DA15
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA15
+# /Interface Sheet/DA16
+set_location_assignment PIN_A2 -to DA16
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA16
+# /Interface Sheet/DA17
+set_location_assignment PIN_B2 -to DA17
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA17
+# /Interface Sheet/DA18
+set_location_assignment PIN_D3 -to DA18
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA18
+# /Interface Sheet/DA19
+set_location_assignment PIN_K6 -to DA19
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA19
+# /Interface Sheet/DA20
+set_location_assignment PIN_C2 -to DA20
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA20
+# /Interface Sheet/DA21
+set_location_assignment PIN_E3 -to DA21
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA21
+# /Interface Sheet/DA22
+set_location_assignment PIN_B1 -to DA22
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA22
+# /Interface Sheet/DA23
+set_location_assignment PIN_D2 -to DA23
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA23
+# /Interface Sheet/DA24
+set_location_assignment PIN_C1 -to DA24
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DA24
+# /Interface Sheet/DB0
+set_location_assignment PIN_D1 -to DB0
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB0
+# /Interface Sheet/DB1
+set_location_assignment PIN_A11 -to DB1
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB1
+# /Interface Sheet/DB2
+set_location_assignment PIN_E1 -to DB2
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB2
+# /Interface Sheet/DB3
+set_location_assignment PIN_B11 -to DB3
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB3
+# /Interface Sheet/DB4
+set_location_assignment PIN_F2 -to DB4
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB4
+# /Interface Sheet/DB5
+set_location_assignment PIN_A10 -to DB5
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB5
+# /Interface Sheet/DB6
+set_location_assignment PIN_H4 -to DB6
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB6
+# /Interface Sheet/DB7
+set_location_assignment PIN_B10 -to DB7
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB7
+# /Interface Sheet/DB8
+set_location_assignment PIN_J4 -to DB8
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB8
+# /Interface Sheet/DB9
+set_location_assignment PIN_C10 -to DB9
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB9
+# /Interface Sheet/DB10
+set_location_assignment PIN_A9 -to DB10
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB10
+# /Interface Sheet/DB11
+set_location_assignment PIN_E10 -to DB11
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB11
+# /Interface Sheet/DB12
+set_location_assignment PIN_C9 -to DB12
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB12
+# /Interface Sheet/DB13
+set_location_assignment PIN_B8 -to DB13
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB13
+# /Interface Sheet/DB14
+set_location_assignment PIN_E9 -to DB14
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB14
+# /Interface Sheet/DB15
+set_location_assignment PIN_C8 -to DB15
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB15
+# /Interface Sheet/DB16
+set_location_assignment PIN_K5 -to DB16
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB16
+# /Interface Sheet/DB17
+set_location_assignment PIN_B7 -to DB17
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB17
+# /Interface Sheet/DB18
+set_location_assignment PIN_D10 -to DB18
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB18
+# /Interface Sheet/DB19
+set_location_assignment PIN_D9 -to DB19
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB19
+# /Interface Sheet/DB20
+set_location_assignment PIN_D7 -to DB20
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB20
+# /Interface Sheet/DB21
+set_location_assignment PIN_C6 -to DB21
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB21
+# /Interface Sheet/DB22
+set_location_assignment PIN_D6 -to DB22
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB22
+# /Interface Sheet/DB23
+set_location_assignment PIN_B5 -to DB23
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB23
+# /Interface Sheet/DB24
+set_location_assignment PIN_E6 -to DB24
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DB24
+# /Interface Sheet/DC0
+set_location_assignment PIN_U20 -to DC0
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC0
+# /Interface Sheet/DC1
+set_location_assignment PIN_U21 -to DC1
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC1
+# /Interface Sheet/DC2
+set_location_assignment PIN_V16 -to DC2
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC2
+# /Interface Sheet/DC3
+set_location_assignment PIN_V21 -to DC3
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC3
+# /Interface Sheet/DC4
+set_location_assignment PIN_W15 -to DC4
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC4
+# /Interface Sheet/DC5
+set_location_assignment PIN_W18 -to DC5
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC5
+# /Interface Sheet/DC6
+set_location_assignment PIN_W20 -to DC6
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC6
+# /Interface Sheet/DC7
+set_location_assignment PIN_Y19 -to DC7
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC7
+# /Interface Sheet/DC8
+set_location_assignment PIN_Y21 -to DC8
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC8
+# /Interface Sheet/DC9
+set_location_assignment PIN_AA20 -to DC9
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC9
+# /Interface Sheet/DC10
+set_location_assignment PIN_AA21 -to DC10
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC10
+# /Interface Sheet/DC11
+set_location_assignment PIN_AA22 -to DC11
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC11
+# /Interface Sheet/DC12
+set_location_assignment PIN_AA16 -to DC12
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC12
+# /Interface Sheet/DC13
+set_location_assignment PIN_AB21 -to DC13
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC13
+# /Interface Sheet/DC14
+set_location_assignment PIN_AB18 -to DC14
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC14
+# /Interface Sheet/DC15
+set_location_assignment PIN_AB17 -to DC15
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC15
+# /Interface Sheet/DC16
+set_location_assignment PIN_AB16 -to DC16
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC16
+# /Interface Sheet/DC17
+set_location_assignment PIN_U2 -to DC17
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC17
+# /Interface Sheet/DC18
+set_location_assignment PIN_U1 -to DC18
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC18
+# /Interface Sheet/DC19
+set_location_assignment PIN_AA8 -to DC19
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DC19
+# /Interface Sheet/DD0
+set_location_assignment PIN_T22 -to DD0
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD0
+# /Interface Sheet/DD1
+set_location_assignment PIN_U18 -to DD1
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD1
+# /Interface Sheet/DD2
+set_location_assignment PIN_U22 -to DD2
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD2
+# /Interface Sheet/DD3
+set_location_assignment PIN_V20 -to DD3
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD3
+# /Interface Sheet/DD4
+set_location_assignment PIN_V22 -to DD4
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD4
+# /Interface Sheet/DD5
+set_location_assignment PIN_W17 -to DD5
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD5
+# /Interface Sheet/DD6
+set_location_assignment PIN_W19 -to DD6
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD6
+# /Interface Sheet/DD7
+set_location_assignment PIN_Y16 -to DD7
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD7
+# /Interface Sheet/DD8
+set_location_assignment PIN_Y20 -to DD8
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD8
+# /Interface Sheet/DD9
+set_location_assignment PIN_Y1 -to DD9
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD9
+# /Interface Sheet/DD10
+set_location_assignment PIN_AA3 -to DD10
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD10
+# /Interface Sheet/DD11
+set_location_assignment PIN_AA1 -to DD11
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD11
+# /Interface Sheet/DD12
+set_location_assignment PIN_AA5 -to DD12
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD12
+# /Interface Sheet/DD13
+set_location_assignment PIN_AA6 -to DD13
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD13
+# /Interface Sheet/DD14
+set_location_assignment PIN_AB2 -to DD14
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD14
+# /Interface Sheet/DD15
+set_location_assignment PIN_AB4 -to DD15
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD15
+# /Interface Sheet/DD16
+set_location_assignment PIN_AB6 -to DD16
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD16
+# /Interface Sheet/DD17
+set_location_assignment PIN_V4 -to DD17
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD17
+# /Interface Sheet/DD18
+set_location_assignment PIN_W7 -to DD18
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD18
+# /Interface Sheet/DD19
+set_location_assignment PIN_V9 -to DD19
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DD19
+# /Interface Sheet/DE0
+set_location_assignment PIN_T1 -to DE0
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE0
+# /Interface Sheet/DE1
+set_location_assignment PIN_Y8 -to DE1
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE1
+# /Interface Sheet/DE2
+set_location_assignment PIN_V8 -to DE2
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE2
+# /Interface Sheet/DE3
+set_location_assignment PIN_V5 -to DE3
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE3
+# /Interface Sheet/DE4
+set_location_assignment PIN_V1 -to DE4
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE4
+# /Interface Sheet/DE5
+set_location_assignment PIN_W6 -to DE5
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE5
+# /Interface Sheet/DE6
+set_location_assignment PIN_W4 -to DE6
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE6
+# /Interface Sheet/DE7
+set_location_assignment PIN_Y7 -to DE7
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE7
+# /Interface Sheet/DE8
+set_location_assignment PIN_Y5 -to DE8
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE8
+# /Interface Sheet/DE9
+set_location_assignment PIN_Y2 -to DE9
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE9
+# /Interface Sheet/DE10
+set_location_assignment PIN_Y4 -to DE10
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE10
+# /Interface Sheet/DE11
+set_location_assignment PIN_AA2 -to DE11
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE11
+# /Interface Sheet/DE12
+set_location_assignment PIN_AA7 -to DE12
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE12
+# /Interface Sheet/DE13
+set_location_assignment PIN_AB3 -to DE13
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE13
+# /Interface Sheet/DE14
+set_location_assignment PIN_AB5 -to DE14
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE14
+# /Interface Sheet/DE15
+set_location_assignment PIN_AB7 -to DE15
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE15
+# /Interface Sheet/DE16
+set_location_assignment PIN_AB8 -to DE16
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE16
+# /Interface Sheet/DE17
+set_location_assignment PIN_W3 -to DE17
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE17
+# /Interface Sheet/DE18
+set_location_assignment PIN_R9 -to DE18
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE18
+# /Interface Sheet/DE19
+set_location_assignment PIN_Y3 -to DE19
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DE19
+# /Interface Sheet/DF0
+set_location_assignment PIN_E22 -to DF0
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF0
+# /Interface Sheet/DF1
+set_location_assignment PIN_F20 -to DF1
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF1
+# /Interface Sheet/DF2
+set_location_assignment PIN_G19 -to DF2
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF2
+# /Interface Sheet/DF3
+set_location_assignment PIN_G20 -to DF3
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF3
+# /Interface Sheet/DF4
+set_location_assignment PIN_G22 -to DF4
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF4
+# /Interface Sheet/DF5
+set_location_assignment PIN_P13 -to DF5
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF5
+# /Interface Sheet/DF6
+set_location_assignment PIN_H21 -to DF6
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF6
+# /Interface Sheet/DF7
+set_location_assignment PIN_R13 -to DF7
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF7
+# /Interface Sheet/DF8
+set_location_assignment PIN_L18 -to DF8
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF8
+# /Interface Sheet/DF9
+set_location_assignment PIN_L20 -to DF9
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF9
+# /Interface Sheet/DF10
+set_location_assignment PIN_M18 -to DF10
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF10
+# /Interface Sheet/DF11
+set_location_assignment PIN_M20 -to DF11
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF11
+# /Interface Sheet/DF12
+set_location_assignment PIN_M21 -to DF12
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF12
+# /Interface Sheet/DF13
+set_location_assignment PIN_M22 -to DF13
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF13
+# /Interface Sheet/DF14
+set_location_assignment PIN_N19 -to DF14
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF14
+# /Interface Sheet/DF15
+set_location_assignment PIN_N20 -to DF15
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF15
+# /Interface Sheet/DF16
+set_location_assignment PIN_N21 -to DF16
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF16
+# /Interface Sheet/DF17
+set_location_assignment PIN_P20 -to DF17
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF17
+# /Interface Sheet/DF18
+set_location_assignment PIN_V14 -to DF18
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF18
+# /Interface Sheet/DF19
+set_location_assignment PIN_P22 -to DF19
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF19
+# /Interface Sheet/DF20
+set_location_assignment PIN_R22 -to DF20
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF20
+# /Interface Sheet/DF21
+set_location_assignment PIN_T19 -to DF21
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF21
+# /Interface Sheet/DF22
+set_location_assignment PIN_T20 -to DF22
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF22
+# /Interface Sheet/DF23
+set_location_assignment PIN_T21 -to DF23
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF23
+# /Interface Sheet/DF24
+set_location_assignment PIN_U17 -to DF24
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DF24
+# /Interface Sheet/DG0
+set_location_assignment PIN_E19 -to DG0
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG0
+# /Interface Sheet/DG1
+set_location_assignment PIN_F18 -to DG1
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG1
+# /Interface Sheet/DG2
+set_location_assignment PIN_E21 -to DG2
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG2
+# /Interface Sheet/DG3
+set_location_assignment PIN_F19 -to DG3
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG3
+# /Interface Sheet/DG4
+set_location_assignment PIN_G17 -to DG4
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG4
+# /Interface Sheet/DG5
+set_location_assignment PIN_F21 -to DG5
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG5
+# /Interface Sheet/DG6
+set_location_assignment PIN_F22 -to DG6
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG6
+# /Interface Sheet/DG7
+set_location_assignment PIN_K15 -to DG7
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG7
+# /Interface Sheet/DG8
+set_location_assignment PIN_H22 -to DG8
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG8
+# /Interface Sheet/DG9
+set_location_assignment PIN_AB10 -to DG9
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG9
+# /Interface Sheet/DG10
+set_location_assignment PIN_J22 -to DG10
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG10
+# /Interface Sheet/DG11
+set_location_assignment PIN_AB15 -to DG11
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG11
+# /Interface Sheet/DG12
+set_location_assignment PIN_L19 -to DG12
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG12
+# /Interface Sheet/DG13
+set_location_assignment PIN_V13 -to DG13
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG13
+# /Interface Sheet/DG14
+set_location_assignment PIN_L22 -to DG14
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG14
+# /Interface Sheet/DG15
+set_location_assignment PIN_N18 -to DG15
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG15
+# /Interface Sheet/DG16
+set_location_assignment PIN_AB14 -to DG16
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG16
+# /Interface Sheet/DG17
+set_location_assignment PIN_N22 -to DG17
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG17
+# /Interface Sheet/DG18
+set_location_assignment PIN_P18 -to DG18
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG18
+# /Interface Sheet/DG19
+set_location_assignment PIN_P19 -to DG19
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG19
+# /Interface Sheet/DG20
+set_location_assignment PIN_P21 -to DG20
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG20
+# /Interface Sheet/DG21
+set_location_assignment PIN_R18 -to DG21
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG21
+# /Interface Sheet/DG22
+set_location_assignment PIN_R20 -to DG22
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG22
+# /Interface Sheet/DG23
+set_location_assignment PIN_T18 -to DG23
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG23
+# /Interface Sheet/DG24
+set_location_assignment PIN_AB13 -to DG24
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DG24
+# /Interface Sheet/DJ0
+set_location_assignment PIN_G4 -to DJ0
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ0
+# /Interface Sheet/DJ1
+set_location_assignment PIN_G3 -to DJ1
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ1
+# /Interface Sheet/DJ2
+set_location_assignment PIN_AA10 -to DJ2
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ2
+# /Interface Sheet/DJ3
+set_location_assignment PIN_H3 -to DJ3
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ3
+# /Interface Sheet/DJ4
+set_location_assignment PIN_G1 -to DJ4
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ4
+# /Interface Sheet/DJ5
+set_location_assignment PIN_M3 -to DJ5
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ5
+# /Interface Sheet/DJ6
+set_location_assignment PIN_H1 -to DJ6
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ6
+# /Interface Sheet/DJ7
+set_location_assignment PIN_L8 -to DJ7
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ7
+# /Interface Sheet/DJ8
+set_location_assignment PIN_N3 -to DJ8
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ8
+# /Interface Sheet/DJ9
+set_location_assignment PIN_N1 -to DJ9
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ9
+# /Interface Sheet/DJ10
+set_location_assignment PIN_W9 -to DJ10
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ10
+# /Interface Sheet/DJ11
+set_location_assignment PIN_N8 -to DJ11
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ11
+# /Interface Sheet/DJ12
+set_location_assignment PIN_AB9 -to DJ12
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ12
+# /Interface Sheet/DJ13
+set_location_assignment PIN_AB11 -to DJ13
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ13
+# /Interface Sheet/DJ14
+set_location_assignment PIN_M1 -to DJ14
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ14
+# /Interface Sheet/DJ15
+set_location_assignment PIN_AB12 -to DJ15
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ15
+# /Interface Sheet/DJ16
+set_location_assignment PIN_W8 -to DJ16
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ16
+# /Interface Sheet/DJ17
+set_location_assignment PIN_V11 -to DJ17
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ17
+# /Interface Sheet/DJ18
+set_location_assignment PIN_P1 -to DJ18
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ18
+# /Interface Sheet/DJ19
+set_location_assignment PIN_K14 -to DJ19
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ19
+# /Interface Sheet/DJ20
+set_location_assignment PIN_R2 -to DJ20
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ20
+# /Interface Sheet/DJ21
+set_location_assignment PIN_R1 -to DJ21
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ21
+# /Interface Sheet/DJ22
+set_location_assignment PIN_AA15 -to DJ22
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ22
+# /Interface Sheet/DJ23
+set_location_assignment PIN_T2 -to DJ23
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ23
+# /Interface Sheet/DJ24
+set_location_assignment PIN_AA14 -to DJ24
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to DJ24
+# /Interface Sheet/GPI0
+set_location_assignment PIN_A13 -to GPI0
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI0
+# /Interface Sheet/GPI1
+set_location_assignment PIN_T3 -to GPI1
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI1
+# /Interface Sheet/GPI2
+set_location_assignment PIN_A14 -to GPI2
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI2
+# /Interface Sheet/GPI3
+set_location_assignment PIN_U6 -to GPI3
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI3
+# /Interface Sheet/GPI4
+set_location_assignment PIN_B14 -to GPI4
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI4
+# /Interface Sheet/GPI5
+set_location_assignment PIN_W5 -to GPI5
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI5
+# /Interface Sheet/GPI6
+set_location_assignment PIN_A15 -to GPI6
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI6
+# /Interface Sheet/GPI7
+set_location_assignment PIN_D14 -to GPI7
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI7
+# /Interface Sheet/GPI8
+set_location_assignment PIN_B15 -to GPI8
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI8
+# /Interface Sheet/GPI9
+set_location_assignment PIN_D15 -to GPI9
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI9
+# /Interface Sheet/GPI10
+set_location_assignment PIN_A17 -to GPI10
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI10
+# /Interface Sheet/GPI11
+set_location_assignment PIN_H14 -to GPI11
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPI11
+# /Interface Sheet/GPO0
+set_location_assignment PIN_E15 -to GPO0
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO0
+# /Interface Sheet/GPO1
+set_location_assignment PIN_B17 -to GPO1
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO1
+# /Interface Sheet/GPO2
+set_location_assignment PIN_E16 -to GPO2
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO2
+# /Interface Sheet/GPO3
+set_location_assignment PIN_C17 -to GPO3
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO3
+# /Interface Sheet/GPO4
+set_location_assignment PIN_A18 -to GPO4
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO4
+# /Interface Sheet/GPO5
+set_location_assignment PIN_F16 -to GPO5
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO5
+# /Interface Sheet/GPO6
+set_location_assignment PIN_D17 -to GPO6
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO6
+# /Interface Sheet/GPO7
+set_location_assignment PIN_C18 -to GPO7
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO7
+# /Interface Sheet/GPO8
+set_location_assignment PIN_A19 -to GPO8
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO8
+# /Interface Sheet/GPO9
+set_location_assignment PIN_B19 -to GPO9
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO9
+# /Interface Sheet/GPO10
+set_location_assignment PIN_C19 -to GPO10
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO10
+# /Interface Sheet/GPO11
+set_location_assignment PIN_A20 -to GPO11
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPO11
+# /MAX10 Sheet/50_MHz
+set_location_assignment PIN_N5 -to CLK50
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLK50
+# /MAX10 Sheet/ASW
+set_location_assignment PIN_AA11 -to ASW
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ASW
+# /MAX10 Sheet/MAX10_FAULT
+set_location_assignment PIN_C12 -to MAX10_FAULT
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to MAX10_FAULT
+# /MAX10 Sheet/MAX10_IRQ
+set_location_assignment PIN_J11 -to MAX10_IRQ
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to MAX10_IRQ
+# /MAX10 Sheet/MAX10_READY
+set_location_assignment PIN_E14 -to MAX10_READY
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to MAX10_READY
+# /MAX10 Sheet/MCU_HEARTBEAT
+set_location_assignment PIN_C5 -to MCU_HEARTBEAT
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to MCU_HEARTBEAT
+# /MAX10 Sheet/SPI1_MOSI
+set_location_assignment PIN_C22 -to SPI1_MOSI
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI1_MOSI
+# /MAX10 Sheet/SPI1_NSS
+set_location_assignment PIN_C20 -to SPI1_NSS
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI1_NSS
+# /MAX10 Sheet/SPI1_SCLK
+set_location_assignment PIN_C21 -to SPI1_SCLK
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI1_SCLK
+# /MAX10 Sheet/SPI2_MOSI
+set_location_assignment PIN_D19 -to SPI2_MOSI
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI2_MOSI
+# /MAX10 Sheet/SPI2_NSS
+set_location_assignment PIN_D18 -to SPI2_NSS
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI2_NSS
+# /MAX10 Sheet/SPI2_SCLK
+set_location_assignment PIN_K21 -to SPI2_SCLK
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI2_SCLK
+# /MAX10 Sheet/SPI3_MOSI
+set_location_assignment PIN_D22 -to SPI3_MOSI
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI3_MOSI
+# /MAX10 Sheet/SPI3_NSS
+set_location_assignment PIN_D21 -to SPI3_NSS
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI3_NSS
+# /MAX10 Sheet/SPI3_SCLK
+set_location_assignment PIN_K22 -to SPI3_SCLK
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI3_SCLK
+# /MAX10 Sheet/SPI4_MISO
+set_location_assignment PIN_J21 -to SPI4_MISO
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI4_MISO
+# /MAX10 Sheet/SPI4_MOSI
+set_location_assignment PIN_E20 -to SPI4_MOSI
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI4_MOSI
+# /MAX10 Sheet/SPI4_NSS
+set_location_assignment PIN_A12 -to SPI4_NSS
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI4_NSS
+# /MAX10 Sheet/SPI4_SCLK
+set_location_assignment PIN_L14 -to SPI4_SCLK
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SPI4_SCLK
+# /STM32H7 Sheet/PA0
+set_location_assignment PIN_A7 -to ACC_96KHZ
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ACC_96KHZ

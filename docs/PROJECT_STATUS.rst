@@ -137,3 +137,12 @@ Recommended next work
 #. Tune and validate the PI controller against the intended power stage.
 #. Add automated tests for command parsing, protocol compatibility, mapping, and
    fault transitions.
+
+J-PARC rev58 preparation (2026-10-11)
+************************************
+
+* Added ``jparc_rev58/`` for STM32H745XIH6 + MAX10 development.
+* Imported provided rev58 hardware documents and pin data with SHA256 checksums.
+* Prepared separate board, bring-up, M7/M4, library, and test directories.
+* Board support, firmware, core ownership, protocols, and hardware verification
+  are pending. See ``jparc_rev58/docs/DEVELOPMENT.md``.
