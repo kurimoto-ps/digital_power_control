@@ -1,7 +1,7 @@
 Project status
 ##############
 
-Last updated: 2026-06-12
+Last updated: 2026-10-11
 
 Purpose
 *******
@@ -10,8 +10,8 @@ This project is a customer-facing development starter for digital power-control
 applications on the NUCLEO-H755ZI-Q. It separates reusable communication and
 safety infrastructure from customer-editable PWM, ADC, and feedback code.
 
-Current implementation
-**********************
+Current implementation (NUCLEO-H755ZI-Q)
+****************************************
 
 Dual-core architecture
 ======================
@@ -65,7 +65,7 @@ ADC and feedback demonstration
   frequency. The nominal ADC and feedback period is 100 us.
 * ADC1 channel 15 preselection and 810.5-cycle sampling time are configured
   explicitly. DMAMUX1 channel 0 routes ADC1 requests to a 16-bit DMA buffer.
-* DMA completion interrupt handling is contained in ``control_core/platform``.
+* DMA completion interrupt handling is contained in ``targets/nucleo_h755zi_q/control_core/platform``.
   A dedicated M4 feedback thread calls customer code and updates PWM duty.
 * The feedback implementation is a bounded PI controller with Kp=0.5, Ki=50 /s,
   output saturation, and conditional-integration anti-windup.
@@ -139,10 +139,23 @@ Recommended next work
    fault transitions.
 
 J-PARC rev58 preparation (2026-10-11)
-************************************
+************************************************************
 
-* Added ``jparc_rev58/`` for STM32H745XIH6 + MAX10 development.
+* Added ``targets/jparc_rev58/`` for STM32H745XIH6 + MAX10 development.
 * Imported provided rev58 hardware documents and pin data with SHA256 checksums.
 * Prepared separate board, bring-up, M7/M4, library, and test directories.
 * Board support, firmware, core ownership, protocols, and hardware verification
-  are pending. See ``jparc_rev58/docs/DEVELOPMENT.md``.
+  are pending. See ``targets/jparc_rev58/docs/DEVELOPMENT.md``.
+
+Parallel target layout (2026-10-11)
+************************************************************
+
+* Moved Nucleo and rev58 development under sibling ``targets/`` directories.
+* Scoped the existing board architecture instructions to the Nucleo target.
+* Build and flash scripts accept a target name and default to Nucleo.
+* Default build output is now ``build-nucleo-h755zi-q`` in the west workspace.
+* The rev58 target remains a development scaffold and has no build or flash entry yet.
+* Verified a clean Nucleo M7/M4 sysbuild from the new source path using
+  Zephyr commit ``d9c3a39174fdc96b5177faa41c62b056c224512b`` and SDK 1.0.1.
+* Verified build/flash argument routing without hardware access. No flashing or
+  new hardware validation was performed for this directory migration.

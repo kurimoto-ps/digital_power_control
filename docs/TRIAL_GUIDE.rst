@@ -12,7 +12,7 @@
 基板内の2つのCPUを役割分担して使用します。一方はEthernet通信を担当し、もう一方は
 PWM出力、電圧測定、出力電圧を目標値へ近づける制御を担当します。
 本書では、この環境を用意する人を「提供元」、このチュートリアルを操作する人を「体験者」と記載します。
-体験者が変更するファイルは、主に ``control_core/customer_code`` フォルダ内にあります。
+体験者が変更するファイルは、主に ``targets/nucleo_h755zi_q/control_core/customer_code`` フォルダ内にあります。
 
 安心してお試しください
 ****************************************************************
@@ -204,13 +204,18 @@ VS Code画面左側のファイル一覧には、主に次のフォルダがあ�
 .. code-block:: text
 
    digital_power_control/
-   |-- control_core/
-   |   `-- customer_code/            体験者が変更するファイル
-   |       |-- pwm/                  PWM出力の設定
-   |       |-- adc/                  測定電圧の換算
-   |       `-- feedback/             PI制御の計算
-   |-- network_core/                 Ethernet通信
-   `-- scripts/                      ビルドと基板書き込み用の命令
+   |-- targets/
+   |   |-- nucleo_h755zi_q/
+   |   |   |-- control_core/
+   |   |   |   `-- customer_code/    体験者が変更するファイル
+   |   |   |       |-- pwm/          PWM出力の設定
+   |   |   |       |-- adc/          測定電圧の換算
+   |   |   |       `-- feedback/     PI制御の計算
+   |   |   `-- network_core/         Ethernet通信
+   |   `-- jparc_rev58/              新基板の開発領域
+   `-- scripts/                     ビルドと基板書き込み用の命令
+
+掲載スクリーンショットには旧配置のパスが残る場合があります。操作は本文のパスに従ってください。
 
 3. 初回ビルド
 ****************************************************************
@@ -226,16 +231,16 @@ VS Code画面左側のファイル一覧には、主に次のフォルダがあ�
 
 .. code-block:: text
 
-   /workdir/zephyrproject/build-digital-power-control/digital_power_control/zephyr/zephyr.bin
-   /workdir/zephyrproject/build-digital-power-control/control_core_m4/zephyr/zephyr.bin
+   /workdir/zephyrproject/build-nucleo-h755zi-q/nucleo_h755zi_q/zephyr/zephyr.bin
+   /workdir/zephyrproject/build-nucleo-h755zi-q/control_core_m4/zephyr/zephyr.bin
 
 ビルド完了後、次の命令を入力して、書き込み用ファイルが2つ表示されることを確認します。
 
 .. code-block:: console
 
    ls -lh \
-     /workdir/zephyrproject/build-digital-power-control/digital_power_control/zephyr/zephyr.bin \
-     /workdir/zephyrproject/build-digital-power-control/control_core_m4/zephyr/zephyr.bin
+     /workdir/zephyrproject/build-nucleo-h755zi-q/nucleo_h755zi_q/zephyr/zephyr.bin \
+     /workdir/zephyrproject/build-nucleo-h755zi-q/control_core_m4/zephyr/zephyr.bin
 
 .. figure:: images/tutorial/03-build-success.png
    :alt: M7とM4のビルド成功画面
@@ -350,7 +355,7 @@ VS Code画面左側のファイル一覧から、次のファイルを開きま�
 
 .. code-block:: text
 
-   control_core/customer_code/pwm/pwm_control.c
+   targets/nucleo_h755zi_q/control_core/customer_code/pwm/pwm_control.c
 
 次の定義を探します。
 
@@ -460,7 +465,7 @@ RCフィルタは、PWMの細かなON/OFF波形を、測定しやすい平均電
 
 電圧測定とPI制御は、1秒間に10000回実行されます。測定を一定間隔で行うための処理は、
 体験者が調整するPI制御のファイルとは分けてあります。通常は
-``control_core/customer_code/feedback`` フォルダ内だけを変更してください。
+``targets/nucleo_h755zi_q/control_core/customer_code/feedback`` フォルダ内だけを変更してください。
 
 目標値を25%、50%、75%へ変更し、ADC表示がそれぞれ約0.825 V、1.65 V、2.475 Vへ
 近づくことを確認します。
@@ -475,7 +480,7 @@ VS Code画面左側のファイル一覧から、次のファイルを開きま�
 
 .. code-block:: text
 
-   control_core/customer_code/adc/adc_input.h
+   targets/nucleo_h755zi_q/control_core/customer_code/adc/adc_input.h
 
 次の定義を探します。
 
@@ -526,7 +531,7 @@ VS Code画面左側のファイル一覧から、次のファイルを開きま�
 * ``customer_code/adc`` : 測定値を電圧や電流の表示へ換算する
 * ``customer_code/feedback`` : 目標値と測定値からPWMの出力割合を計算する
 * ``customer_code/pwm`` : PWMの周波数、出力割合、切り替え時の待ち時間を設定する
-* ``control_core/platform`` : 一定間隔の測定や、基板内のCPU間通信を行う。通常は変更しない
+* ``targets/nucleo_h755zi_q/control_core/platform`` : 一定間隔の測定や、基板内のCPU間通信を行う。通常は変更しない
 
 確認後は、 ``ADC_INPUT_FULL_SCALE_MV`` を ``3300U`` へ戻し、 ``Ctrl+S`` で保存します。
 

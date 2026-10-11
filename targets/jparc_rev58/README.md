@@ -5,7 +5,7 @@
 現在はボード定義・アプリ未実装で、rev58用のビルド／書込みはまだできません。
 
 ```text
-jparc_rev58/
+targets/jparc_rev58/
 ├── apps/
 │   ├── bringup/                 M7単体の起動確認（最初の実装対象）
 │   ├── m7/                      Ethernet・パタン管理の予定領域
@@ -27,8 +27,8 @@ jparc_rev58/
     └── DEVELOPMENT.md           条件・未確定事項・着手順
 ```
 
-既存Nucleoアプリはリポジトリ直下にあります。既存の `scripts/build.sh`
-はNucleo向けです。rev58には専用ボード定義を作成します。
+既存Nucleoアプリは隣の `../nucleo_h755zi_q/` にあります。
+リポジトリ直下の `scripts/build.sh` は引数省略時にNucleoをビルドします。rev58には専用ボード定義を作成します。
 Zephyrと依存モジュールは既存west workspaceを共有し、この配下へコピーしません。
 ボード実装時はこのディレクトリをBOARD_ROOT/DTS_ROOTに指定する構成を追加します。
 

@@ -631,7 +631,7 @@ a { text-decoration: none; }
 <p>基板内の2つのCPUを役割分担して使用します。一方はEthernet通信を担当し、もう一方は
 PWM出力、電圧測定、出力電圧を目標値へ近づける制御を担当します。
 本書では、この環境を用意する人を「提供元」、このチュートリアルを操作する人を「体験者」と記載します。
-体験者が変更するファイルは、主に <span class="docutils literal">control_core/customer_code</span> フォルダ内にあります。</p>
+体験者が変更するファイルは、主に <span class="docutils literal">targets/nucleo_h755zi_q/control_core/customer_code</span> フォルダ内にあります。</p>
 </section>
 <section id="section-3">
 <h2>安心してお試しください</h2>
@@ -809,13 +809,17 @@ ADC電圧表示の最大値が3300 mVです。次の値になっている状態�
 #define ADC_INPUT_FULL_SCALE_MV 3300U</span></code></pre>
 <p>VS Code画面左側のファイル一覧には、主に次のフォルダがあります。</p>
 <pre class="code text literal-block"><code>digital_power_control/
-|-- control_core/
-|   `-- customer_code/            体験者が変更するファイル
-|       |-- pwm/                  PWM出力の設定
-|       |-- adc/                  測定電圧の換算
-|       `-- feedback/             PI制御の計算
-|-- network_core/                 Ethernet通信
-`-- scripts/                      ビルドと基板書き込み用の命令</code></pre>
+|-- targets/
+|   |-- nucleo_h755zi_q/
+|   |   |-- control_core/
+|   |   |   `-- customer_code/    体験者が変更するファイル
+|   |   |       |-- pwm/          PWM出力の設定
+|   |   |       |-- adc/          測定電圧の換算
+|   |   |       `-- feedback/     PI制御の計算
+|   |   `-- network_core/         Ethernet通信
+|   `-- jparc_rev58/              新基板の開発領域
+`-- scripts/                     ビルドと基板書き込み用の命令</code></pre>
+<p>掲載スクリーンショットには旧配置のパスが残る場合があります。操作は本文のパスに従ってください。</p>
 </section>
 <section id="section-6">
 <h2>3. 初回ビルド</h2>
@@ -823,12 +827,12 @@ ADC電圧表示の最大値が3300 mVです。次の値になっている状態�
 <pre class="code console literal-block"><code><span class="generic output">./scripts/build.sh</span></code></pre>
 <p>この命令は、以前のビルド結果を消してから、基板内の2つのCPUで動かすプログラムを作成します。
 成功すると、書き込み用ファイルが2つ作成されます。</p>
-<pre class="code text literal-block"><code>/workdir/zephyrproject/build-digital-power-control/digital_power_control/zephyr/zephyr.bin
-/workdir/zephyrproject/build-digital-power-control/control_core_m4/zephyr/zephyr.bin</code></pre>
+<pre class="code text literal-block"><code>/workdir/zephyrproject/build-nucleo-h755zi-q/nucleo_h755zi_q/zephyr/zephyr.bin
+/workdir/zephyrproject/build-nucleo-h755zi-q/control_core_m4/zephyr/zephyr.bin</code></pre>
 <p>ビルド完了後、次の命令を入力して、書き込み用ファイルが2つ表示されることを確認します。</p>
 <pre class="code console literal-block"><code><span class="generic output">ls -lh \
-  /workdir/zephyrproject/build-digital-power-control/digital_power_control/zephyr/zephyr.bin \
-  /workdir/zephyrproject/build-digital-power-control/control_core_m4/zephyr/zephyr.bin</span></code></pre>
+  /workdir/zephyrproject/build-nucleo-h755zi-q/nucleo_h755zi_q/zephyr/zephyr.bin \
+  /workdir/zephyrproject/build-nucleo-h755zi-q/control_core_m4/zephyr/zephyr.bin</span></code></pre>
 <figure>
 <img alt="M7とM4のビルド成功画面" src="images/tutorial/03-build-success.png" style="width: 100%;" />
 <figcaption>
@@ -910,7 +914,7 @@ PE8とPE9を同時に測定し、2つの出力が同時にHighにならないこ
 <h2>7. PWMコード変更演習</h2>
 <p>ここでは、体験者が最大PWM周波数を20 kHzから10 kHzへ変更します。
 VS Code画面左側のファイル一覧から、次のファイルを開きます。</p>
-<pre class="code text literal-block"><code>control_core/customer_code/pwm/pwm_control.c</code></pre>
+<pre class="code text literal-block"><code>targets/nucleo_h755zi_q/control_core/customer_code/pwm/pwm_control.c</code></pre>
 <p>次の定義を探します。</p>
 <pre class="code c literal-block"><code><span class="comment preproc">#define MAX_FREQUENCY_HZ 20000U</span></code></pre>
 <p>これを次のように変更し、 <span class="docutils literal">Ctrl+S</span> を押して保存します。</p>
@@ -978,7 +982,7 @@ GET</code></pre>
 <span class="docutils literal">GET</span> の <span class="docutils literal">target=50%</span> は目標値、<span class="docutils literal"><span class="pre">duty=...%</span></span> はPI制御が決めた実際の出力割合です。</p>
 <p>電圧測定とPI制御は、1秒間に10000回実行されます。測定を一定間隔で行うための処理は、
 体験者が調整するPI制御のファイルとは分けてあります。通常は
-<span class="docutils literal">control_core/customer_code/feedback</span> フォルダ内だけを変更してください。</p>
+<span class="docutils literal">targets/nucleo_h755zi_q/control_core/customer_code/feedback</span> フォルダ内だけを変更してください。</p>
 <p>目標値を25%、50%、75%へ変更し、ADC表示がそれぞれ約0.825 V、1.65 V、2.475 Vへ
 近づくことを確認します。</p>
 </section>
@@ -987,7 +991,7 @@ GET</code></pre>
 <p>ここでは、A0の測定結果をmVで表示するときの基準値を変更します。
 表示だけが変わり、PI制御の動作は変わりません。</p>
 <p>VS Code画面左側のファイル一覧から、次のファイルを開きます。</p>
-<pre class="code text literal-block"><code>control_core/customer_code/adc/adc_input.h</code></pre>
+<pre class="code text literal-block"><code>targets/nucleo_h755zi_q/control_core/customer_code/adc/adc_input.h</code></pre>
 <p>次の定義を探します。</p>
 <pre class="code c literal-block"><code><span class="comment preproc">#define ADC_INPUT_FULL_SCALE_MV 3300U</span></code></pre>
 <p>動作を分かりやすく確認するため、一時的に次へ変更し、 <span class="docutils literal">Ctrl+S</span> を押して保存します。</p>
@@ -1016,7 +1020,7 @@ GET</code></pre>
 <li><p><span class="docutils literal">customer_code/adc</span> : 測定値を電圧や電流の表示へ換算する</p></li>
 <li><p><span class="docutils literal">customer_code/feedback</span> : 目標値と測定値からPWMの出力割合を計算する</p></li>
 <li><p><span class="docutils literal">customer_code/pwm</span> : PWMの周波数、出力割合、切り替え時の待ち時間を設定する</p></li>
-<li><p><span class="docutils literal">control_core/platform</span> : 一定間隔の測定や、基板内のCPU間通信を行う。通常は変更しない</p></li>
+<li><p><span class="docutils literal">targets/nucleo_h755zi_q/control_core/platform</span> : 一定間隔の測定や、基板内のCPU間通信を行う。通常は変更しない</p></li>
 </ul>
 <p>確認後は、 <span class="docutils literal">ADC_INPUT_FULL_SCALE_MV</span> を <span class="docutils literal">3300U</span> へ戻し、 <span class="docutils literal">Ctrl+S</span> で保存します。</p>
 </section>
