@@ -16,7 +16,7 @@ Zephyr本体と依存モジュールは、共通のwest workspaceで管理しま
 
 Nucleoの構成・配線・通信仕様は ``targets/nucleo_h755zi_q/README.rst``、
 rev58の構成は ``targets/jparc_rev58/README.md`` を参照してください。
-rev58はディレクトリと資料の準備段階です。ボード定義・アプリは未実装です。
+rev58はM7単体の専用ボード定義と起動・周辺確認アプリを実装しています。実機動作は未確認です。
 
 Nucleoのビルドと書込みは、リポジトリ直下で実行します。
 
@@ -26,7 +26,9 @@ Nucleoのビルドと書込みは、リポジトリ直下で実行します。
    ./scripts/flash.sh nucleo_h755zi_q
 
 引数省略時もNucleoを選択します。ビルド先は ``../build-nucleo-h755zi-q/`` です。
-rev58指定時は未実装の旨を表示して終了します。
+rev58の最小アプリは ``./scripts/build.sh jparc_rev58``、
+周辺確認は末尾に ``sdram``、``ethernet``、``spi`` を指定します。
+手順と初回書込み条件は ``targets/jparc_rev58/docs/BRINGUP.md`` を参照してください。
 
 環境構築は ``docs/DEVELOPMENT.rst``、実装状況は ``docs/PROJECT_STATUS.rst``、
 Nucleoの操作演習は ``docs/TRIAL_GUIDE.rst`` を参照してください。

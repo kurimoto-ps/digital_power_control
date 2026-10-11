@@ -1,0 +1,3 @@
+&fmc { status = "okay"; };
+&sdram { status = "okay"; };
+&sdram2 { status = "okay"; };

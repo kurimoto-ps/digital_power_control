@@ -1,0 +1,85 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+#include <zephyr/dt-bindings/memory-attr/memory-attr-arm.h>
+/ {
+    sdram2: memory@d0000000 {
+        compatible = "zephyr,memory-region", "mmio-sram";
+        device_type = "memory";
+        reg = <0xd0000000 0x00800000>;
+        zephyr,memory-region = "SDRAM2";
+        zephyr,memory-attr = <DT_MEM_ARM(ATTR_MPU_RAM_NOCACHE)>;
+        status = "disabled";
+    };
+};
+&fmc {
+    status = "disabled";
+    clocks = <&rcc STM32_CLOCK(AHB3, 12)>, <&rcc STM32_SRC_HCLK3 FMC_SEL(0)>;
+    st,mem-swap = "disable";
+    pinctrl-0 = <&fmc_nbl0_pe0 &fmc_nbl1_pe1
+        &fmc_sdclk_pg8 &fmc_sdnwe_ph5 &fmc_sdcke1_ph7 &fmc_sdne1_ph6
+        &fmc_sdnras_pf11 &fmc_sdncas_pg15
+        &fmc_a0_pf0 &fmc_a1_pf1 &fmc_a2_pf2 &fmc_a3_pf3 &fmc_a4_pf4 &fmc_a5_pf5
+        &fmc_a6_pf12 &fmc_a7_pf13 &fmc_a8_pf14 &fmc_a9_pf15 &fmc_a10_pg0 &fmc_a11_pg1
+        &fmc_a14_pg4 &fmc_a15_pg5
+        &fmc_d0_pd14 &fmc_d1_pd15 &fmc_d2_pd0 &fmc_d3_pd1
+        &fmc_d4_pe7 &fmc_d5_pe8 &fmc_d6_pe9 &fmc_d7_pe10
+        &fmc_d8_pe11 &fmc_d9_pe12 &fmc_d10_pe13 &fmc_d11_pe14
+        &fmc_d12_pe15 &fmc_d13_pd8 &fmc_d14_pd9 &fmc_d15_pd10>;
+    pinctrl-names = "default";
+};
+&sdram {
+    status = "disabled";
+    power-up-delay = <200>;
+    num-auto-refresh = <8>;
+    /* BL1, sequential, CL3, single-location write burst. */
+    mode-register = <0x230>;
+    /* HCLK 200 MHz / 2 = SDCLK 100 MHz. J part: 4096 rows / 64 ms. */
+    refresh-rate = <1542>;
+    bank@1 {
+        reg = <1>;
+        st,sdram-control = <STM32_FMC_SDRAM_NC_8 STM32_FMC_SDRAM_NR_12
+            STM32_FMC_SDRAM_MWID_16 STM32_FMC_SDRAM_NB_4 STM32_FMC_SDRAM_CAS_3
+            STM32_FMC_SDRAM_SDCLK_PERIOD_2 STM32_FMC_SDRAM_RBURST_DISABLE
+            STM32_FMC_SDRAM_RPIPE_0>;
+        st,sdram-timing = <2 8 5 7 3 2 2>;
+    };
+};
+&mac {
+    status = "disabled";
+    pinctrl-0 = <&eth_ref_clk_pa1 &eth_crs_dv_pa7 &eth_rxd0_pc4 &eth_rxd1_pc5
+                 &eth_tx_en_pb11 &eth_txd0_pg13 &eth_txd1_pb13>;
+    pinctrl-names = "default";
+    phy-connection-type = "rmii";
+    phy-handle = <&eth_phy>;
+};
+&mdio {
+    status = "disabled";
+    pinctrl-0 = <&eth_mdio_pa2 &eth_mdc_pc1>;
+    pinctrl-names = "default";
+    eth_phy: ethernet-phy@0 {
+        compatible = "microchip,lan8742";
+        reg = <0>; /* Strap-derived candidate; verify PHY ID on hardware. */
+        status = "disabled";
+    };
+};
+/* No MISO on SPI1/2/3. Hardware NSS: neither cs-gpios nor st,soft-nss. */
+&spi1 {
+    status = "disabled";
+    pinctrl-0 = <&spi1_nss_pa4 &spi1_sck_pg11 &spi1_mosi_pb5>;
+    pinctrl-names = "default";
+};
+&spi2 {
+    status = "disabled";
+    pinctrl-0 = <&spi2_nss_pb12 &spi2_sck_pb10 &spi2_mosi_pc3>;
+    pinctrl-names = "default";
+};
+&spi3 {
+    status = "disabled";
+    pinctrl-0 = <&spi3_nss_pa15 &spi3_sck_pc10 &spi3_mosi_pc12>;
+    pinctrl-names = "default";
+};
+&spi4 {
+    status = "disabled";
+    clocks = <&rcc STM32_CLOCK(APB2, 13)>, <&rcc STM32_SRC_PCLK2 SPI45_SEL(0)>;
+    pinctrl-0 = <&spi4_nss_pe4 &spi4_sck_pe2 &spi4_mosi_pe6 &spi4_miso_pe5>;
+    pinctrl-names = "default";
+};

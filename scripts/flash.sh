@@ -3,16 +3,20 @@ set -eu
 
 REPO_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 WORKSPACE_DIR=$(dirname "$REPO_DIR")
-if [ "$#" -gt 1 ]; then
-    printf 'Usage: %s [nucleo_h755zi_q|jparc_rev58]\n' "$0" >&2
+if [ "$#" -gt 2 ]; then
+    printf 'Usage: %s [nucleo_h755zi_q|jparc_rev58] [rev58-profile]\n' "$0" >&2
     exit 2
 fi
 TARGET=${1:-nucleo_h755zi_q}
 case "$TARGET" in
-    nucleo_h755zi_q) ;;
+    nucleo_h755zi_q)
+        if [ "$#" -gt 1 ]; then
+            printf 'Nucleo does not accept a rev58 profile.\n' >&2
+            exit 2
+        fi ;;
     jparc_rev58)
-        printf 'jparc_rev58: board support and firmware are not implemented yet.\n' >&2
-        exit 2 ;;
+        shift
+        exec "$REPO_DIR/targets/jparc_rev58/scripts/flash.sh" "$@" ;;
     *) printf 'Unknown target: %s\n' "$TARGET" >&2; exit 2 ;;
 esac
 BUILD_DIR=${BUILD_DIR:-$WORKSPACE_DIR/build-nucleo-h755zi-q}

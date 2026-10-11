@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: Apache-2.0
+config BOARD_JPARC_REV58
+    select SOC_STM32H745XX_M7

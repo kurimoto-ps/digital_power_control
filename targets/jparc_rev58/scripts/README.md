@@ -1,5 +1,6 @@
-# scripts
+# rev58開発コマンド
 
-rev58専用のビルド・書込み・試験補助。ボード定義後に追加する。
-
-ディレクトリ準備段階です。実装・ビルド・実機確認は未実施です。
+`build.sh [bringup|sdram|ethernet|spi]` と `flash.sh [同プロファイル]`。
+リポジトリ直下の `scripts/build.sh jparc_rev58 [プロファイル]` からも実行できます。
+出力はwest workspaceの `build-jparc-rev58-<プロファイル>`。
+詳細は[立ち上げ手順](../docs/BRINGUP.md)を参照してください。

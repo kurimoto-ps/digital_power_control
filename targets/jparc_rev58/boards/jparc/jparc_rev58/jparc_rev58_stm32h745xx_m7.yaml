@@ -1,0 +1,11 @@
+identifier: jparc_rev58/stm32h745xx/m7
+name: J-PARC rev58 (M7)
+type: mcu
+arch: arm
+ram: 512
+flash: 1024
+toolchain:
+  - zephyr
+supported:
+  - gpio
+vendor: others

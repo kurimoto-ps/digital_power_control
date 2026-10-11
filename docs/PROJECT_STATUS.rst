@@ -159,3 +159,27 @@ Parallel target layout (2026-10-11)
   Zephyr commit ``d9c3a39174fdc96b5177faa41c62b056c224512b`` and SDK 1.0.1.
 * Verified build/flash argument routing without hardware access. No flashing or
   new hardware validation was performed for this directory migration.
+
+J-PARC rev58 M7 bring-up (2026-10-11)
+************************************************************
+
+* Added the out-of-tree ``jparc_rev58/stm32h745xx/m7`` board for STM32H745XIH6.
+* HSE is 25 MHz bypass; SYSCLK/HCLK/APB are 400/200/100 MHz with Direct SMPS.
+* A board-local, SHA256-guarded build adaptation uses VOS1 in the STM32H7 clock
+  driver. The shared Zephyr checkout and Nucleo clock driver remain unchanged.
+* M7 uses internal Flash and AXI SRAM; D-cache is disabled for bring-up visibility.
+  M4 is not started by software. BCM4 option bytes must disable M4 hardware boot.
+* Added minimal bring-up, SDRAM, Ethernet, and SPI profiles, with isolated outputs.
+  SDRAM tests overwrite 8 MiB. Ethernet reads PHY ID/link. SPI initializes drivers
+  without transferring unspecified FPGA frames.
+* Added build-artifact checks for clock/power, RAM placement, and peripheral pins
+  against the supplied netlist. An altered upstream clock source was rejected by
+  the VOS1 guard in a configuration test.
+* See ``targets/jparc_rev58/docs/BRINGUP.md`` for commands and initial hardware checks.
+* M4, operating protocols, pattern management, control, and all hardware validation
+  remain pending. No board programming or option-byte writes have been performed.
+* Verified all four rev58 profile builds and the existing Nucleo M7/M4 build
+  with the pinned Zephyr commit and SDK 1.0.1. Artifact verification passed for
+  clock/VOS1, internal RAM placement, and 38 SDRAM / 9 Ethernet / 13 SPI pins.
+* Build/flash target/profile routing was checked without accessing hardware;
+  OpenOCD and STM32CubeProgrammer runner configuration was generated successfully.

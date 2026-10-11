@@ -77,7 +77,7 @@ Board-specific source layout
 * ``targets/nucleo_h755zi_q/`` contains the existing Nucleo M7/M4 applications,
   overlays, shared protocol, and sysbuild definition.
 * ``targets/jparc_rev58/`` contains the new board development layout and hardware
-  references. Board support and firmware are not implemented yet.
+  references, M7 board support, and bring-up profiles. Hardware is not yet verified.
 * The root ``west.yml``, ``scripts/``, and ``docs/`` are shared workspace resources.
 
 Run these commands from the repository root:
@@ -87,10 +87,26 @@ Run these commands from the repository root:
    ./scripts/build.sh nucleo_h755zi_q
    ./scripts/flash.sh nucleo_h755zi_q
 
-Omitting the target selects ``nucleo_h755zi_q``. Unknown targets and the
-unimplemented ``jparc_rev58`` target fail before invoking west.
+Omitting the target selects ``nucleo_h755zi_q``. Unknown targets fail before invoking west.
 The default output directory is ``../build-nucleo-h755zi-q``; ``BUILD_DIR`` can
 still override it. Use the same override for build and flash.
 M7 output is ``nucleo_h755zi_q/zephyr/zephyr.bin`` within that directory,
 and M4 output is ``control_core_m4/zephyr/zephyr.bin``.
 The previous ``build-digital-power-control`` directory is no longer used by default.
+
+rev58 bring-up
+************************
+
+From the repository root:
+
+.. code-block:: console
+
+   ./scripts/build.sh jparc_rev58
+   ./scripts/build.sh jparc_rev58 sdram
+   ./scripts/build.sh jparc_rev58 ethernet
+   ./scripts/build.sh jparc_rev58 spi
+
+Each profile builds to ``../build-jparc-rev58-<profile>`` (default ``bringup``).
+Pass the same target/profile to ``scripts/flash.sh`` when hardware is available.
+Review ``targets/jparc_rev58/docs/BRINGUP.md`` before first programming, especially
+Direct SMPS/VOS1 and the requirement to disable M4 boot via BCM4 option bytes.

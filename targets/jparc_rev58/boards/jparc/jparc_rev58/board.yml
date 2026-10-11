@@ -1,0 +1,6 @@
+board:
+  name: jparc_rev58
+  full_name: J-PARC rev58 STM32H745XI
+  vendor: others
+  socs:
+    - name: stm32h745xx

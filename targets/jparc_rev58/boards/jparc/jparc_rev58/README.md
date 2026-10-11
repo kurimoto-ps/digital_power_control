@@ -1,5 +1,6 @@
-# boards/jparc/jparc_rev58
+# jparc_rev58/stm32h745xx/m7
 
-STM32H745XIH6専用のboard.yml、M7/M4 DTS、pinctrl、defconfig、runnerを配置する。現在はボード未実装。
+STM32H745XIH6用の独立ボード定義。M7単体のみを実装しています。
+電源・クロック修正とBCM4の条件は[立ち上げ手順](../../../docs/BRINGUP.md)を参照してください。
 
-ディレクトリ準備段階です。実装・ビルド・実機確認は未実施です。
+周辺ピンは定義済みで通常はdisabledです。apps/bringup/profilesで個別に有効化します。

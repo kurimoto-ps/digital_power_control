@@ -1,0 +1,5 @@
+&mac { status = "okay"; zephyr,random-mac-address; };
+&mdio { status = "okay"; };
+&eth_phy { status = "okay"; };
+&clk_hsi48 { status = "okay"; };
+&rng { status = "okay"; };

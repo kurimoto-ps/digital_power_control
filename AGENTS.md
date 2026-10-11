@@ -3,7 +3,7 @@
 This repository hosts parallel board targets under `targets/`:
 
 - `targets/nucleo_h755zi_q/`: existing STM32H755 dual-core starter.
-- `targets/jparc_rev58/`: STM32H745 + MAX10 development scaffold.
+- `targets/jparc_rev58/`: STM32H745 M7 bring-up and MAX10 interface development.
 
 Read `README.rst`, `docs/DEVELOPMENT.rst`, and `docs/PROJECT_STATUS.rst` before
 substantial changes. Follow any target-local AGENTS.md instructions.
@@ -17,7 +17,11 @@ the shared workspace. Do not commit Zephyr, modules, `.west/`, or build output.
 After Nucleo source, Devicetree, Kconfig, CMake, protocol, or shared build-script
 changes, run `./scripts/build.sh nucleo_h755zi_q` from the repository root.
 Both M7 and M4 images must build. Never infer hardware behavior from build success.
-The rev58 target is not buildable yet; document its limitations explicitly.
+For rev58 changes, build `./scripts/build.sh jparc_rev58` and affected peripheral
+profiles (`sdram`, `ethernet`, `spi`). Keep its VOS1 adaptation board-local and
+hash-guarded. Never silently fall back to the upstream VOS0 clock driver.
+Read `targets/jparc_rev58/docs/BRINGUP.md`; M4/BCM4 and hardware verification
+remain explicit limitations.
 
 Update user-facing paths and commands and `docs/PROJECT_STATUS.rst` when changing
 the layout, capabilities, or next priorities. Keep commits scoped and descriptive.

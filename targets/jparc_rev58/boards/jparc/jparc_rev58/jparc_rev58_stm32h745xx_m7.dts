@@ -1,0 +1,56 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/dts-v1/;
+#include <st/h7/stm32h745Xi_m7.dtsi>
+#include <st/h7/stm32h745xihx-pinctrl.dtsi>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+    model = "J-PARC rev58 STM32H745XIH6 (M7)";
+    compatible = "jparc,rev58";
+    chosen {
+        zephyr,flash = &flash0;
+        zephyr,sram = &sram0;
+        zephyr,dtcm = &dtcm;
+    };
+    /* Raw electrical levels; protocol active polarity is not yet specified. */
+    zephyr,user {
+        ready-gpios = <&gpiod 11 GPIO_ACTIVE_HIGH>;
+        fault-gpios = <&gpioj 11 GPIO_ACTIVE_HIGH>;
+        irq-gpios = <&gpiod 12 GPIO_ACTIVE_HIGH>;
+        heartbeat-gpios = <&gpiok 0 GPIO_ACTIVE_HIGH>;
+        nstatus-gpios = <&gpioh 8 GPIO_ACTIVE_HIGH>;
+        confdone-gpios = <&gpioi 13 GPIO_ACTIVE_HIGH>;
+        nconfig-request-gpios = <&gpiob 14 GPIO_ACTIVE_HIGH>;
+        sync-gpios = <&gpioa 0 GPIO_ACTIVE_HIGH>;
+        trigger-gpios = <&gpiod 13 GPIO_ACTIVE_HIGH>;
+    };
+};
+
+&pwr { power-supply = "smps-direct"; };
+&clk_hse {
+    clock-frequency = <25000000>;
+    hse-bypass;
+    status = "okay";
+};
+/* 25 / 5 * 160 = 800 MHz VCO; P=400 MHz, Q=100 MHz. */
+&pll {
+    div-m = <5>;
+    mul-n = <160>;
+    div-p = <2>;
+    div-q = <8>;
+    div-r = <2>;
+    clocks = <&clk_hse>;
+    status = "okay";
+};
+&rcc {
+    clocks = <&pll>;
+    clock-frequency = <400000000>;
+    d1cpre = <1>;
+    hpre = <2>;
+    d1ppre = <2>;
+    d2ppre1 = <2>;
+    d2ppre2 = <2>;
+    d3ppre = <2>;
+};
+/* External peripherals are defined separately and disabled by default. */
+#include "jparc_rev58-peripherals.dtsi"
