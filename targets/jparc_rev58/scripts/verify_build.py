@@ -40,6 +40,12 @@ pll_hz = value('clk_hse', 'clock-frequency') // value('pll', 'div-m') * value('p
 require(pll_hz // value('pll', 'div-p') == 400000000, 'PLL P calculation')
 require(pll_hz // value('pll', 'div-q') == 100000000, 'PLL Q calculation')
 require(edt.chosen_node('zephyr,sram') == node['sram0'], 'startup SRAM')
+# stm32h7_clock.h: HSE=4, SPI45 selector at D2CCIP1R[18:16], selection 5.
+spi4_clocks = value('spi4', 'clocks')
+require(len(spi4_clocks) == 2 and spi4_clocks[1].data ==
+        {'bus': 4, 'bits': (5 << 24) | (2 << 21) | (16 << 16) | 0x50},
+        'SPI4 must use the supported HSE 25 MHz domain')
+
 require(node['sdram2'].regs[0].addr == 0xd0000000 and
         node['sdram2'].regs[0].size == 8 * 1024 * 1024, 'SDRAM region')
 require(value('sdram', 'refresh-rate') == 1542, 'refresh count at 100 MHz')
@@ -98,6 +104,13 @@ require('PWR_REGULATOR_VOLTAGE_SCALE0' not in source and
 build_ninja = (args.build_dir / 'build.ninja').read_text()
 require(re.search(r'^build .*clock_stm32_ll_h7_vos1[.]c[.]obj:', build_ninja, re.M), 'patched clock not compiled')
 require(not re.search(r'^build .*[/]clock_stm32_ll_h7[.]c[.]obj:', build_ninja, re.M), 'upstream VOS0 clock compiled')
+if 'CONFIG_PHY_MICROCHIP_LAN8742=y' in config:
+    phy_source = (args.build_dir / 'jparc_rev58/phy_microchip_lan8742_init.c').read_text()
+    require('if (ret < 0 && ret != -EALREADY)' in phy_source, 'LAN8742 init EALREADY fix')
+    require(re.search(r'^build .*phy_microchip_lan8742_init[.]c[.]obj:', build_ninja, re.M),
+            'patched LAN8742 driver not compiled')
+    require(not re.search(r'^build .*[/]phy_microchip_lan8742[.]c[.]obj:', build_ninja, re.M),
+            'original LAN8742 driver compiled')
 with (args.build_dir / 'zephyr/zephyr.elf').open('rb') as f:
     elf = ELFFile(f)
     for section in elf.iter_sections():

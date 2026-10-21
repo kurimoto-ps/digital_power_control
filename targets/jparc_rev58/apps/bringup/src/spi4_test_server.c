@@ -10,6 +10,8 @@
 #include "spi4_protocol.h"
 #include "spi4_test_server.h"
 
+BUILD_ASSERT(IS_ENABLED(CONFIG_NET_CONTEXT_RCVTIMEO) &&
+             IS_ENABLED(CONFIG_NET_CONTEXT_SNDTIMEO), "TCP client timeouts must be enabled");
 #define FPGA DT_NODELABEL(max10_spi4)
 BUILD_ASSERT(DT_PROP(FPGA, spi_max_frequency) <= 2000000, "MAX10 v1 max 2 MHz");
 BUILD_ASSERT(DT_PROP(FPGA, spi_cs_setup_delay_ns) >= 1000, "CS setup >= 1 us");
@@ -51,7 +53,10 @@ static void serve_client(int fd)
 {
     struct zsock_timeval timeout = {.tv_sec = 5};
     if (zsock_setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) ||
-        zsock_setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout))) { return; }
+        zsock_setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout))) {
+        printk("SPI4 client timeout setup failed: errno=%d\n", errno);
+        return;
+    }
     char line[SPI4_LINE_SIZE], reply[SPI4_REPLY_SIZE];
     size_t used = 0;
     int64_t deadline = k_uptime_get() + 5000;

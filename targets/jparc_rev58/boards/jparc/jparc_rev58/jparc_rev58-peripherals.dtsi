@@ -79,7 +79,8 @@
 };
 &spi4 {
     status = "disabled";
-    clocks = <&rcc STM32_CLOCK(APB2, 13)>, <&rcc STM32_SRC_PCLK2 SPI45_SEL(0)>;
+    // H745 clock driver supports HSE domains; PCLK2 domains are H7RS-only.
+    clocks = <&rcc STM32_CLOCK(APB2, 13)>, <&rcc STM32_SRC_HSE SPI45_SEL(5)>;
     pinctrl-0 = <&spi4_nss_pe4 &spi4_sck_pe2 &spi4_mosi_pe6 &spi4_miso_pe5>;
     pinctrl-names = "default";
 };

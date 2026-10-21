@@ -3,7 +3,8 @@
 `spi4_regs` は、PC → Ethernet/TCP → STM32H745 M7 → SPI4 → MAX10 の試験用プロファイル。
 `quartus/projects/spi4_regs/SPI4_PROTOCOL.md` v1.0 に合わせた実装。
 [仕様書の保存コピー](hardware/rev58/SPI4_PROTOCOL_v1.0.md)を同梱した（本文内の相対パスは元のQuartus構成）。
-実機通信・タイミングは未検証。PC側はPython 3の標準ライブラリのみを使用する。
+2026-10-21に実機でpingとINFO／DEVICE_ID読出しを確認した。
+レジスタ書込み試験と電気的タイミング測定は未実施。PC側はPython 3の標準ライブラリのみを使用する。
 
 ## 準備・ビルド・書込み
 
@@ -60,7 +61,7 @@ python3 targets/jparc_rev58/scripts/spi4_client.py test --expect-reset
 
 - STM32 master、Mode 0、8 bit、MSB first、全二重。
 - PE2=SCK、PE5=MISO、PE6=MOSIはAF5。**PE4=NSSはGPIO active-low**。
-- 要求1 MHz、現在の100 MHzカーネルクロック／128で計算上 **781.25 kHz**。
+- 要求1 MHz、HSE 25 MHzカーネルクロック／32で計算上 **781.25 kHz**。
   本RTLの上限2 MHzを超えない。基板資料の20 MHz設定は使用しない。
 - 1フレーム8バイトを1回の `spi_transceive_dt()` で送受信。
   CS setup/holdはGPIO CSのdelayでそれぞれ1 µs、フレーム間にもbusy-wait 1 µsを入れる。
@@ -127,3 +128,11 @@ ZephyrのTCPスタック・STM32 SPIドライバ・FPGA RTLの実行試験では
 ロジアナでMode 0、1フレーム64クロック、NSSが途中で上がらないこと、setup/hold/間隔、
 SCK High/Low時間とMOSI setup/holdを測定し、[測定記録](measurements/README.md)へ保存する。
 2 MHz要求での試験、任意opcode、途中中断、再設定中の動作、長時間／温度試験は今回の自動試験の範囲外。
+
+## 2026-10-21 実機立ち上げでの修正
+
+ホストのIP・経路が正しくてもARPがFAILEDの場合、初期化停止の可能性がある。
+今回、PHYの既設定扱い（EALREADY）とSPI4の未対応クロック源指定を修正した。
+LAN8742の変更はボード限定・元ソースのハッシュ検査付き。[詳細](BRINGUP.md)。
+またTCP接続直後の切断を防ぐため、`CONFIG_NET_CONTEXT_RCVTIMEO` と
+`CONFIG_NET_CONTEXT_SNDTIMEO` を有効化した。修正後のイメージで再書込みすること。

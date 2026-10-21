@@ -214,3 +214,35 @@ J-PARC rev58 Ethernet to SPI4 register test (2026-10-11)
 * Hardware operation, Zephyr TCP runtime, SPI signal timing, FPGA reconfiguration
   during traffic, and 2 MHz operation remain unverified. M4 and operating control
   protocols remain pending. Quartus sources and Nucleo code were not modified.
+
+J-PARC rev58 first hardware bring-up (2026-10-21)
+************************************************************
+
+* User confirmed BCM4=0 / BCM7=1. Minimal bring-up reached error=0, ticks=6,
+  SYSCLK=400 MHz and HCLK=200 MHz with Direct SMPS/VOS1.
+* Host eno1 had 192.168.100.1/24 and the correct route, but ARP failed because
+  the firmware exited before assigning its IP address.
+* Diagnosed LAN8742 init_res=120 (EALREADY), despite MDIO responding at address 0
+  with PHY ID 0x0007c131 and BMSR link/autonegotiation-complete bits set.
+  Added a board-local, SHA256-guarded PHY driver adaptation accepting EALREADY
+  only during initialization; other errors still abort initialization.
+* Diagnosed SPI4 init_res=134 (ENOTSUP): the pinned H745 clock driver does not
+  support PCLK2 as a domain source. Selected supported HSE 25 MHz, SPI45 mux 5;
+  requesting 1 MHz still yields a calculated 781.25 kHz (25 MHz / 32).
+* Enabled NET_CONTEXT_RCVTIMEO/SNDTIMEO for the TCP server. Without these,
+  setsockopt failed and each accepted connection was immediately closed.
+  Added a compile-time requirement and diagnostic for socket setup failures.
+* Programmed updated test firmware over SWD. Ping from the container through
+  the host succeeded, including two steady-state responses around 0.23 ms
+  with no packet loss. No option-byte or FPGA configuration writes were made
+  during this Ethernet diagnosis.
+* With the final firmware, the host Python INFO command succeeded on hardware:
+  DEVICE_ID=0x4a503538, version=0x00010000, capabilities=1, dummy_count=16,
+  write_count=0. Ethernet/TCP and SPI4 register readback are now verified together.
+* Hardware TCP checks passed for fragmented commands, pipelined INFO/READ,
+  oversized-line rejection/close, and a 5-second idle-client timeout.
+* Default bring-up, ethernet, spi and spi4_regs builds and artifact checks passed.
+  Generated artifacts now check the supported HSE SPI4 source and the compiled
+  PHY adaptation. No shared Zephyr sources were edited.
+* FPGA register writes, the full 176-write test, and waveform timing measurements
+  remain pending. The board is left running the corrected spi4_regs image.

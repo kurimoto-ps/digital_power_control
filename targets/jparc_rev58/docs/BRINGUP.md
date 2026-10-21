@@ -124,6 +124,13 @@ Ethernet DMA用SRAM3はZephyrのSTM32H7 SoC定義を使用し、AXI SRAMと分�
 `spi4_regs` は固定IPのTCP試験を提供する。パタン転送プロトコルと製品MAC割当は未実装。
 PHY IDとリンクの確認だけで転送の合格とはしない。
 
+採用ZephyrのLAN8742ドライバには、リセット後の広告設定が要求値と一致すると
+`-EALREADY` を初期化失敗として返す問題がある。実機ではPHYアドレス0から
+ID `0x0007C131` とリンク状態を読める一方、デバイスのinit_resが120となり、
+アプリの `Peripheral check failed: -19` でIP設定前に終了した。
+ボード限定・SHA256照合付きの生成ソースで、初期化時の `-EALREADY` だけを許容し、
+通常のリンク監視開始まで進める。他のエラー処理と共有Zephyrソースは変更しない。
+
 ### SPI
 
 SPI1: FPGA master→MCU slave受信用の配線。
@@ -135,7 +142,9 @@ cs-gpios/st,soft-nssがなければハードウェアNSSを使う。
 
 `spi` プロファイルはドライバとピン設定の準備のみ。NSS極性、CPOL/CPHA、フレーム長、
 受信armとREADY/IRQの順序を決めてから転送アプリを追加する。
-kernel clockは100 MHzなので通常の2冪分周で20 MHzぴったりにはならない。
+SPI1〜3のkernel clockは100 MHzなので通常の2冪分周で20 MHzぴったりにはならない。
+SPI4はHSE 25 MHzを選択する。採用ZephyrのH745 clock driverではPCLK2を
+domain sourceとして指定すると `-ENOTSUP` となるため、対応済みのHSEを使う。
 SPI1〜3の目標20 MHzへのクロック設計は別途行う。
 `spi4_regs` は別のoverlayでPE4をGPIO CSに変更し、指定1 MHzで8バイト転送する。
 MAX10レジスタ試験v1の上限は2 MHzであり、20 MHzを適用しない。[詳細](SPI4_TEST.md)。
