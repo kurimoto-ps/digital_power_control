@@ -246,3 +246,26 @@ J-PARC rev58 first hardware bring-up (2026-10-21)
   PHY adaptation. No shared Zephyr sources were edited.
 * FPGA register writes, the full 176-write test, and waveform timing measurements
   remain pending. The board is left running the corrected spi4_regs image.
+
+J-PARC rev58 combined SDRAM and Ethernet/SPI4 profile (2026-10-21)
+************************************************************
+
+* User reported standalone SPI4 test PASS: 176 verified writes, WRITE_COUNT
+  1 -> 177, after successful write/readback of 0x12345678 at 0x0100.
+* User reported standalone SDRAM test stage=5 with zero failure fields.
+* Added ``combined`` profile, composing the existing SDRAM and SPI4/Ethernet
+  overlays and configuration fragments without duplicating their settings.
+* On every boot, the existing destructive 8 MiB SDRAM test runs first. After
+  successful peripheral checks the TCP SPI4 service starts at 192.168.100.58:4244.
+  SDRAM failure prevents server startup and preserves the existing failure record.
+* SDRAM remains mapped and initialized; program stacks and ordinary buffers remain
+  in internal RAM. This does not yet add SDRAM-backed SPI4 payload storage or a
+  network memory-access API. D-cache remains disabled and M4 boot must stay disabled.
+* Build/flash commands accept ``jparc_rev58 combined`` and use the isolated output
+  directory ``build-jparc-rev58-combined``. Host SPI4 commands are unchanged.
+* Combined image built successfully; artifact verification passed for all 51
+  active peripheral pins without collisions, clock/VOS1, PHY adaptation, and
+  internal RAM placement. Generated DT confirms SDRAM, Ethernet and SPI4 enabled.
+* Regression builds/artifact checks passed for bringup, sdram and spi4_regs.
+  Combined flash routing was tested with a mock west; no board programming was
+  performed for this change. Simultaneous operation on hardware remains to be checked.

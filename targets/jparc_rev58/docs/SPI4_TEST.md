@@ -4,7 +4,7 @@
 `quartus/projects/spi4_regs/SPI4_PROTOCOL.md` v1.0 に合わせた実装。
 [仕様書の保存コピー](hardware/rev58/SPI4_PROTOCOL_v1.0.md)を同梱した（本文内の相対パスは元のQuartus構成）。
 2026-10-21に実機でpingとINFO／DEVICE_ID読出しを確認した。
-レジスタ書込み試験と電気的タイミング測定は未実施。PC側はPython 3の標準ライブラリのみを使用する。
+単独プロファイルで176回の書込み・読戻し試験も合格した。電気的タイミング測定は未実施。PC側はPython 3の標準ライブラリのみを使用する。
 
 ## 準備・ビルド・書込み
 
@@ -136,3 +136,26 @@ SCK High/Low時間とMOSI setup/holdを測定し、[測定記録](measurements/R
 LAN8742の変更はボード限定・元ソースのハッシュ検査付き。[詳細](BRINGUP.md)。
 またTCP接続直後の切断を防ぐため、`CONFIG_NET_CONTEXT_RCVTIMEO` と
 `CONFIG_NET_CONTEXT_SNDTIMEO` を有効化した。修正後のイメージで再書込みすること。
+
+## SDRAMとEthernet/SPI4を同時に使う
+
+リポジトリ直下で:
+
+```sh
+./scripts/build.sh jparc_rev58 combined
+./scripts/flash.sh jparc_rev58 combined
+python3 targets/jparc_rev58/scripts/spi4_client.py info
+python3 targets/jparc_rev58/scripts/spi4_client.py test
+```
+
+`combined` は既存のSDRAMとSPI4/Ethernet設定を合成する。
+出力先は `../build-jparc-rev58-combined/zephyr/`。
+起動のたびにSDRAM 8 MiB全域を上書きして検査し、合格後にTCPサーバーを起動する。
+起動後はSDRAMを初期化済みの状態で維持し、従来と同じIP `192.168.100.58`、
+TCPポート4244、PCコマンドを使用できる。接続は起動後数秒待ってから行う。
+SDRAM試験に失敗するとサーバーは起動せず、`rev58_memtest` に失敗情報を保存する。
+
+SDRAMは `0xD0000000` から8 MiB。現時点のスタック・通常変数・TCP処理は内蔵RAMを使い、
+SPI4の転送内容をSDRAMへ保存する機能はまだ追加していない。D-cacheは引き続き無効。
+デバッガで `rev58_memtest.stage == 5` と `rev58_status.error == 0` を確認できる。
+GDBでCPUを停止するとEthernetも止まるため、PCコマンド試験時は実行状態に戻す。

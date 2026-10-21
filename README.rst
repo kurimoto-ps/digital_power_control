@@ -29,6 +29,7 @@ Nucleoのビルドと書込みは、リポジトリ直下で実行します。
 rev58の最小アプリは ``./scripts/build.sh jparc_rev58``、
 周辺確認は末尾に ``sdram``、``ethernet``、``spi`` を指定します。
 Ethernet経由のMAX10レジスタ試験は ``spi4_regs`` を指定します。
+SDRAMとの同時使用は ``combined`` を指定します。
 操作は ``targets/jparc_rev58/docs/SPI4_TEST.md`` を参照してください。
 手順と初回書込み条件は ``targets/jparc_rev58/docs/BRINGUP.md`` を参照してください。
 

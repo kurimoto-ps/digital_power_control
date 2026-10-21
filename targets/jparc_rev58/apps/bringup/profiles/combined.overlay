@@ -1,0 +1,3 @@
+/* SDRAM self-test followed by Ethernet -> SPI4 register service. */
+#include "sdram.overlay"
+#include "spi4_regs.overlay"

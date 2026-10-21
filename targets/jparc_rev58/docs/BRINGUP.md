@@ -19,6 +19,7 @@ NucleoのLED、UART、PWM、Ethernetピン割当は継承していない。
 ./scripts/build.sh jparc_rev58 ethernet
 ./scripts/build.sh jparc_rev58 spi
 ./scripts/build.sh jparc_rev58 spi4_regs
+./scripts/build.sh jparc_rev58 combined
 ```
 
 | プロファイル | 有効にする機能と実行内容 |
@@ -27,6 +28,7 @@ NucleoのLED、UART、PWM、Ethernetピン割当は継承していない。
 | sdram | 上記＋FMC SDRAM初期化、8 MiB全域を破壊するメモリ試験 |
 | ethernet | 上記＋RMII MAC・LAN8742 PHY、PHY ID読出し、リンク状態表示 |
 | spi | 上記＋SPI1〜4のドライバ初期化・ready確認。転送は行わない |
+| combined | SDRAM 8 MiB全域の起動時試験＋Ethernet/SPI4。SDRAM合格後にTCPサーバー起動 |
 | spi4_regs | 上記＋Ethernet TCPコマンドからSPI4レジスタ書込み／読戻し。[操作手順](SPI4_TEST.md) |
 
 出力先はwest workspace内の `build-jparc-rev58-<プロファイル>/zephyr/`。
