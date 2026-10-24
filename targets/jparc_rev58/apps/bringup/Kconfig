@@ -15,3 +15,7 @@ config JPARC_SPI4_TEST_PORT
     range 1024 65535
     default 4244
     depends on JPARC_SPI4_REGS_TEST
+
+config JPARC_ADC_DUMMY_TEST
+    bool "SPI1 continuous DMA dummy ADC test"
+    depends on JPARC_SPI4_REGS_TEST && DMA && SPI_SLAVE

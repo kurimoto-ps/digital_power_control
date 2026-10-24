@@ -35,3 +35,7 @@ SDRAMとの同時使用は ``combined`` を指定します。
 
 環境構築は ``docs/DEVELOPMENT.rst``、実装状況は ``docs/PROJECT_STATUS.rst``、
 Nucleoの操作演習は ``docs/TRIAL_GUIDE.rst`` を参照してください。
+
+FPGA v1.3のADCダミー送信をSPI1の循環DMAで受信する試験は
+``./scripts/build.sh jparc_rev58 adc_dummy`` でビルドします。
+ホスト操作は ``targets/jparc_rev58/docs/ADC_DUMMY_TEST.md`` を参照してください。

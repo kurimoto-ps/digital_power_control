@@ -9,6 +9,9 @@
 #include <string.h>
 #include "spi4_protocol.h"
 #include "spi4_test_server.h"
+#ifdef CONFIG_JPARC_ADC_DUMMY_TEST
+#include "adc_dummy_test.h"
+#endif
 
 BUILD_ASSERT(IS_ENABLED(CONFIG_NET_CONTEXT_RCVTIMEO) &&
              IS_ENABLED(CONFIG_NET_CONTEXT_SNDTIMEO), "TCP client timeouts must be enabled");
@@ -20,7 +23,7 @@ static const struct spi_dt_spec fpga = SPI_DT_SPEC_GET(
     FPGA, SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_TRANSFER_MSB);
 static const struct gpio_dt_spec confdone =
     GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), confdone_gpios);
-static K_THREAD_STACK_DEFINE(server_stack, 4096);
+static K_THREAD_STACK_DEFINE(server_stack, 12288);
 static struct k_thread server_thread;
 
 /* Only server_thread accesses SPI4; one call is one 8-byte CS-low frame. */
@@ -75,7 +78,10 @@ static void serve_client(int fd)
             } else {
                 /* Conservative 10 ms settling on every command, including after reconfiguration. */
                 k_msleep(10);
-                spi4_command(line, reply, transfer, NULL);
+#ifdef CONFIG_JPARC_ADC_DUMMY_TEST
+                if (!adc_dummy_command(line, reply, transfer, NULL))
+#endif
+                { spi4_command(line, reply, transfer, NULL); }
             }
             if (!send_reply(fd, reply)) { return; }
             used = 0;

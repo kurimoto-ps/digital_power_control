@@ -53,7 +53,7 @@ class Firmware:
 
     def command(self, text):
         line = C.create_string_buffer(text.encode('ascii'))
-        reply = C.create_string_buffer(256)
+        reply = C.create_string_buffer(2048)
         self.lib.spi4_command(line, reply, self.callback, None)
         return reply.value.decode('ascii')
 
@@ -165,6 +165,26 @@ class ProtocolTests(unittest.TestCase):
         self.with_server(lambda pc: self.assertIn('176 verified writes', client.run_test(pc, True)))
         self.assertEqual(self.fw.regs[16], 176)
 
+    def test_v13_info_and_legacy_dummy_suite_do_not_write_dac(self):
+        self.fw.regs[4] = 0x10003
+        self.fw.regs[8] = 15
+        self.with_server(lambda pc: self.assertIn('176 verified writes', client.run_test(pc)))
+        self.assertFalse(any(f[0] == 2 and 0x200 <= int.from_bytes(f[1:3], 'big') <= 0x23c
+                             for f in self.fw.frames))
+
+    def test_v13_control_clear_masked_readback(self):
+        # Special fake only for this self-clearing register, after normal identity reads.
+        self.fw.regs[4] = 0x10003
+        original = self.fw.transfer
+        def transfer(ctx, tx, rx):
+            if int.from_bytes(bytes(tx[1:3]), 'big') == 0x400:
+                for i in range(8): rx[i] = 0
+                if tx[0] == 3: rx[7] = 1
+                return 0
+            return original(ctx, tx, rx)
+        self.fw.callback = CALLBACK(transfer)
+        self.assertEqual(self.fw.command('WRITE 0x0400 3'), 'OK WRITE 0x0400 0x00000001\n')
+
     def test_write_count_wrap(self):
         self.fw.regs[16] = 0xfffffff0
         self.with_server(lambda pc: self.assertIn('176 verified writes', client.run_test(pc)))
@@ -187,6 +207,23 @@ class ProtocolTests(unittest.TestCase):
         self.with_server(check, drop_reply)
         self.assertEqual(self.fw.regs[0x100], 0x12345678)
         self.assertEqual(self.fw.regs[16], 1)
+
+    def test_dac_command_waits_for_initialized_and_sent_code(self):
+        class FakeDAC:
+            def __init__(self): self.writes = []; self.polls = 0
+            def info(self): return {'capabilities': 15}
+            def write(self, addr, code): self.writes.append((addr, code))
+            def read(self, addr):
+                if addr == 0x001c: return 16
+                if addr == 0x0014:
+                    self.polls += 1
+                    return (1 << 3) if self.polls == 1 else (1 << 11)
+                if addr == 0x033c: return 0xabcd
+                raise AssertionError(addr)
+        dac = FakeDAC()
+        client.dac_set(dac, 16, 0xabcd)
+        self.assertEqual(dac.writes, [(0x023c, 0xabcd)])
+        self.assertEqual(dac.polls, 2)
 
     def test_host_rejects_corrupt_reply(self):
         for reply in ('OK READ 0x100 1\n', 'OK READ 0 0x100000000\n', 'garbage\n'):

@@ -269,3 +269,55 @@ J-PARC rev58 combined SDRAM and Ethernet/SPI4 profile (2026-10-21)
 * Regression builds/artifact checks passed for bringup, sdram and spi4_regs.
   Combined flash routing was tested with a mock west; no board programming was
   performed for this change. Simultaneous operation on hardware remains to be checked.
+
+J-PARC rev58 FPGA v1.3 dummy ADC DMA reception (2026-10-24)
+************************************************************
+
+* User previously reported combined-profile SPI4 test PASS (176 writes,
+  WRITE_COUNT 177 -> 353), and after a power cycle INFO write_count=0 followed
+  by test --expect-reset PASS (0 -> 176).
+* Imported unchanged ADC v1.3 and DAC handoff references with SHA256 sums.
+  Despite the ADC document's stale not-programmed note, user confirmation and
+  runtime INFO verified FPGA ID=0x4a503538, version=0x00010003, capabilities=15.
+* Added ``adc_dummy`` profile retaining the SDRAM self-test and Ethernet/SPI4.
+  SPI1 is Mode 0, hardware NSS, 8-bit slave RX on PG11/PA4/PB5. A dedicated
+  STM32 LL receive setup and Zephyr circular DMA preserve reception across NSS
+  boundaries, without rearming each 8-byte record.
+* Reserved DMAMUX1 channel 0 / DMA1 stream 0 / SPI1_RX request 37. Uses a
+  32 KiB aligned AXI SRAM ring with 16 KiB half/full callbacks; D-cache remains
+  disabled. Detects DMA errors, overwritten halves, and SPI OVR/MODF/TIFRE.
+* ADCTEST performs identity/capability checks, stop/wait, three dummy value writes,
+  mode selection, DMA arm, clear/start, bounded capture (100..3000 ms), stop/wait,
+  final-byte collection, stable TX count read, and mode=0 cleanup. No DAC writes.
+* Portable decoder validates CRC-16/CCITT-FALSE, channel tags, expected raw24 values,
+  first sequence zero and modulo-16-bit continuity; corrupt input is resynchronized
+  bytewise while retaining failure counters. Host independently checks all results.
+* DROP/RESTART are sampled while streaming just before stopping: the dummy source
+  keeps producing after TX stops and fills FIFOs in about 3.28 ms. Post-stop DROP
+  is therefore not treated as streaming loss. TX count is read after BUSY clears.
+* Added standalone stdlib host script ``scripts/adc_dummy_client.py`` with duration,
+  three values, repetitions, and JSON results. Repetitions have deliberate gaps.
+* SPI4 firmware/client now support known v1.0..v1.3. Write verification respects
+  DAC 16-bit, ADC 24-bit and self-clearing CONTROL masks. Moved legacy dummy-test
+  invalid address from 0x0200 (now DAC) to 0x0800. Added explicit host ``dac-set``
+  with SET readback, BUSY/PENDING/INITIALIZED and SENT checks; no automatic DAC use.
+* Programmed the new STM32 test firmware and verified hardware captures:
+  default values, 1000 ms: 234791 records; 0/0xffffff/0x800000, 3000 ms:
+  703775 records; 100 ms repeated three times: 23847 records each.
+  All passed: received count=FPGA_TX_COUNT, zero CRC/sequence/value/SPI/DMA errors
+  and zero pre-stop DROP/RESTART. CONTROL and SOURCE_MODE read back zero afterwards;
+  DAC_TRANSFER_COUNT remained zero. No FPGA or option-byte programming was performed.
+* Host tests cover published CRC vectors, 65535->0 sequence wrap, fragmented and
+  corrupted streams, wrong values/duplicates/gaps, fail-closed result validation,
+  TCP JSON fragmentation, old/new SPI4 compatibility, and DAC completion logic.
+* Real ADC inputs, DAC analog outputs, waveform timing and long uninterrupted runs
+  remain unverified. Current captures retain statistics, not raw payload history;
+  SDRAM is enabled but the DMA ring resides in internal AXI SRAM.
+* Passed 21 host tests and all seven rev58 profile builds/artifact checks:
+  bringup, sdram, ethernet, spi, spi4_regs, combined, adc_dummy. New profile
+  verifies 54 active peripheral pins and the DMA ring in aligned AXI SRAM.
+* Deliberately disconnected a host immediately after ADCTEST; after the bounded
+  capture, CONTROL=0 and SOURCE_MODE=0 were verified through a new TCP connection.
+* See ``targets/jparc_rev58/docs/ADC_DUMMY_TEST.md`` for command examples,
+  ownership, cleanup, result semantics and limits. Board is left running the
+  adc_dummy firmware with streaming disabled; DAC output was not exercised.

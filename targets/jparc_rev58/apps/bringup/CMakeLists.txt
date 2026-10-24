@@ -15,3 +15,7 @@ if(CONFIG_JPARC_SPI4_REGS_TEST)
     ${REV58_ROOT}/lib/fpga_link/spi4_protocol.c)
   target_include_directories(app PRIVATE ${REV58_ROOT}/lib/fpga_link)
 endif()
+
+if(CONFIG_JPARC_ADC_DUMMY_TEST)
+  target_sources(app PRIVATE src/adc_dummy_test.c ${REV58_ROOT}/lib/fpga_link/adc_stream.c)
+endif()

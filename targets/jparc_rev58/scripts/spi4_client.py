@@ -3,6 +3,7 @@
 import argparse
 import socket
 import sys
+import time
 
 
 class TestError(RuntimeError):
@@ -43,7 +44,9 @@ class Client:
             values = [int(p, 0) for p in parts[2:]]
         except ValueError as exc:
             raise TestError('Invalid INFO values') from exc
-        if values[:4] != [0x4A503538, 0x10000, 1, 16] or not 0 <= values[4] <= 0xffffffff:
+        if (values[0] != 0x4A503538 or values[1] not in range(0x10000, 0x10004) or
+                values[2] != (1 << (values[1] - 0x10000 + 1)) - 1 or
+                values[3] != 16 or not 0 <= values[4] <= 0xffffffff):
             raise TestError('Unexpected FPGA identity/capabilities: ' + repr(values))
         return dict(zip(('device_id', 'version', 'capabilities', 'dummy_count', 'write_count'), values))
 
@@ -60,7 +63,12 @@ class Client:
             raise TestError('Invalid register values') from exc
         if echoed_addr != addr or not 0 <= actual <= 0xffffffff:
             raise TestError('Invalid address/value in response')
-        if value is not None and actual != value:
+        expected = value
+        if value is not None:
+            if 0x0200 <= addr <= 0x023c: expected &= 0xffff
+            if addr in (0x0400, 0x0480): expected &= 1
+            if 0x0484 <= addr <= 0x048c: expected &= 0xffffff
+        if value is not None and actual != expected:
             raise TestError(f'Readback mismatch: expected {value:#010x}, got {actual:#010x}')
         return actual
 
@@ -69,6 +77,23 @@ class Client:
 
     def write(self, addr, value):
         return self.access('WRITE', addr, value)
+
+
+def dac_set(client, channel, code):
+    info = client.info()
+    if not info['capabilities'] & 2 or client.read(0x001c) != 16:
+        raise TestError('FPGA does not support 16-channel DAC output')
+    index = channel - 1
+    client.write(0x0200 + 4 * index, code)
+    chip = index // 4
+    deadline = time.monotonic() + 1
+    while time.monotonic() < deadline:
+        status = client.read(0x0014)
+        if status & (1 << (chip + 8)) and not status & ((1 << chip) | (1 << (chip + 4))):
+            if client.read(0x0300 + 4 * index) == code:
+                return
+        time.sleep(0.01)
+    raise TestError('DAC FPGA transmission completion timeout')
 
 
 def run_test(client, expect_reset=False):
@@ -95,8 +120,8 @@ def run_test(client, expect_reset=False):
     for addr, value in expected.items():
         if client.read(addr) != value:
             raise TestError(f'Address independence failed at {addr:#06x}')
-    for command, status in [('WRITE 0 0xffffffff', 8), ('READ 0x200', 4),
-                            ('WRITE 0x200 1', 4), ('READ 0x101', 2),
+    for command, status in [('WRITE 0 0xffffffff', 8), ('READ 0x0800', 4),
+                            ('WRITE 0x0800 1', 4), ('READ 0x101', 2),
                             ('WRITE 0x101 1', 2), ('READ 1', 6)]:
         try:
             client.request(command)
@@ -137,6 +162,9 @@ def main():
     write = sub.add_parser('write')
     write.add_argument('address', type=uint(16))
     write.add_argument('value', type=uint(32))
+    dac = sub.add_parser('dac-set', help='Set one DAC raw code; resends all four channels of its IC')
+    dac.add_argument('channel', type=int, choices=range(1, 17))
+    dac.add_argument('code', type=uint(16))
     test = sub.add_parser('test', help='Overwrites all 16 FPGA dummy registers')
     test.add_argument('--expect-reset', action='store_true', help='Also require initial all-zero state')
     args = parser.parse_args()
@@ -145,6 +173,9 @@ def main():
             if args.command == 'info':
                 for name, value in client.info().items():
                     print(f'{name}: 0x{value:08x} ({value})')
+            elif args.command == 'dac-set':
+                dac_set(client, args.channel, args.code)
+                print(f'DAC CH{args.channel}: FPGA transmission complete, raw=0x{args.code:04x} (not analog readback)')
             elif args.command == 'read':
                 print(f'{args.address:#06x}: {client.read(args.address):#010x}')
             elif args.command == 'write':

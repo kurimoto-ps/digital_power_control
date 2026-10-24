@@ -97,6 +97,16 @@ for label in ('fmc', 'mac', 'mdio', 'spi1', 'spi2', 'spi3', 'spi4'):
         else:
             require('cs-gpios' not in n.props and not n.props['st,soft-nss'].val, 'hardware NSS')
 
+if 'CONFIG_JPARC_ADC_DUMMY_TEST=y' in config:
+    require(node['spi1'].status == 'okay', 'SPI1 RX enabled')
+    require(node['spi2'].status == node['spi3'].status == 'disabled', 'SPI2/3 remain disabled')
+    require('CONFIG_DMA=y' in config and 'CONFIG_SPI_STM32_DMA=y' not in config,
+            'application owns circular SPI1 DMA; SPI4 remains polling')
+    rx = value('spi1', 'dmas')
+    require(len(rx) == 1 and rx[0].controller == node['dmamux1'] and
+            rx[0].data['channel'] == 0 and rx[0].data['slot'] == 37,
+            'SPI1_RX reserves DMAMUX1 channel 0 / DMA1 stream 0 / request 37')
+
 patched = args.build_dir / 'jparc_rev58/clock_stm32_ll_h7_vos1.c'
 source = patched.read_text()
 require('PWR_REGULATOR_VOLTAGE_SCALE0' not in source and
@@ -121,6 +131,12 @@ with (args.build_dir / 'zephyr/zephyr.elf').open('rb') as f:
             require((0x20000000 <= start < end <= 0x40000000) or
                     (section.name == '.last_section' and 0x08000000 <= start < end <= 0x08100000),
                     'writable section outside internal RAM: ' + section.name)
+    if 'CONFIG_JPARC_ADC_DUMMY_TEST=y' in config:
+        dma_buffer = elf.get_section_by_name('.symtab').get_symbol_by_name('adc_dma_ring')
+        require(dma_buffer and dma_buffer[0]['st_size'] == 32768 and
+                dma_buffer[0]['st_value'] % 32 == 0 and
+                0x24000000 <= dma_buffer[0]['st_value'] <= 0x24080000 - 32768,
+                'circular RX buffer must be aligned in DMA-accessible AXI SRAM')
     symbols = elf.get_section_by_name('.symtab').get_symbol_by_name('rev58_status')
     require(symbols and 0x24000000 <= symbols[0]['st_value'] < 0x24080000,
             'debug status not in AXI SRAM')

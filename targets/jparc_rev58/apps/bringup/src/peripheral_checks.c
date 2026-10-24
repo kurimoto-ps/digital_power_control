@@ -124,13 +124,21 @@ int rev58_peripheral_checks(void)
 #endif
 #if DT_NODE_HAS_STATUS(DT_NODELABEL(spi1), okay)
     const struct device *const buses[] = {
-        DEVICE_DT_GET(DT_NODELABEL(spi1)), DEVICE_DT_GET(DT_NODELABEL(spi2)),
-        DEVICE_DT_GET(DT_NODELABEL(spi3)), DEVICE_DT_GET(DT_NODELABEL(spi4)),
+        DEVICE_DT_GET(DT_NODELABEL(spi1)),
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(spi2), okay)
+        DEVICE_DT_GET(DT_NODELABEL(spi2)),
+#endif
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(spi3), okay)
+        DEVICE_DT_GET(DT_NODELABEL(spi3)),
+#endif
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(spi4), okay)
+        DEVICE_DT_GET(DT_NODELABEL(spi4)),
+#endif
     };
     for (size_t i = 0; i < ARRAY_SIZE(buses); ++i) {
         if (!device_is_ready(buses[i])) { return -ENODEV; }
     }
-    printk("SPI1..4 drivers ready; no transfers until the FPGA frame specification is defined\n");
+    printk("Enabled SPI drivers ready\n");
 #endif
     return 0;
 }
