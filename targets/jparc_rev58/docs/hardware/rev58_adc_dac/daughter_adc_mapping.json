@@ -1,0 +1,60 @@
+{
+  "source": "ACM205_signal_extract/signal_map.json; optical daughter routing only, not legacy FPGA pins",
+  "signals": [
+    {
+      "function": "ADC1 FS/DRDY",
+      "physical": "O/E CN1-a1 → OE0 ← CH1-1 / IC1",
+      "daughter_pin": "a1",
+      "cn": "CN1C-18"
+    },
+    {
+      "function": "ADC1 DATA/DOUT",
+      "physical": "O/E CN1-b1 → OE1 ← CH1-2 / IC2",
+      "daughter_pin": "b1",
+      "cn": "CN1C-20"
+    },
+    {
+      "function": "ADC1 SCLK",
+      "physical": "O/E CN1-a3 → OE2 ← CH1-3 / IC3",
+      "daughter_pin": "a3",
+      "cn": "CN1C-22"
+    },
+    {
+      "function": "ADC2 FS/DRDY",
+      "physical": "O/E CN1-a5 → OE3 ← CH2-1 / IC4",
+      "daughter_pin": "a5",
+      "cn": "CN1C-26"
+    },
+    {
+      "function": "ADC2 DATA/DOUT",
+      "physical": "O/E CN1-b5 → OE4 ← CH2-2 / IC5",
+      "daughter_pin": "b5",
+      "cn": "CN1C-28"
+    },
+    {
+      "function": "ADC2 SCLK",
+      "physical": "O/E CN1-a7 → OE5 ← CH2-3 / IC6",
+      "daughter_pin": "a7",
+      "cn": "CN1C-30"
+    },
+    {
+      "function": "ADC3 FS/DRDY",
+      "physical": "O/E CN1-a9 → OE6 ← CH3-1 / IC7",
+      "daughter_pin": "a9",
+      "cn": "CN1C-34"
+    },
+    {
+      "function": "ADC3 DATA/DOUT",
+      "physical": "O/E CN1-b9 → OE7 ← CH3-2 / IC8",
+      "daughter_pin": "b9",
+      "cn": "CN1C-36"
+    },
+    {
+      "function": "ADC3 SCLK",
+      "physical": "O/E CN1-a11 → OE8 ← CH3-3 / IC9",
+      "daughter_pin": "a11",
+      "cn": "CN1C-38"
+    }
+  ],
+  "source_sha256": "5d5ce65792d7b223f880d8dc70b54f6df704fd17a1332cea6007c3bda0d28bb6"
+}

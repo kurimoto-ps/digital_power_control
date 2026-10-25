@@ -2,7 +2,10 @@
 
 対象はSTM32H745XIH6 + MAX10 (10M16DCF484I7G)の新基板です。
 専用ボード定義とM7単体の起動・周辺確認アプリを管理します。
-ビルド検証は可能ですが、実機動作は未確認です。M4と製品アプリは未実装です。
+M7起動・SDRAM・Ethernet/SPI4・FPGA内部ADCダミー受信は実機確認済みです。M4と製品アプリは未実装です。
+
+納品資料：[現状のソフト構成](docs/CUSTOMER_DELIVERY.md)、[お客様用ADC/DAC・ダミー試験手順](docs/CUSTOMER_IO_TEST.md)。
+実ADC入力とDACアナログ出力はお客様での確認対象です。
 
 ```text
 targets/jparc_rev58/

@@ -1,7 +1,7 @@
 Project status
 ##############
 
-Last updated: 2026-10-11
+Last updated: 2026-10-25
 
 Purpose
 *******
@@ -321,3 +321,24 @@ J-PARC rev58 FPGA v1.3 dummy ADC DMA reception (2026-10-24)
 * See ``targets/jparc_rev58/docs/ADC_DUMMY_TEST.md`` for command examples,
   ownership, cleanup, result semantics and limits. Board is left running the
   adc_dummy firmware with streaming disabled; DAC output was not exercised.
+
+
+rev58 customer handoff (2026-10-25)
+==================================
+
+* Customer Markdown: ``targets/jparc_rev58/docs/CUSTOMER_DELIVERY.md`` and
+  ``CUSTOMER_IO_TEST.md`` describe the M7-only adc_dummy baseline, verified
+  scope, daughter wiring, dummy tests, and real I/O procedures.
+* ``adc_input_client.py`` polls FPGA real-input LAST/RX_COUNT registers via
+  SPI4, outputs raw24, explicitly selected encoding, volts (3 / 2^23),
+  freshness and restart counters as CSV. This is not full-rate SPI1 capture.
+* ``dac_output_client.py`` sets one raw16 code or reads FPGA SET/SENT status;
+  each write resends all four channels in its IC. Analog measurement is external.
+* O/E optical receiver IC1..9 mappings are recorded with source provenance.
+  Exact DAC A/B/C/D-to-CN mapping and ADC/DAC electrical coding remain pending.
+* Firmware is unchanged. No real ADC/DAC analog test was performed for this
+  handoff. Quartus release commit, programmed-file hashes and confirmed daughter
+  connector mapping must be supplied by the FPGA maintainer.
+* Host suite: 27 tests pass, including signed conversion boundaries, stale
+  input and frame restart detection, and absence of unintended DAC writes.
+* Both bringup and adc_dummy build and artifact verification passed.
