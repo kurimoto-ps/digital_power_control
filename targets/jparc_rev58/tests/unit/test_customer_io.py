@@ -1,4 +1,5 @@
 """Customer scripts: conversion boundaries, input activity, and write scope."""
+import argparse
 import contextlib
 import io
 from pathlib import Path
@@ -77,8 +78,35 @@ class CustomerTests(unittest.TestCase):
         self.assertEqual(self.run_adc(c)[0], 1)
         self.assertEqual(c.writes, [])
 
+    def test_dac_voltage_boundaries_and_quantization(self):
+        for text, code in [('0', 0), ('-10', 0x8000), ('10', 0x7fff),
+                           ('2.5', 0x2000), ('-2.5', 0xe000),
+                           ('0.000152587890625', 1), ('-0.000152587890625', 0xffff)]:
+            self.assertEqual(dac.voltage_to_code(text), code)
+        self.assertEqual(dac.code_to_voltage(0x8000), -10)
+        self.assertEqual(dac.code_to_voltage(0x7fff), 10 - 10 / 32768)
+        for code in range(65536):
+            self.assertEqual(dac.voltage_to_code(str(dac.code_to_voltage(code))), code)
+
+    def test_dac_invalid_voltage_and_connector(self):
+        for text in ['nan', 'inf', '-inf', '10.001', '-10.001', 'hello']:
+            with self.assertRaises(argparse.ArgumentTypeError):
+                dac.voltage_to_code(text)
+        for text in ['CN2', 'CN19', '0', '17', 'CNx']:
+            with self.assertRaises(argparse.ArgumentTypeError):
+                dac.channel_or_connector(text)
+        for channel in range(1, 17):
+            self.assertEqual(dac.channel_or_connector(f'CN{channel+2}'), channel)
+        with patch.object(sys, 'argv', ['dac', 'set-voltage', 'CN3', '11']), \
+                patch.object(dac, 'Client') as client, contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                dac.main()
+            client.assert_not_called()
+
     def test_dac_status_readonly_and_set_scope(self):
-        for command, expected in [(['status'], []), (['set', '16', '0xffff'], [(0x23c, 0xffff)])]:
+        for command, expected in [(['status'], []), (['set', '16', '0xffff'], [(0x23c, 0xffff)]),
+                                  (['set-voltage', 'CN3', '-2.5'], [(0x200, 0xe000)]),
+                                  (['set-voltage', 'CN18', '10'], [(0x23c, 0x7fff)])]:
             c = FakeClient()
             with patch.object(sys, 'argv', ['dac_output_client'] + command), \
                     patch.object(dac, 'Client', return_value=c), \
@@ -86,7 +114,7 @@ class CustomerTests(unittest.TestCase):
                     contextlib.redirect_stderr(io.StringIO()):
                 self.assertEqual(dac.main(), 0)
             self.assertEqual(c.writes, expected)
-            self.assertIn('16,4,IC17,D,CN15-CN18,UNCONFIRMED', out.getvalue())
+            self.assertIn('16,4,IC17,D,CN15-CN18,CN18', out.getvalue())
 
 
 if __name__ == '__main__':

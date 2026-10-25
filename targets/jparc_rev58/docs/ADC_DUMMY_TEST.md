@@ -116,7 +116,7 @@ python3 targets/jparc_rev58/scripts/spi4_client.py dac-set 1 0x1234
 CHは1〜16。要求値の読戻しに加え、BUSY/PENDING解除、INITIALIZED、DAC_SENTを確認する。
 表示はFPGAの送信完了であって、外部DACの受信やアナログ電圧の保証ではない。
 同じICの4CHを一括再送するため、初回は他の3CHの初期コード0も送信される。
-コード0を0 Vとは仮定しない。ダミーADC試験からこのコマンドを自動実行することはない。
+本納品のDACは±10 V・符号付き16 bitで、コード0は公称0 V。電圧／CN番号で指定する場合は [お客様用試験手順](CUSTOMER_IO_TEST.md) の `dac_output_client.py set-voltage` を使用する。ダミーADC試験からDAC設定を自動実行することはない。
 
 汎用 `write` はDAC_SETの16 bit、ADCダミー値の24 bit、CONTROL/SOURCE_MODEのbit0だけを
 読戻し比較する。CONTROL=3のclear bitが読出しで0になるのは正常。
@@ -139,7 +139,9 @@ python3 targets/jparc_rev58/scripts/verify_build.py ../build-jparc-rev58-adc_dum
 ホスト結果判定、TCP分割応答、SPI4旧版とv1.3、clear bitの読戻しを検査する。
 生成物検査では54本の周辺端子、DMA割当とAXI SRAM配置も確認する。
 
-参照原本のコピー（相対リンクは元のQuartus構成を指す）:
+現行の統合仕様は [FIRMWARE_SPEC_v1.3.md](hardware/rev58_adc_dac/FIRMWARE_SPEC_v1.3.md)。書込みファイルの識別と検証範囲は [納品資料](CUSTOMER_DELIVERY.md) を参照。
+
+旧引継ぎ原本のコピー（相対リンクは元のQuartus構成を指す）:
 - [ADC v1.3引継ぎ](hardware/rev58_adc_dac/ZEPHYR_ADC_STREAM_HANDOFF.md)
 - [DAC引継ぎ](hardware/rev58_adc_dac/ZEPHYR_DAC_HANDOFF.md)
 

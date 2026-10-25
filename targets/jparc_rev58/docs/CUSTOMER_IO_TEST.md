@@ -48,14 +48,14 @@ python3 targets/jparc_rev58/scripts/adc_dummy_client.py --duration-ms 1000 --jso
 O/E CN1のピンは、ADC1がa1/b1/a3、ADC2がa5/b5/a7、ADC3がa9/b9/a11（順にDRDY/DATA/SCLK）。
 経路は O/E CN1 → 母基板J11 → 母基板CN1C → rev58 J10。rev58 J10と母基板CN1Cは同じ接点番号です。**母基板J10はDAC接続用で、rev58 J10とは別物**です。
 ADC4～6に相当する光素子IC10～18は現FPGAでは使用しません。
-出典：提供資料 `ACM205_signal_extract/signal_map.json` のO/E物理経路（必要部分の保存コピー：[daughter_adc_mapping.json](hardware/rev58_adc_dac/daughter_adc_mapping.json)）、rev58コネクタ用途表とADC引継ぎ仕様。旧ACM205のFPGAボール番号はrev58へ流用していません。
+出典：[回路図一覧](hardware/circuit/README.md) のTEP523A p.1、TEP521C p.3・6、rev58コネクタ用途表p.3、および [FPGA統合仕様](hardware/rev58_adc_dac/FIRMWARE_SPEC_v1.3.md) §3.2。以前の信号抽出表と新たに提供された回路図を照合しました。旧ACM205のFPGAボール番号はrev58へ流用していません。
 
 外部ダミー送信器を使う場合も、DRDY立上りでフレーム開始、SCLK立下りでDATAを取り込む24 bit MSB firstの信号を送ります。SCLK/DATAだけではフレームが開始しません。
-現仕様では20 MHz、DRDY立上りから最初のサンプルクロックまで50 ns以上、DATA setup/hold各16.7 ns以上です。詳細は [ADC引継ぎ仕様](hardware/rev58_adc_dac/ZEPHYR_ADC_STREAM_HANDOFF.md) に合わせてください。
+現仕様では20 MHz、DRDY立上りから最初のサンプルクロックまで50 ns以上、DATA setup/hold各16.7 ns以上です。詳細は [FPGA統合仕様 §7](hardware/rev58_adc_dac/FIRMWARE_SPEC_v1.3.md) に合わせてください。
 
 ### 最新値の表示と保存
 
-ADCデータ形式を確認して `--encoding` を必ず指定します。
+符号形式とは、24 bitを正負の数に解釈する規則です。例えば `0xFFFFFF` は2の補数で−1、符号なしで16,777,215です。O/E回路図には光送信元ADCの回路が含まれず、FPGAは受信ビットをそのまま転送するので、送信元の形式に合わせて `--encoding` を必ず指定します。以下は2の補数の場合の例です。
 
 ```sh
 python3 targets/jparc_rev58/scripts/adc_input_client.py --initialize --encoding signed24 --count 20 --interval 0.5
@@ -84,36 +84,70 @@ CSVは生コード・整数・電圧・受信カウンタ・更新の有無・�
 カウンタと値は別々に読むため原子的な組ではなく、`changed_during_read=1` は読取り中に受信が進んだことを示します。
 SPI1を停止してもFPGA入力は受信し続けます。FIFO満杯とDROP増加はこの観測方法では想定動作であり、最新値・RX_COUNTは更新されます。
 
-## 4. 実DAC：コード設定と電圧測定
+## 4. 実DAC：CN番号・電圧指令と測定
 
-|ホストCH|DACボードIC|DAC出力|アナログ出力コネクタ群|
-|---|---|---|---|
-|1 / 2 / 3 / 4|IC11（DAC1）|A / B / C / D|CN3～CN6|
-|5 / 6 / 7 / 8|IC13（DAC2）|A / B / C / D|CN7～CN10|
-|9 / 10 / 11 / 12|IC15（DAC3）|A / B / C / D|CN11～CN14|
-|13 / 14 / 15 / 16|IC17（DAC4）|A / B / C / D|CN15～CN18|
+TEP522A回路図p.1のDOUTA/B/C/DからLEMO中心端子を追跡した対応です。LEMO外側はAGNDです。
 
-**各群のA/B/C/Dと個別CN番号の対応は未確定です。CH1=CN3等とは断定できません。**
-出典：[DAC引継ぎ仕様](hardware/rev58_adc_dac/ZEPHYR_DAC_HANDOFF.md)、提供信号解析資料。
-確定図面を受領するまでスクリプトは `exact_connector=UNCONFIRMED` と表示します。個別CNでの正式な対応判定は、この情報を補ってから行ってください。
+|ホストCH|DACボードIC|出力（ICピン）|アナログCN|DAC_SET|
+|---|---|---|---|---|
+|1|IC11（DAC1）|A（23）|CN3|0x0200|
+|2|IC11（DAC1）|B（22）|CN4|0x0204|
+|3|IC11（DAC1）|C（19）|CN5|0x0208|
+|4|IC11（DAC1）|D（18）|CN6|0x020C|
+|5|IC13（DAC2）|A（23）|CN7|0x0210|
+|6|IC13（DAC2）|B（22）|CN8|0x0214|
+|7|IC13（DAC2）|C（19）|CN9|0x0218|
+|8|IC13（DAC2）|D（18）|CN10|0x021C|
+|9|IC15（DAC3）|A（23）|CN11|0x0220|
+|10|IC15（DAC3）|B（22）|CN12|0x0224|
+|11|IC15（DAC3）|C（19）|CN13|0x0228|
+|12|IC15（DAC3）|D（18）|CN14|0x022C|
+|13|IC17（DAC4）|A（23）|CN15|0x0230|
+|14|IC17（DAC4）|B（22）|CN16|0x0234|
+|15|IC17（DAC4）|C（19）|CN17|0x0238|
+|16|IC17（DAC4）|D（18）|CN18|0x023C|
+
+出典：[TEP522A回路図と接続根拠](hardware/circuit/README.md)、[FPGA統合仕様 §6](hardware/rev58_adc_dac/FIRMWARE_SPEC_v1.3.md)。
+デジタル経路は rev58 J10 → 母基板CN1C → 母基板J10 → DACボードCN1。
+
+### 電圧で指定する（推奨）
 
 ```sh
 python3 targets/jparc_rev58/scripts/dac_output_client.py status
-python3 targets/jparc_rev58/scripts/dac_output_client.py set 1 0x8000 > dac_ch1_8000.csv
-python3 targets/jparc_rev58/scripts/dac_output_client.py status > dac_status.csv
+python3 targets/jparc_rev58/scripts/dac_output_client.py set-voltage CN3 2.5 > dac_cn3_plus2_5V.csv
+python3 targets/jparc_rev58/scripts/dac_output_client.py set-voltage CN3 -2.5 > dac_cn3_minus2_5V.csv
+python3 targets/jparc_rev58/scripts/dac_output_client.py set-voltage CN3 0 > dac_cn3_zeroV.csv
 ```
 
-上はCH1へ生コード`0x8000`を書き込む例で、0 V指定ではありません。DACの換算係数・極性・基準電圧が未確定なので、ADCの換算式をDACには使いません。
-外部負荷に適したコードを選び、対象CNと基準GND間を電圧計またはオシロスコープで測定してください。
-**1チャネルを書くだけでも同一ICの4出力が現在の設定値で再送信されます。未設定の他3チャネルは0コードです。**
-プログラム終了後も出力を保持し、自動でゼロへ戻しません。終了時に必要なコードは明示的に設定してください。0コードが0 Vとは限りません。
+`CN3` の代わりにホストCH番号 `1` も指定できます。`CN18` はCH16です。
+コード指定も残しています。例えば `set CN3 0x2000` は公称+2.5 Vです。
+
+DACは±10 V、符号付き16 bit（2の補数）として、`signed_code = round(V × 32768 / 10)`、送信値はその下位16 bitとします。
+最も近いコードへ丸め、ちょうど半LSBの場合は0から遠い側へ丸めます。+10 Vはコード32767へ制限し、±10 Vを超える値やNaN/無限大は通信前に拒否します。
+
+|指令V|符号付きコード|送信コード|公称出力V|
+|---|---|---|---|
+|−10|−32768|0x8000|−10|
+|−5|−16384|0xC000|−5|
+|−2.5|−8192|0xE000|−2.5|
+|0|0|0x0000|0|
+|+2.5|8192|0x2000|+2.5|
+|+5|16384|0x4000|+5|
+|+10|32767|0x7FFF|+9.999694824|
+
+CSVの `exact_connector` に実CN番号、`set_nominal_volts` / `sent_nominal_volts` にコードから換算した公称電圧を出力します。実電圧の自動読戻しではありません。
+外部負荷に適した指令を選び、対象LEMOの中心端子と外側AGND間を電圧計またはオシロスコープで測定してください。各CNで0 V、正電圧、負電圧への追従を確認し、コード・公称電圧・実測電圧・許容差を記録してください。
+
+**1チャネルを書くだけでも同一ICの4出力が現在の設定値で再送信されます。未設定の他3チャネルは0コード（公称0 V）です。**
+プログラム終了後も出力を保持します。測定終了後は必要なチャネルへ `set-voltage CN番号 0` 等を明示的に送ってください。FPGAの再設定だけではDAC出力をリセットしません。
+DAC電源投入直後は、まだ送信していない0コードの表示だけで実出力0 Vと判断しないでください。
 
 `set_hex` はFPGA設定値、`sent_hex` はFPGAが送信した値、`initialized` はFPGA側の送信済み状態です。
-一致と送信完了はDAC実チップによる受理やアナログ電圧の一致を保証しません。DACのSDOによるデバイスレジスタ読戻しは実装していません。
-エラー時に書込みを自動再試行しません。応答が失われても送信済みの場合があるので、先に `status` と実電圧を確認してください。
+一致と送信完了はDAC実チップによる受理やアナログ電圧の一致を保証しません。DACのSDOによるデバイスレジスタ読戻しは未実装です。
+エラー時は書込みを自動再試行しません。応答が失われても送信済みの場合があるので、先に `status` と実電圧を確認してください。
 
-試験記録には「Gitコミット、FPGA識別、基板番号、IC/出力、実測CN番号、設定コード、実測V、期待Vと許容差、判定」を残してください。
-DAC全16出力のコネクタ対応・複数コードでの応答は、図面・換算仕様確定後にこの形式で記録します。
+試験記録には「ソフトGitコミット、FPGA POFハッシュ、基板番号、IC/出力、CN番号、指令V、設定コード、公称V、実測V、許容差、判定」を残してください。
+FPGAハッシュと過去試験との対応範囲は [納品資料 §5](CUSTOMER_DELIVERY.md) を参照してください。
 
 ## 5. 問題の切分け
 

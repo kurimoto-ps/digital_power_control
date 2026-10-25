@@ -332,13 +332,18 @@ rev58 customer handoff (2026-10-25)
 * ``adc_input_client.py`` polls FPGA real-input LAST/RX_COUNT registers via
   SPI4, outputs raw24, explicitly selected encoding, volts (3 / 2^23),
   freshness and restart counters as CSV. This is not full-rate SPI1 capture.
-* ``dac_output_client.py`` sets one raw16 code or reads FPGA SET/SENT status;
+* ``dac_output_client.py`` accepts CH/CN voltage commands (signed16 +/-10 V),
+  raw16 codes, or reads FPGA SET/SENT status;
   each write resends all four channels in its IC. Analog measurement is external.
 * O/E optical receiver IC1..9 mappings are recorded with source provenance.
-  Exact DAC A/B/C/D-to-CN mapping and ADC/DAC electrical coding remain pending.
+  TEP522A confirms CH1..16 -> CN3..18; TEP521C/523A and connector drawings
+  are archived with checksums. Upstream ADC coding remains unspecified.
 * Firmware is unchanged. No real ADC/DAC analog test was performed for this
-  handoff. Quartus release commit, programmed-file hashes and confirmed daughter
-  connector mapping must be supplied by the FPGA maintainer.
-* Host suite: 27 tests pass, including signed conversion boundaries, stale
-  input and frame restart detection, and absence of unintended DAC writes.
+  handoff. FIRMWARE_SPEC_v1.3.md is archived as the current FPGA specification;
+  supplied POF/SOF hashes match its programming record. Historical Zephyr tests
+  did not record bitstream hashes: rerun integration acceptance on this POF.
+  Quartus source commit remains to be supplied.
+* Host suite: 29 tests pass, including signed conversion boundaries, stale
+  input and frame restart detection, all 65536 DAC code/voltage round trips,
+  voltage limits, connector selection, and absence of unintended DAC writes.
 * Both bringup and adc_dummy build and artifact verification passed.
