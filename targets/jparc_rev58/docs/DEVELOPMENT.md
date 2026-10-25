@@ -1,5 +1,7 @@
 # rev58の開発条件と着手順
 
+[English version](DEVELOPMENT_en.md)
+
 2026-10-11: M7専用ボード定義と起動・周辺確認アプリを実装。実機動作は未確認。
 ビルドと初回立ち上げは [BRINGUP.md](BRINGUP.md) を参照。
 出典は `hardware/rev58/` 内の実装用ハードウェア資料と技術説明書v1。

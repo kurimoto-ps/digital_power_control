@@ -1,5 +1,7 @@
 # FPGA v1.3 ダミーADC → SPI1 DMA → Ethernet試験
 
+[English version](ADC_DUMMY_TEST_en.md)
+
 FPGAの3系統ダミー生成をSPI4から設定し、20 MHz SPI1をSTM32 M7が
 循環DMAで連続受信する。ホストには検査結果だけを返す。
 SDRAM 8 MiBの起動時試験と、従来のEthernet/SPI4サービスも有効。

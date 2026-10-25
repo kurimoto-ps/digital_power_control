@@ -1,5 +1,7 @@
 # J-PARC rev58 Zephyr開発
 
+[English version](README_en.md)
+
 対象はSTM32H745XIH6 + MAX10 (10M16DCF484I7G)の新基板です。
 専用ボード定義とM7単体の起動・周辺確認アプリを管理します。
 M7起動・SDRAM・Ethernet/SPI4・FPGA内部ADCダミー受信は実機確認済みです。M4と製品アプリは未実装です。

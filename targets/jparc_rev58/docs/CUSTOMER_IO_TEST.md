@@ -1,5 +1,7 @@
 # お客様ホストPCでのADC・DAC試験
 
+[English version](CUSTOMER_IO_TEST_en.md)
+
 対象：rev58 STM32 `adc_dummy`、FPGA統合版v1.3。構成・検証範囲は [CUSTOMER_DELIVERY.md](CUSTOMER_DELIVERY.md)。
 コマンドはリポジトリルートで実行します。Python 3標準ライブラリのみ使用します。Windowsでは `python3` を `py -3` に置き換えられます。
 スクリプトだけを持ち出す場合、`spi4_client.py`、`adc_dummy_client.py`、`adc_input_client.py`、`dac_output_client.py` を同じディレクトリに置き、コマンドのパスを合わせてください。

@@ -1,5 +1,7 @@
 # JPARC rev58 試験ソフト納品資料
 
+[English version](CUSTOMER_DELIVERY_en.md)
+
 作成日：2026-10-25。対象：STM32H745 M7の `adc_dummy` プロファイルとMAX10 ADC/DAC統合版v1.3。
 本納品は基板の通信・メモリ・入出力確認用です。電源制御ループ、PWM制御、PLC制御は実装対象に含みません。
 

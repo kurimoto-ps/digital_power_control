@@ -1,5 +1,7 @@
 # Ethernet経由のMAX10 SPI4レジスタ試験
 
+[English version](SPI4_TEST_en.md)
+
 `spi4_regs` は、PC → Ethernet/TCP → STM32H745 M7 → SPI4 → MAX10 の試験用プロファイル。
 `quartus/projects/spi4_regs/SPI4_PROTOCOL.md` v1.0 に合わせた実装。
 [仕様書の保存コピー](hardware/rev58/SPI4_PROTOCOL_v1.0.md)を同梱した（本文内の相対パスは元のQuartus構成）。

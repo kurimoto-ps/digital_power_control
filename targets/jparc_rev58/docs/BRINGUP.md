@@ -1,5 +1,7 @@
 # rev58 M7のビルドと初回立ち上げ
 
+[English version](BRINGUP_en.md)
+
 ## 現在の範囲
 
 専用ボード `jparc_rev58/stm32h745xx/m7` とM7単体の試験アプリを用意した。

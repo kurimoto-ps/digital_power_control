@@ -366,3 +366,14 @@ New rev58 board acceptance (2026-10-25)
   remains running. Real ADC optical input and DAC analog output were not tested.
 * Full record and JSON diagnostics: ``targets/jparc_rev58/docs/measurements/``
   ``2026-10-25-board-00250028-35335115-39383331/README.md``.
+
+
+English customer documentation (2026-10-25)
+===========================================
+
+* Added 11 English Markdown documents with ``_en.md`` suffixes: target index,
+  delivery, customer I/O, bringup, development, SPI4, ADC dummy, integrated FPGA
+  v1.3 specification, schematic references, measurement index and new-board record.
+* English links connect the translated handoff documents; archived originals,
+  schematic PDFs and checksum-protected FPGA source documents remain unchanged.
+* This is a documentation-only change; no firmware, scripts or board state changed.
