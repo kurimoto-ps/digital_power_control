@@ -1,0 +1,408 @@
+[
+  {
+    "test": "default",
+    "result": {
+      "pass": true,
+      "requested_ms": 1000,
+      "elapsed_ms": 1002,
+      "received": 234793,
+      "fpga_tx": 234793,
+      "crc_errors": 0,
+      "header_errors": 0,
+      "discarded_bytes": 0,
+      "trailing_bytes": 0,
+      "dma_errors": 0,
+      "dma_overruns": 0,
+      "spi_error_flags": 0,
+      "error": 0,
+      "control_error": false,
+      "cleanup_error": 0,
+      "channels": [
+        {
+          "channel": 1,
+          "records": 78265,
+          "expected": 1193046,
+          "last": 1193046,
+          "first_seq": 0,
+          "last_seq": 12728,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 2,
+          "records": 78264,
+          "expected": 9022413,
+          "last": 9022413,
+          "first_seq": 0,
+          "last_seq": 12727,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 3,
+          "records": 78264,
+          "expected": 16702650,
+          "last": 16702650,
+          "first_seq": 0,
+          "last_seq": 12727,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        }
+      ]
+    }
+  },
+  {
+    "test": "boundaries",
+    "result": {
+      "pass": true,
+      "requested_ms": 3000,
+      "elapsed_ms": 3002,
+      "received": 703783,
+      "fpga_tx": 703783,
+      "crc_errors": 0,
+      "header_errors": 0,
+      "discarded_bytes": 0,
+      "trailing_bytes": 0,
+      "dma_errors": 0,
+      "dma_overruns": 0,
+      "spi_error_flags": 0,
+      "error": 0,
+      "control_error": false,
+      "cleanup_error": 0,
+      "channels": [
+        {
+          "channel": 1,
+          "records": 234595,
+          "expected": 0,
+          "last": 0,
+          "first_seq": 0,
+          "last_seq": 37986,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 2,
+          "records": 234594,
+          "expected": 16777215,
+          "last": 16777215,
+          "first_seq": 0,
+          "last_seq": 37985,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 3,
+          "records": 234594,
+          "expected": 8388608,
+          "last": 8388608,
+          "first_seq": 0,
+          "last_seq": 37985,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        }
+      ]
+    }
+  },
+  {
+    "test": "repeat",
+    "result": {
+      "pass": true,
+      "requested_ms": 100,
+      "elapsed_ms": 102,
+      "received": 23845,
+      "fpga_tx": 23845,
+      "crc_errors": 0,
+      "header_errors": 0,
+      "discarded_bytes": 0,
+      "trailing_bytes": 0,
+      "dma_errors": 0,
+      "dma_overruns": 0,
+      "spi_error_flags": 0,
+      "error": 0,
+      "control_error": false,
+      "cleanup_error": 0,
+      "channels": [
+        {
+          "channel": 1,
+          "records": 7949,
+          "expected": 1193046,
+          "last": 1193046,
+          "first_seq": 0,
+          "last_seq": 7948,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 2,
+          "records": 7948,
+          "expected": 9022413,
+          "last": 9022413,
+          "first_seq": 0,
+          "last_seq": 7947,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 3,
+          "records": 7948,
+          "expected": 16702650,
+          "last": 16702650,
+          "first_seq": 0,
+          "last_seq": 7947,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        }
+      ]
+    }
+  },
+  {
+    "test": "repeat",
+    "result": {
+      "pass": true,
+      "requested_ms": 100,
+      "elapsed_ms": 102,
+      "received": 23847,
+      "fpga_tx": 23847,
+      "crc_errors": 0,
+      "header_errors": 0,
+      "discarded_bytes": 0,
+      "trailing_bytes": 0,
+      "dma_errors": 0,
+      "dma_overruns": 0,
+      "spi_error_flags": 0,
+      "error": 0,
+      "control_error": false,
+      "cleanup_error": 0,
+      "channels": [
+        {
+          "channel": 1,
+          "records": 7949,
+          "expected": 1193046,
+          "last": 1193046,
+          "first_seq": 0,
+          "last_seq": 7948,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 2,
+          "records": 7949,
+          "expected": 9022413,
+          "last": 9022413,
+          "first_seq": 0,
+          "last_seq": 7948,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 3,
+          "records": 7949,
+          "expected": 16702650,
+          "last": 16702650,
+          "first_seq": 0,
+          "last_seq": 7948,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        }
+      ]
+    }
+  },
+  {
+    "test": "repeat",
+    "result": {
+      "pass": true,
+      "requested_ms": 100,
+      "elapsed_ms": 103,
+      "received": 23846,
+      "fpga_tx": 23846,
+      "crc_errors": 0,
+      "header_errors": 0,
+      "discarded_bytes": 0,
+      "trailing_bytes": 0,
+      "dma_errors": 0,
+      "dma_overruns": 0,
+      "spi_error_flags": 0,
+      "error": 0,
+      "control_error": false,
+      "cleanup_error": 0,
+      "channels": [
+        {
+          "channel": 1,
+          "records": 7949,
+          "expected": 1193046,
+          "last": 1193046,
+          "first_seq": 0,
+          "last_seq": 7948,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 2,
+          "records": 7949,
+          "expected": 9022413,
+          "last": 9022413,
+          "first_seq": 0,
+          "last_seq": 7948,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 3,
+          "records": 7948,
+          "expected": 16702650,
+          "last": 16702650,
+          "first_seq": 0,
+          "last_seq": 7947,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        }
+      ]
+    }
+  },
+  {
+    "test": "alternating",
+    "result": {
+      "pass": true,
+      "requested_ms": 1000,
+      "elapsed_ms": 1002,
+      "received": 234795,
+      "fpga_tx": 234795,
+      "crc_errors": 0,
+      "header_errors": 0,
+      "discarded_bytes": 0,
+      "trailing_bytes": 0,
+      "dma_errors": 0,
+      "dma_overruns": 0,
+      "spi_error_flags": 0,
+      "error": 0,
+      "control_error": false,
+      "cleanup_error": 0,
+      "channels": [
+        {
+          "channel": 1,
+          "records": 78265,
+          "expected": 5592405,
+          "last": 5592405,
+          "first_seq": 0,
+          "last_seq": 12728,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 2,
+          "records": 78265,
+          "expected": 11184810,
+          "last": 11184810,
+          "first_seq": 0,
+          "last_seq": 12728,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 3,
+          "records": 78265,
+          "expected": 1193046,
+          "last": 1193046,
+          "first_seq": 0,
+          "last_seq": 12728,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        }
+      ]
+    }
+  },
+  {
+    "test": "coldboot_default",
+    "result": {
+      "pass": true,
+      "requested_ms": 1000,
+      "elapsed_ms": 1002,
+      "received": 234794,
+      "fpga_tx": 234794,
+      "crc_errors": 0,
+      "header_errors": 0,
+      "discarded_bytes": 0,
+      "trailing_bytes": 0,
+      "dma_errors": 0,
+      "dma_overruns": 0,
+      "spi_error_flags": 0,
+      "error": 0,
+      "control_error": false,
+      "cleanup_error": 0,
+      "channels": [
+        {
+          "channel": 1,
+          "records": 78265,
+          "expected": 1193046,
+          "last": 1193046,
+          "first_seq": 0,
+          "last_seq": 12728,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 2,
+          "records": 78265,
+          "expected": 9022413,
+          "last": 9022413,
+          "first_seq": 0,
+          "last_seq": 12728,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        },
+        {
+          "channel": 3,
+          "records": 78264,
+          "expected": 16702650,
+          "last": 16702650,
+          "first_seq": 0,
+          "last_seq": 12727,
+          "value_errors": 0,
+          "sequence_errors": 0,
+          "fpga_drop": 0,
+          "fpga_restart": 0
+        }
+      ]
+    }
+  }
+]

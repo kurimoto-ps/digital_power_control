@@ -1,0 +1,137 @@
+[sdram]
+0x08004a08 in __l_vfprintf ()
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x080014d4 msp: 0x24001a80
+Unable to match requested speed 4000 kHz, using 3300 kHz
+Unable to match requested speed 4000 kHz, using 3300 kHz
+** Programming Started **
+Padding image section 0 at 0x08007698 with 8 bytes
+Padding image section 1 at 0x08007710 with 16 bytes (bank write end alignment)
+Adding extra erase range, 0x08007720 .. 0x0801ffff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+** Resetting Target **
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x61000000 pc: 0x08004cac psp: 0x24001260
+$1 = {magic = 1381381432, ticks = 3, sysclk_hz = 400000000, hclk_hz = 200000000, pwr_cr3 = 65604, pwr_d3cr = 57344, syscfg_pwrcr = 0, syscfg_ur1 = 65536, error = 0, ready_raw = 1, fault_raw = 1, irq_raw = 1}
+$2 = {stage = 5, failed_address = 0, expected = 0, actual = 0}
+[Inferior 1 (Remote target) detached]
+
+
+[ethernet]
+net_udp_input (pkt=0x10, udp_access=0x0) at /workdir/zephyrproject/zephyr/include/zephyr/net/net_pkt.h:882
+882		return pkt->ipv4_opts_len;
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x08001620 msp: 0x24001a80
+Unable to match requested speed 4000 kHz, using 3300 kHz
+Unable to match requested speed 4000 kHz, using 3300 kHz
+** Programming Started **
+Padding image section 0 at 0x08012c34 with 12 bytes (bank write end alignment)
+Adding extra erase range, 0x08012c40 .. 0x0801ffff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+** Resetting Target **
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x61000000 pc: 0x0800b872 psp: 0x24002a20
+$1 = {magic = 1381381432, ticks = 5, sysclk_hz = 400000000, hclk_hz = 200000000, pwr_cr3 = 65604, pwr_d3cr = 57344, syscfg_pwrcr = 0, syscfg_ur1 = 65536, error = 0, ready_raw = 1, fault_raw = 1, irq_raw = 1}
+[Inferior 1 (Remote target) detached]
+
+
+[spi]
+0x0800b872 in ?? ()
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x08001750 msp: 0x24003240
+Unable to match requested speed 4000 kHz, using 3300 kHz
+Unable to match requested speed 4000 kHz, using 3300 kHz
+** Programming Started **
+Padding image section 0 at 0x080085a4 with 8 bytes
+Adding extra erase range, 0x080087a0 .. 0x0801ffff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+** Resetting Target **
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x61000000 pc: 0x08005798 psp: 0x240013e0
+$1 = {magic = 1381381432, ticks = 5, sysclk_hz = 400000000, hclk_hz = 200000000, pwr_cr3 = 65604, pwr_d3cr = 57344, syscfg_pwrcr = 0, syscfg_ur1 = 65536, error = 0, ready_raw = 1, fault_raw = 1, irq_raw = 1}
+[Inferior 1 (Remote target) detached]
+
+
+[spi4_regs]
+net_if_lock (iface=0x0) at /workdir/zephyrproject/zephyr/include/zephyr/net/net_if.h:790
+790		NET_ASSERT(iface);
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x080015e4 msp: 0x24001c00
+Unable to match requested speed 4000 kHz, using 3300 kHz
+Unable to match requested speed 4000 kHz, using 3300 kHz
+** Programming Started **
+Padding image section 0 at 0x0801c53c with 4 bytes
+Adding extra erase range, 0x0801c580 .. 0x0801ffff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+** Resetting Target **
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x61000000 pc: 0x08012c40 psp: 0x240065e0
+$1 = {magic = 1381381432, ticks = 5, sysclk_hz = 400000000, hclk_hz = 200000000, pwr_cr3 = 65604, pwr_d3cr = 57344, syscfg_pwrcr = 0, syscfg_ur1 = 65536, error = 0, ready_raw = 1, fault_raw = 1, irq_raw = 1}
+[Inferior 1 (Remote target) detached]
+
+
+[combined]
+0x08012c40 in sys_heap_free (heap=<optimized out>, mem=<optimized out>) at /workdir/zephyrproject/zephyr/lib/heap/heap.c:319
+319		if (SYS_HEAP_HARDENING_MODERATE &&
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x0800205c msp: 0x24006e00
+Unable to match requested speed 4000 kHz, using 3300 kHz
+Unable to match requested speed 4000 kHz, using 3300 kHz
+** Programming Started **
+Padding image section 0 at 0x0801cc54 with 12 bytes (bank write end alignment)
+Adding extra erase range, 0x0801cc60 .. 0x0801ffff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+** Resetting Target **
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x61000000 pc: 0x08012eb4 psp: 0x240065e0
+$1 = {magic = 1381381432, ticks = 3, sysclk_hz = 400000000, hclk_hz = 200000000, pwr_cr3 = 65604, pwr_d3cr = 57344, syscfg_pwrcr = 0, syscfg_ur1 = 65536, error = 0, ready_raw = 1, fault_raw = 1, irq_raw = 1}
+$2 = {stage = 5, failed_address = 0, expected = 0, actual = 0}
+[Inferior 1 (Remote target) detached]
+
+
+[adc_dummy]
+0x08012eb4 in sys_clock_tick_get () at /workdir/zephyrproject/zephyr/kernel/timeout.c:359
+359	}
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x08002174 msp: 0x24006e00
+Unable to match requested speed 4000 kHz, using 3300 kHz
+Unable to match requested speed 4000 kHz, using 3300 kHz
+** Programming Started **
+Padding image section 0 at 0x0801f8ec with 4 bytes
+Padding image section 1 at 0x0801f930 with 16 bytes (bank write end alignment)
+Adding extra erase range, 0x0801f940 .. 0x0801ffff
+** Programming Finished **
+** Verify Started **
+** Verified OK **
+** Resetting Target **
+[stm32h7x.cpu0] halted due to debug-request, current mode: Thread 
+xPSR: 0x61000000 pc: 0x08014a0e psp: 0x24012820
+$1 = {magic = 1381381432, ticks = 3, sysclk_hz = 400000000, hclk_hz = 200000000, pwr_cr3 = 65604, pwr_d3cr = 57344, syscfg_pwrcr = 0, syscfg_ur1 = 65536, error = 0, ready_raw = 1, fault_raw = 1, irq_raw = 1}
+$2 = {stage = 5, failed_address = 0, expected = 0, actual = 0}
+[Inferior 1 (Remote target) detached]
+
+
+[bringup]
+__enable_irq () at /workdir/zephyrproject/modules/hal/cmsis_6/CMSIS/Core/Include/cmsis_gcc.h:803
+803	    __ASM volatile ("cpsie i" : : : "memory");
+$1 = {magic = 1381381432, ticks = 6, sysclk_hz = 400000000, hclk_hz = 200000000, pwr_cr3 = 65604, pwr_d3cr = 57344, syscfg_pwrcr = 0, syscfg_ur1 = 65536, error = 0, ready_raw = 1, fault_raw = 1, irq_raw = 1}
+0x1ff1e800:	0x00250028	0x35335115	0x39383331
+[Inferior 1 (Remote target) detached]
+
+
+[final_status]
+__enable_irq () at /workdir/zephyrproject/modules/hal/cmsis_6/CMSIS/Core/Include/cmsis_gcc.h:803
+803	    __ASM volatile ("cpsie i" : : : "memory");
+$1 = {magic = 1381381432, ticks = 36, sysclk_hz = 400000000, hclk_hz = 200000000, pwr_cr3 = 65604, pwr_d3cr = 57344, syscfg_pwrcr = 0, syscfg_ur1 = 65536, error = 0, ready_raw = 1, fault_raw = 1, irq_raw = 1}
+$2 = {stage = 5, failed_address = 0, expected = 0, actual = 0}
+[Inferior 1 (Remote target) detached]

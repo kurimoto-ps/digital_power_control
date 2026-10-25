@@ -347,3 +347,22 @@ rev58 customer handoff (2026-10-25)
   input and frame restart detection, all 65536 DAC code/voltage round trips,
   voltage limits, connector selection, and absence of unintended DAC writes.
 * Both bringup and adc_dummy build and artifact verification passed.
+
+
+New rev58 board acceptance (2026-10-25)
+======================================
+
+* STM32 UID words: 00250028 / 35335115 / 39383331. Fresh board replaced the
+  previous unit; FPGA v1.3 was programmed by the user.
+* Changed BCM4 from 1 to 0, retained BCM7=1 and other option bytes.
+* Bringup, sdram, ethernet, spi, spi4_regs, combined and adc_dummy profiles
+  passed their implemented checks. SDRAM full 8 MiB stage=5; SYSCLK/HCLK
+  400/200 MHz; SPI4 register test and multiple SPI1 DMA dummy patterns passed.
+* Customer adc_dummy image was programmed and verified. HEX SHA-256:
+  169b05152db4e75fb2e9f15a7869a3f78903bbc400073d45196ae9d42e489f2c.
+* After user power cycling, with no debugger connected, initial-state SPI4
+  test passed (0 -> 176 writes) and 1 s ADC test passed (234794 records).
+* Final CONTROL=0, SOURCE_MODE=0, DAC_TRANSFER_COUNT=0. Customer firmware
+  remains running. Real ADC optical input and DAC analog output were not tested.
+* Full record and JSON diagnostics: ``targets/jparc_rev58/docs/measurements/``
+  ``2026-10-25-board-00250028-35335115-39383331/README.md``.
