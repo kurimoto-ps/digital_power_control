@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8"><title>JPARC rev58 ソフトウェア開発・実機確認 作業報告書</title>
+<style>
+body { font-family: sans-serif; font-size: 10.5pt; line-height: 1.55; color: #202e3b; }
+h1 { font-size: 23pt; line-height: 1.35; color: #173b59; margin: 5pt 0 12pt; }
+h2 { font-size: 14pt; color: #173b59; margin: 15pt 0 7pt; border-bottom: 1px solid #b8cbd8; padding-bottom: 4pt; }
+h3 { font-size: 11pt; color: #173b59; margin: 10pt 0 3pt; }
+p { margin: 5pt 0; }
+table { width: 100%; border-collapse: collapse; margin: 7pt 0; font-size: 9.5pt; }
+th { background: #e6eef4; color: #173b59; text-align: left; font-weight: bold; }
+th,td { border: 0.5px solid #c4d1db; padding: 6pt 7pt; vertical-align: top; }
+.small { font-size: 8.8pt; color: #506070; }
+.label { font-size: 10pt; color: #52738c; }
+.result { background: #edf4f7; padding: 10pt; margin: 10pt 0; }
+code { font-family: monospace; font-size: 9pt; }
+a { color: #1f587e; }
+.compact td, .compact th {padding: 3pt 7pt;}
+</style></head><body>
+<!-- PAGE -->
+<p class="label">作業報告書 ／ 2026年10月26日作成</p>
+<h1>JPARC rev58<br>ソフトウェア開発・実機確認</h1>
+<p>対象：STM32H745XIH6・MAX10搭載 JPARC rev58基板</p>
+<p>本書は、rev58用Zephyrソフトウェアの開発、ホストPC用試験スクリプトの作成、実機での動作確認、および納品資料の整備について、実施した作業を報告する。</p>
+<h2>1. Zephyrソフトウェアの開発</h2>
+<h3>1.1 ボード定義・開発構成の整備</h3>
+<p>既存Nucleo用とrev58用を独立したディレクトリに分離し、rev58専用のボード定義、ピン設定、メモリ設定およびビルド・書込み用スクリプトを整備した。STM32H745のM7単独で動作する起動確認アプリケーションを実装した。</p>
+<p>電源設定をDirect SMPS・VOS1に合わせ、SYSCLK 400 MHz、HCLK 200 MHzで動作する構成とした。使用中のZephyrに対するクロック初期化の修正はrev58に限定して適用し、元ソースのハッシュ照合を組み込んだ。</p>
+<h3>1.2 SDRAM・Ethernet・SPI4の実装</h3>
+<p>外部SDRAM 8 MiBの初期化と全域試験を実装した。試験内容はwalking bit、アドレス／反転パターン、1秒間の保持、上下バイトの独立書込みである。</p>
+<p>Ethernet経由でMAX10のSPI4レジスタを読み書きするTCPサーバを実装した。書込み後に別フレームで読み戻し、一致を確認して応答する処理を追加した。起動確認時に判明したLAN8742初期化のEALREADY扱いとSPI4クロック源の設定を修正した。</p>
+<p>SDRAM試験に合格してからEthernet／SPI4サーバを起動する統合構成を作成した。通信先は固定IP 192.168.100.58、TCPポート4244とした。</p>
+<h3>1.3 SPI1循環DMA受信・ダミー検査の実装</h3>
+<p>FPGA統合版v1.3に対応し、STM32のSPI1をスレーブ受信、Mode 0、20 MHz入力として設定した。内部AXI SRAMに32 KiBの循環DMAバッファを設け、受信データを16 KiB単位で回収・解析する処理を実装した。</p>
+<p>ホストの試験要求に応じ、FPGA送信停止、ダミー値設定、DMA受信開始、FPGA送信許可の順に制御する機能を実装した。チャンネル識別、24 bit値、CRC16、通番、受信数、SPI／DMAエラーを検査し、終了後は送信停止・実ADCモードへ戻す処理を追加した。</p>
+<!-- PAGE -->
+<p class="label">JPARC rev58 ／ 作業報告書</p>
+<h2>2. 新品基板への書込み・実機試験</h2>
+<p>2026年10月25日、同型の別の新品基板に対して、STM32の設定・書込みと各構成の動作試験を実施した。MAX10は事前に書込み済みの状態で試験した。</p>
+<table><tr><th width="29%">対象・設定</th><th>確認内容</th></tr>
+<tr><td>STM32固有ID</td><td>00250028 / 35335115 / 39383331<br>0x1FF1E800から32 bit単位で読出し</td></tr>
+<tr><td>接続・デバイス</td><td>ST-LINK V3SET、SWD、ターゲット電圧3.27 V<br>Device ID 0x450、Rev V、Flash 2 MiB</td></tr>
+<tr><td>起動設定</td><td>BCM4を1から0へ変更し、M4自動起動を無効化。BCM7=1を維持。変更後の書込み照合を実施。</td></tr>
+<tr><td>FPGA識別</td><td>ID 0x4A503538、version 0x00010003、capabilities 0x0000000FをSPI4で読出し。</td></tr></table>
+<h3>2.1 起動・周辺機能の確認</h3>
+<table><tr><th width="23%">試験構成</th><th>実施内容・結果</th></tr>
+<tr><td>bringup</td><td>M7起動、tick進行、SYSCLK 400 MHz／HCLK 200 MHz、error=0を確認。</td></tr>
+<tr><td>sdram</td><td>8 MiB全域試験が完了。stage=5、失敗アドレス・期待値・実値は0。</td></tr>
+<tr><td>ethernet</td><td>初期化error=0、PHY ID読出し成功、リンクupを確認。</td></tr>
+<tr><td>spi</td><td>SPI1〜4ドライバの初期化・readyを確認。</td></tr>
+<tr><td>spi4_regs</td><td>初期値確認付き176回書込み試験が合格。0x0100への0x12345678の書込み・読戻しが一致。</td></tr>
+<tr><td>combined</td><td>SDRAM合格後、Ethernet／SPI4で176回書込み試験が合格。</td></tr>
+<tr><td>adc_dummy</td><td>顧客用構成を書込み・照合。SDRAM、Ethernet／SPI4、SPI1 DMAダミー受信試験が合格。</td></tr></table>
+<h3>2.2 SPI1・DMA受信試験</h3>
+<table><tr><th>ダミー値（3系統・16進）</th><th>時間</th><th>受信レコード数</th><th>結果</th></tr>
+<tr><td>123456 / 89ABCD / FEDCBA</td><td>1秒</td><td>234,793</td><td>合格</td></tr>
+<tr><td>000000 / FFFFFF / 800000</td><td>3秒</td><td>703,783</td><td>合格</td></tr>
+<tr><td>既定値・3回反復</td><td>各100 ms</td><td>23,845 / 23,847 / 23,846</td><td>全合格</td></tr>
+<tr><td>555555 / AAAAAA / 123456</td><td>1秒</td><td>234,795</td><td>合格</td></tr></table>
+<p>全試験で受信数とFPGA送信数が一致し、CRC・値・通番・SPI・DMAエラーおよび送信中のDROP／RESTARTは0であった。</p>
+<!-- PAGE -->
+<p class="label">JPARC rev58 ／ 作業報告書</p>
+<h2>3. 終了処理・電源再投入の確認</h2>
+<p>1秒間のダミー試験を要求した直後にホスト接続を切断し、2秒後に別接続から送信停止と実ADCモードへの復帰を確認した。</p>
+<p>基板の電源OFF／ON後、OpenOCD／GDBを接続せずにEthernet通信を確認した。FPGAのWRITE_COUNT初期値0を確認し、初期値確認付き176回書込み試験が合格した。さらに1秒間のADCダミー試験で234,794レコードを受信し、FPGA送信数との一致および全エラー0を確認した。</p>
+<div class="result">最終状態：顧客用 <b>adc_dummy</b> をFlashへ書込み・照合済み。<br>電源再投入後の単独起動を確認し、CONTROL=0、SOURCE_MODE=0、DAC_TRANSFER_COUNT=0の状態で動作させた。</div>
+<h2>4. ホストPC用スクリプト・資料の整備</h2>
+<table><tr><th width="34%">成果物</th><th>実施した内容</th></tr>
+<tr><td>spi4_client.py</td><td>EthernetからのFPGA識別、レジスタ読書き、16レジスタ・176回書込み試験を作成した。</td></tr>
+<tr><td>adc_dummy_client.py</td><td>ダミー値・試験時間・反復回数を指定し、SPI1 DMA検査結果を取得するスクリプトを作成した。</td></tr>
+<tr><td>adc_input_client.py</td><td>FPGAの最新受信値レジスタをSPI4で読み、生の24 bit値・整数値・電圧をCSV出力する処理を作成した。換算係数は3 / 2²³とし、符号形式の選択を実装した。</td></tr>
+<tr><td>dac_output_client.py</td><td>±10 V・符号付き16 bitの電圧指令を実装した。CN番号による出力指定、コードへの換算、範囲外値の拒否、FPGA送信状態の表示を追加した。</td></tr>
+<tr><td>回路図・仕様書の照合</td><td>O/EのIC1〜9とADC1〜3の信号対応を照合した。DAC回路を追跡し、CH1〜16がCN3〜CN18に対応することを確認した。FPGA v1.3統合仕様を納品資料に反映した。</td></tr>
+<tr><td>納品・試験資料</td><td>構成説明、ADC／DAC試験手順、立ち上げ手順、実機試験記録を整備した。客先向け資料と関連資料の英語版11ファイルを追加した。</td></tr></table>
+<p>ホスト側29件のテストが成功した。DAC換算では全65,536コードの往復変換、端点、丸め、範囲外値の拒否を検証した。ソース、試験スクリプト、資料および実機試験記録をGitHubの開発ブランチへ保存した。</p>
+<p class="small">実ADC表示はFPGAの最新値を読む方式であり、循環DMAバッファの読出しではない。SPI1循環DMAはダミー試験中に動作する構成として実装・確認した。</p>
+<!-- PAGE -->
+<p class="label">JPARC rev58 ／ 作業報告書</p>
+<h2>5. 作業成果の識別情報</h2>
+<table class="compact"><tr><th width="31%">項目</th><th>記録</th></tr>
+<tr><td>GitHubリポジトリ</td><td><a href="https://github.com/kurimoto-ps/digital_power_control">kurimoto-ps/digital_power_control</a></td></tr>
+<tr><td>管理ブランチ</td><td>feature/jparc-rev58-zephyr-layout</td></tr>
+<tr><td>対象ディレクトリ</td><td>targets/jparc_rev58/</td></tr>
+<tr><td>STM32アプリ基準</td><td>edd9817（SPI1循環DMAダミー試験の実装）</td></tr>
+<tr><td>客先用ツール・配線対応</td><td>0a6f953（CN対応確定・DAC電圧指令追加）</td></tr>
+<tr><td>新品基板の試験記録</td><td>a5ed69d（書込み・実機受入れ結果の保存）</td></tr>
+<tr><td>英語版資料</td><td>50e7268（英語版11ファイルの追加）</td></tr>
+<tr><td>最終書込み構成</td><td>jparc_rev58/stm32h745xx/m7 ／ adc_dummy</td></tr></table>
+<h3>書込み済みSTM32イメージのSHA-256</h3>
+<p class="small">zephyr.hex<br><code>169b05152db4e75fb2e9f15a7869a3f78903<br>bbc400073d45196ae9d42e489f2c</code></p>
+<p class="small">zephyr.bin<br><code>588cd563cd1c7fbf0e5994d1c178e28c45b0<br>ba60640747d613a4d47e75ffe0d0</code></p>
+<p class="small">ハッシュは表示上のみ改行。各ファイルの64桁の値として記録。</p>
+<h2>6. 実施範囲</h2>
+<p>実機で確認した受信経路は、FPGA内部ダミー生成からSPI1送信、STM32 SPI1受信、DMA、循環バッファおよびデータ解析までである。SDRAM全域試験とEthernet／SPI4の読書きについても確認した。</p>
+<p>実ADCからの光伝送・O/E入力、DACの実アナログ出力、SPI2／SPI3の実データ転送、長時間連続運転、温度・電源変動および波形測定は本作業では実施していない。DACの電圧指令機能はソフトウェアで実装・検証したものであり、実機へのDAC出力要求は行っていない。</p>
+<p>新品基板のMAX10書込みは本作業に先立って実施済みであった。本作業ではSPI4でID・version・capabilitiesを確認したが、新品基板に実際に書き込まれたFPGAファイル自体のハッシュ照合は行っていない。</p>
+<h2>7. 根拠資料</h2>
+<p>下記は本報告書の数値・実施内容の根拠となるGitHub保存資料である。</p>
+<p>① <a href="https://github.com/kurimoto-ps/digital_power_control/blob/50e7268/targets/jparc_rev58/docs/measurements/2026-10-25-board-00250028-35335115-39383331/README.md">新品rev58基板のSTM32受入れ確認（実機結果・イメージ識別）</a><br>
+② <a href="https://github.com/kurimoto-ps/digital_power_control/blob/50e7268/targets/jparc_rev58/docs/measurements/2026-10-25-board-00250028-35335115-39383331/adc_results.json">ADCダミー試験結果JSON（全7回の検査結果）</a><br>
+③ <a href="https://github.com/kurimoto-ps/digital_power_control/blob/50e7268/targets/jparc_rev58/docs/CUSTOMER_DELIVERY.md">納品用ソフト構成説明</a><br>
+④ <a href="https://github.com/kurimoto-ps/digital_power_control/blob/50e7268/targets/jparc_rev58/docs/CUSTOMER_IO_TEST.md">ADC・DAC試験資料（CN対応・電圧換算仕様）</a></p>
+</body></html>

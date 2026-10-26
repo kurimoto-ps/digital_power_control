@@ -377,3 +377,14 @@ English customer documentation (2026-10-25)
 * English links connect the translated handoff documents; archived originals,
   schematic PDFs and checksum-protected FPGA source documents remain unchanged.
 * This is a documentation-only change; no firmware, scripts or board state changed.
+
+
+Customer work report (2026-10-26)
+================================
+
+* Added Japanese PDF report under ``targets/jparc_rev58/docs/reports/``:
+  ``2026-10-26_work_report_ja.pdf``. It records completed software development,
+  STM32 programming, new-board tests, power-cycle verification and documentation.
+* Editable HTML and a PyMuPDF renderer are included. Four A4 pages were rendered
+  and visually inspected; Japanese fonts, recorded values and image hashes were
+  checked. No firmware or connected-board state changed for this report.
