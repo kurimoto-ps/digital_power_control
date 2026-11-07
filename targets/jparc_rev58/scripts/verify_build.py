@@ -135,6 +135,19 @@ if 'CONFIG_JPARC_BOARD_IO_TEST=y' in config:
         require(re.search(r'\bJ8[.]' + str(contact) + r'\b', pins[physical]['direct_connections']),
                 'UART vs netlist ' + physical)
     require('CONFIG_UART_CONSOLE=y' not in config, 'UART8 must not carry console output')
+    for prop, physical, contact, fpga_ball in [('sync-gpios', 'PA0', 77, 'A7'),
+                                              ('trigger-gpios', 'PD13', 79, 'A8')]:
+        spec = user.props[prop].val
+        require(len(spec) == 1 and spec[0].controller == node['gpio' + physical[1].lower()] and
+                spec[0].data == {'pin': int(physical[2:]), 'flags': 0}, 'ACC GPIO assignment')
+        require(physical not in seen, 'ACC input pin collision ' + physical)
+        seen.add(physical)
+        connections = pins[physical]['direct_connections']
+        require(re.search(r'\bJ7[.]' + str(contact) + r'\b', connections) and
+                re.search(r'\bU5[.]' + fpga_ball + r'\b', connections), 'ACC shared net ' + physical)
+    fpga_clk = next(p for p in netlist['pins'] if p['device'] == 'U5' and p['ball'] == 'M9')
+    require(re.search(r'\bJ7[.]75\b', fpga_clk['direct_connections']), 'ACC 12 MHz FPGA net')
+
 
 patched = args.build_dir / 'jparc_rev58/clock_stm32_ll_h7_vos1.c'
 source = patched.read_text()

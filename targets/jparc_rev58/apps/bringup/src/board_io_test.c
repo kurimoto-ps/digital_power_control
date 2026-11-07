@@ -17,6 +17,20 @@ static const struct device *const serial = DEVICE_DT_GET(DT_NODELABEL(uart8));
 RING_BUF_DECLARE(rx_ring, 1024);
 static uint32_t rx_total, rx_dropped, error_flags, tx_total;
 static uint16_t output_latch;
+static const struct gpio_dt_spec acc_inputs[] = {
+    GPIO_DT_SPEC_GET(USER, sync_gpios), GPIO_DT_SPEC_GET(USER, trigger_gpios)
+};
+int board_acc_read(void *unused, uint32_t *levels)
+{
+    ARG_UNUSED(unused);
+    *levels = 0;
+    for (unsigned i = 0; i < ARRAY_SIZE(acc_inputs); ++i) {
+        int level = gpio_pin_get_raw(acc_inputs[i].port, acc_inputs[i].pin);
+        if (level < 0) { return level; }
+        *levels |= (uint32_t)level << (i + 1); /* Same bit positions as FPGA. */
+    }
+    return 0;
+}
 static void serial_irq(const struct device *dev, void *unused)
 {
     ARG_UNUSED(unused);
@@ -53,6 +67,12 @@ static int set_outputs(uint16_t mask)
 }
 int board_io_init(void)
 {
+    /* Shared with MAX10 and external drivers: inputs only, no pulls/EXTI. */
+    for (unsigned i = 0; i < ARRAY_SIZE(acc_inputs); ++i) {
+        if (!gpio_is_ready_dt(&acc_inputs[i])) { return -ENODEV; }
+        int rc = gpio_pin_configure_dt(&acc_inputs[i], GPIO_INPUT);
+        if (rc) { return rc; }
+    }
     for (unsigned i = 0; i < 16; ++i) {
         if (!gpio_is_ready_dt(&outputs[i]) || !gpio_is_ready_dt(&inputs[i])) { return -ENODEV; }
         int rc = gpio_pin_configure_dt(&outputs[i], GPIO_OUTPUT_LOW);

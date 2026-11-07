@@ -1,5 +1,8 @@
 # FPGA v2.0：11 CH受信・光リンク調整手順
 
+FPGA v2.0.1にも対応しました。[ACC入力診断・同軸配線試験](ACC_INPUT_TEST.md)で0x0024とSTM32 PA0/PD13を確認できます。J16/J17は96 kHz／TRIG、12 MHzは別のJ6光経路です。実機試験は未実施です。
+
+
 `mixed_adc` にPLC用16入力・16出力と母基板経由UART8の試験機能を追加しました。[試験者向け手順書](PLC_UART_TEST.md)を参照してください。実機確認は未実施です。
 
 
@@ -12,7 +15,7 @@
 | FPGA | STM32プロファイル | ホスト側 |
 |---|---|---|
 | v1.3 / `0x00010003` | `adc_dummy`（従来のまま） | `adc_dummy_client.py`、`adc_input_client.py` |
-| v2.0 / `0x00020000`、Capabilities `0x3f` | **`mixed_adc`** | **`mixed_adc_client.py`**、SPI4/DACスクリプト |
+| v2.0 / `0x00020000`・`0x3f`、v2.0.1 / `0x00020001`・`0x7f` | **`mixed_adc`** | **`mixed_adc_client.py`**、SPI4/DACスクリプト |
 
 v2の48バイトフレームを旧8バイトデコーダでは受信できません。新旧プロファイルを混ぜないでください。M7がEthernet・SPI4・SPI1 DMAを担当し、M4は起動しません（BCM4無効、BCM7有効）。SDRAM 8 MiB起動試験も従来どおり含みます。SPI1リング自体は内蔵AXI SRAMに配置します。
 

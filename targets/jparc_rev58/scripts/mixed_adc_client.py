@@ -12,8 +12,8 @@ APPLIED = (0x540, 0x544, 0x548, 0x54c, 0x550)
 
 def probe(c):
     info = c.info()
-    if (info['version'], info['capabilities']) != (0x20000, 0x3f):
-        raise TestError('Requires FPGA v2.0 (0x00020000), capabilities 0x3f')
+    if (info['version'], info['capabilities']) not in ((0x20000, 0x3f), (0x20001, 0x7f)):
+        raise TestError('Requires FPGA v2.0/0x3f or v2.0.1/0x7f')
     if c.read(0x40c) != 3 or c.read(0x560) != 8:
         raise TestError('Unexpected ADC channel counts')
 

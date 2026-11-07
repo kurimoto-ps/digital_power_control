@@ -205,7 +205,8 @@ bool mixed_adc_command(char *line, char reply[SPI4_REPLY_SIZE],
     uint32_t id, version, caps, count, mask, negate, period, status, enabled;
     if (!read_reg(&ctrl, 0, &id) || !read_reg(&ctrl, 4, &version) ||
         !read_reg(&ctrl, 8, &caps) || !read_reg(&ctrl, 0x040c, &count) ||
-        id != SPI4_DEVICE_ID || version != MIXED_FIRMWARE_VERSION || caps != 0x3f || count != 3 ||
+        id != SPI4_DEVICE_ID || !((version == 0x00020000 && caps == 0x3f) ||
+          (version == 0x00020001 && caps == 0x7f)) || count != 3 ||
         !read_reg(&ctrl, 0x0560, &count) || count != 8) {
         strcpy(reply, "ERR MIX_REQUIRES_V2_CAPS_3F_CHANNELS_3_8\n"); return true;
     }

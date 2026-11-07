@@ -436,3 +436,29 @@ rev58 PLC GPIO / motherboard UART wiring tests (2026-11-07)
 * Validation: 49 host tests passed; all eight rev58 profiles built and passed
   artifact checks. The mixed_adc check now covers 88 active peripheral pins,
   including all 32 PLC GPIOs and the swapped UART8 pair, against the rev58 netlist.
+
+
+rev58 FPGA v2.0.1 ACC input monitoring (2026-11-07)
+=================================================
+
+* ``mixed_adc`` configures PA0 (96 kHz) and PD13 (TRIG) as GPIO inputs without
+  pulls or edge interrupts; no peripheral pin conflict. Existing PLC, UART,
+  ADC/DAC, Ethernet and SDRAM functions remain included.
+* Read-only ``ACC READ`` checks VERSION 0x00020001 and capability bit6 before
+  reading 0x0024 through the existing SPI4 response/status decoder. It returns
+  FPGA levels and GPIO snapshots before/after that transaction. Reserved bits
+  must be zero. Single-threaded SPI4 serialization remains intact.
+* ``acc_input_client.py`` logs named levels and offers expected static-level
+  comparison plus a guided J16/J17 coax test. Reports explicitly exclude the
+  12 MHz net from coax acceptance: it originates at optical receiver J6 via
+  AC coupling/comparator circuitry, and has no direct STM32 input.
+* Updated ADC and DAC version gates to accept both v2.0 and v2.0.1. No changes
+  to 48-byte SPI1 decoding, DMA configuration or ADC/DAC register semantics.
+  New supplied specification/header archived with provenance; v2.0 header kept.
+* Japanese/English manuals distinguish instantaneous observations from frequency
+  or trigger-history measurements and document non-simultaneous sampling.
+  No flashing, coax/optical measurements or physical mapping tests performed.
+* Validation: all 60 host tests passed, including actual C SPI4 ACC decoding,
+  old-version/capability gating, response errors, static comparisons and guided
+  test reports. All eight rev58 profiles built and passed artifact checks;
+  mixed_adc now checks 90 active pins including the two shared ACC inputs.

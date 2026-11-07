@@ -19,6 +19,7 @@
 
 #ifdef CONFIG_JPARC_BOARD_IO_TEST
 #include "board_io_test.h"
+#include "acc_monitor.h"
 #endif
 
 BUILD_ASSERT(IS_ENABLED(CONFIG_NET_CONTEXT_RCVTIMEO) &&
@@ -92,6 +93,9 @@ static void serve_client(int fd)
                 } else {
                     /* Conservative 10 ms settling on every command, including after reconfiguration. */
                     k_msleep(10);
+#ifdef CONFIG_JPARC_BOARD_IO_TEST
+                    if (!acc_monitor_command(line, reply, transfer, NULL, board_acc_read, NULL))
+#endif
 #ifdef CONFIG_JPARC_ADC_DUMMY_TEST
                     if (!adc_dummy_command(line, reply, transfer, NULL))
 #endif

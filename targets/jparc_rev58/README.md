@@ -1,5 +1,8 @@
 # J-PARC rev58 Zephyr開発
 
+FPGA v2.0.1にも対応しました。[ACC入力診断・同軸配線試験](docs/ACC_INPUT_TEST.md)で0x0024とSTM32 PA0/PD13を確認できます。J16/J17は96 kHz／TRIG、12 MHzは別のJ6光経路です。実機試験は未実施です。
+
+
 `mixed_adc` にPLC用16入力・16出力と母基板経由UART8の試験機能を追加しました。[試験者向け手順書](docs/PLC_UART_TEST.md)を参照してください。実機確認は未実施です。
 
 

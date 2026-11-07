@@ -25,6 +25,7 @@ if(CONFIG_JPARC_MIXED_ADC_TEST)
 endif()
 
 if(CONFIG_JPARC_BOARD_IO_TEST)
-  target_sources(app PRIVATE src/board_io_test.c ${REV58_ROOT}/lib/plc/board_io_protocol.c)
+  target_sources(app PRIVATE src/board_io_test.c ${REV58_ROOT}/lib/plc/board_io_protocol.c
+    ${REV58_ROOT}/lib/fpga_link/acc_monitor.c)
   target_include_directories(app PRIVATE ${REV58_ROOT}/lib/plc)
 endif()

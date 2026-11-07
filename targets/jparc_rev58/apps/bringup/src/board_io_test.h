@@ -3,5 +3,6 @@
 #define REV58_BOARD_IO_TEST_H
 #include "spi4_protocol.h"
 int board_io_init(void);
+int board_acc_read(void *unused, uint32_t *levels);
 bool board_io_command(const char *line, char reply[SPI4_REPLY_SIZE]);
 #endif

@@ -98,13 +98,21 @@ class ProtocolTests(unittest.TestCase):
             self.with_server(lambda c: self.assertEqual(c.write(addr, 0xffffffff), mask))
         self.assertEqual(self.fw.command('INFO').split()[3], '0x00020000')
 
+    def test_v201_identity_and_existing_register_test(self):
+        self.fw.regs.update({4: 0x20001, 8: 127})
+        self.with_server(lambda c: self.assertEqual(c.info()['version'], 0x20001))
+        self.with_server(lambda c: self.assertIn('PASS', client.run_test(c)))
+
     def test_v2_dac_linked_channel_rejects_manual_write(self):
         class LinkedDAC:
-            def info(self): return {'version': 0x20000, 'capabilities': 63}
+            version = 0x20000
+            def info(self): return {'version': self.version, 'capabilities': 63 if self.version == 0x20000 else 127}
             def read(self, addr): return {0x1c: 16, 0x60: 1}[addr]
             def write(self, addr, value): raise AssertionError('must not write')
-        with self.assertRaisesRegex(client.TestError, 'ADC-linked'):
-            client.dac_set(LinkedDAC(), 1, 123)
+        for version in (0x20000, 0x20001):
+            dac = LinkedDAC(); dac.version = version
+            with self.assertRaisesRegex(client.TestError, 'ADC-linked'):
+                client.dac_set(dac, 1, 123)
 
     def test_reference_vectors_and_write_readback(self):
         self.assertEqual(self.fw.command('READ 0'), 'OK READ 0x0000 0x4a503538\n')

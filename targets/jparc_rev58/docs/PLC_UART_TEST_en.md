@@ -1,5 +1,8 @@
 # PLC 16-input/16-output mapping and motherboard RS232 tests
 
+FPGA v2.0.1 is supported. See [ACC input diagnosis and coax wiring tests](ACC_INPUT_TEST_en.md) for the 0x0024 monitor and STM32 PA0/PD13 comparison. J16/J17 test 96 kHz/TRIG; 12 MHz is the separate J6 optical path. Hardware tests remain pending.
+
+
 Added 2026-11-07 for rev58 + TEP521C motherboard, STM32 **mixed_adc** profile.
 [日本語・配線表](PLC_UART_TEST.md) / [ADC/DAC system guide](MIXED_ADC_V2_en.md).
 
