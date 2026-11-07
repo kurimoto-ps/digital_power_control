@@ -462,3 +462,25 @@ rev58 FPGA v2.0.1 ACC input monitoring (2026-11-07)
   old-version/capability gating, response errors, static comparisons and guided
   test reports. All eight rev58 profiles built and passed artifact checks;
   mixed_adc now checks 90 active pins including the two shared ACC inputs.
+
+
+rev58 FPGA v2.0.2 optical 12 MHz clock detection (2026-11-07)
+==========================================================
+
+* ACC diagnostics now gate clock registers on v2.0.2 / capability bit7,
+  reading 0x002C (VALID/ACTIVE/NEAR_12MHZ) and 0x0028 (17-bit completed 1 ms
+  rising-edge count). Unsupported versions do not access these registers.
+* Host logs expose count/ms, estimated Hz and the three flags. Automatic clock
+  pass/fail uses the atomic STATUS flag set; COUNT is supplementary because
+  separate READs may straddle a window boundary.
+* Added ``clock-test`` stop/start/stop guidance and ``read --clock-expect on|off``.
+  Tests wait 3 ms after operator-confirmed input changes and sample repeatedly.
+  Stopped requires valid+inactive, not merely absence of the near-12MHz flag.
+* Existing v2.0/v2.0.1 paths and ADC/DAC compatibility remain; SPI1 48-byte
+  format, DMA and shared STM32 GPIO assignments are unchanged. PLC, UART,
+  Ethernet and SDRAM remain included. Coax J16/J17 still test 96 kHz/TRIG;
+  optical J6 is tested separately with an actual 12 MHz clock, not held DC.
+* Japanese/English guides and supplied specification/header snapshots updated.
+  No FPGA/STM32 programming or physical optical/coax tests performed.
+* Validation: 65 host tests passed. All eight rev58 profiles built and passed
+  clock/RAM/netlist checks; mixed_adc retains 90 checked peripheral pins.

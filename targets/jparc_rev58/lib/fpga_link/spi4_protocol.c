@@ -82,7 +82,7 @@ void spi4_command(char *line, char reply[SPI4_REPLY_SIZE],
     uint32_t id, version;
     if (!spi4_exchange(transfer, ctx, 3, 0, 0, &id, reply) ||
         !spi4_exchange(transfer, ctx, 3, 4, 0, &version, reply)) { return; }
-    if (id != SPI4_DEVICE_ID || (version != 0x00020000 && version != 0x00020001 && (version < SPI4_VERSION || version > 0x00010003))) {
+    if (id != SPI4_DEVICE_ID || (version != 0x00020000 && version != 0x00020001 && version != 0x00020002 && (version < SPI4_VERSION || version > 0x00010003))) {
         snprintf(reply, SPI4_REPLY_SIZE, "ERR ID 0x%08lx 0x%08lx\n",
                  (unsigned long)id, (unsigned long)version);
         return;
@@ -108,7 +108,7 @@ void spi4_command(char *line, char reply[SPI4_REPLY_SIZE],
             if (addr == 0x0480) { expected &= 1; }
             if (addr >= 0x0484 && addr <= 0x048c) { expected &= 0xffffff; }
         }
-        if (version == 0x00020000 || version == 0x00020001) {
+        if (version == 0x00020000 || version == 0x00020001 || version == 0x00020002) {
             if (addr == 0x0060) { expected &= 0x7ff; }
             if (addr == 0x0500 || addr == 0x0510) { expected &= 1; }
             if (addr == 0x0504 || addr == 0x0508) { expected &= 0xffff; }

@@ -1,7 +1,7 @@
 # ACC 12 MHz / 96 kHz / TRIG wiring checks: FPGA and STM32
 
-For FPGA **v2.0.1**, STM32 **mixed_adc**, rev58 and TEP521C motherboard.
-[日本語](ACC_INPUT_TEST.md) / [Archived FPGA designer specification](hardware/acc_v201/ACC_INPUT_MONITOR_STM32.md).
+For FPGA **v2.0.2**, STM32 **mixed_adc**, rev58 and TEP521C motherboard.
+[日本語](ACC_INPUT_TEST.md) / [Archived FPGA designer specification](hardware/acc_v202/ACC_INPUT_MONITOR_STM32.md).
 
 **Build and host-model validation only. Neither image was programmed during this work; the physical tests below have not been performed.**
 
@@ -15,7 +15,7 @@ For FPGA **v2.0.1**, STM32 **mixed_adc**, rev58 and TEP521C motherboard.
 
 J7 and CN1B contacts use identical numbering. Test points: TP1=12 MHz, TP2=96 kHz, TP3=TRIG.
 
-**J16/J17 verify only the 96 kHz and TRIG nets. The 12 MHz net originates at optical receiver J6 and cannot be validated by those coax inputs.** All diagnostic records still display its instantaneous FPGA level.
+**J16/J17 verify only the 96 kHz and TRIG nets. The 12 MHz net originates at optical receiver J6 and cannot be validated by those coax inputs.** v2.0.2 diagnoses its optical clock using the new count/status registers; instantaneous levels remain in the log.
 
 Sources: [motherboard sheets 3/6 and 6/6](hardware/circuit/フィードバック基板_TEP521C回路図.pdf), [connector usage p.2](hardware/circuit/Connector_usage_rev58.pdf), [rev58 pin table](hardware/rev58/rev58_pin_tables.md).
 
@@ -23,17 +23,17 @@ Sources: [motherboard sheets 3/6 and 6/6](hardware/circuit/フィードバック
 
 PA0 and PD13 initialize as GPIO inputs without internal pulls or edge interrupts. They are not driven by STM32 or assigned to timers. Incoming 96 kHz does not generate per-edge software interrupts. Existing peripheral pins do not overlap; future owners of these pins must preserve or explicitly revise this arrangement.
 
-`ACC READ` verifies device ID, VERSION=`0x00020001` and capability bit6 before reading 0x0024. Old firmware is rejected without accessing that register. It uses the existing eight-byte SPI4 read handler, checking response status, big-endian data and zero reserved bits31:3. Diagnostics do not write FPGA registers or change PLC outputs.
+`ACC READ` verifies device ID, VERSION=`0x00020001` or `0x00020002` and capability bit6 before reading 0x0024. Old firmware is rejected without accessing that register. It uses the existing eight-byte SPI4 read handler, checking response status, big-endian data and zero reserved bits31:3. Diagnostics do not write FPGA registers or change PLC outputs.
 
-The server reads STM32 GPIO, then FPGA levels, then STM32 GPIO again. All SPI4 activity is serialized by the existing single server thread. ADC 48-byte circular DMA and ADC/DAC control are unchanged; both v2.0 and v2.0.1 remain supported for those functions. Only ACC monitoring requires v2.0.1. PLC GPIO, UART8, Ethernet and the 8 MiB SDRAM startup test remain included.
+The server reads STM32 GPIO, then FPGA levels, then STM32 GPIO again. All SPI4 activity is serialized by the existing single server thread. ADC 48-byte circular DMA and ADC/DAC control are unchanged; v2.0, v2.0.1 and v2.0.2 remain supported for those functions. Instantaneous ACC levels require v2.0.1 or v2.0.2; clock detection requires v2.0.2 and capability bit7. Unsupported clock registers are never accessed. PLC GPIO, UART8, Ethernet and the 8 MiB SDRAM startup test remain included.
 
 **Samples are sequential, not simultaneous.** FPGA inputs pass through three synchronization stages at 120 MHz and are captured around SPI4 address acceptance. The two STM32 GPIOs are also read in sequence. Running clocks can produce different readings without a fault. Even equal before/after values do not prove absence of transitions between observations.
 
-This interface measures instantaneous levels only: no frequency, pulse width, edge counter, sticky bit or trigger history. Short TRIG pulses may be missed and repeated clock reads can appear constant because of sampling phase. Use an oscilloscope or equivalent for clock presence/frequency verification.
+GPIO and 0x0024 measure instantaneous levels only. There is no 96 kHz frequency/pulse-width measurement or trigger history. v2.0.2 separately measures 12 MHz rising edges over completed 1 ms windows. Short TRIG pulses may be missed and repeated clock reads can appear constant because of sampling phase. Use an oscilloscope or equivalent for clock presence/frequency verification.
 
 ## Preparation
 
-Program FPGA v2.0.1 supplied by the designer and the current STM32 mixed_adc image. The flash command below is for the later hardware operator and was not executed in this work.
+Program FPGA v2.0.2 supplied by the designer and the current STM32 mixed_adc image. The flash command below is for the later hardware operator and was not executed in this work.
 
 ```sh
 # Zephyr development environment, repository root
@@ -54,7 +54,7 @@ python3 spi4_client.py info
 python3 acc_input_client.py read
 ```
 
-Expected VERSION=`0x00020001`, CAPABILITIES=`0x0000007f`. Host wired IP: `192.168.100.1/24`; STM32: `192.168.100.58:4244/TCP`. Use `--host IP` before the subcommand if necessary.
+Expected VERSION=`0x00020002`, CAPABILITIES=`0x000000ff`. Host wired IP: `192.168.100.1/24`; STM32: `192.168.100.58:4244/TCP`. Use `--host IP` before the subcommand if necessary.
 
 Start after GPIO initialization and a successful Ethernet response. Stop concurrent host operations during the wiring test. An ADC capture occupies the same TCP server and delays other requests; coexistence in one image does not provide parallel simultaneous measurements.
 
@@ -99,22 +99,55 @@ python3 acc_input_client.py read --count 5 --expect 0x2 --mask 0x6 --report boar
 
 Example: TX `03 00 24 00 00 00 00 00`, RX `00 00 00 00 00 00 00 05` means FPGA 12 MHz high, 96 kHz low, TRIG high. With stable signals, STM32 should read PA0=0 and PD13=1.
 
-## Separate 12 MHz verification
+## Optical 12 MHz start/stop test (v2.0.2)
 
-The J6 optical path includes AC coupling and a comparator. **Constant optical ON/OFF does not necessarily produce a held digital High/Low.** Applying 12 MHz to J16 tests the bit1 path, not the bit0 optical path.
+The J6 optical path is AC-coupled. **Fixed High does not detect 12 MHz.** Apply a real 12 MHz optical clock with a compatible source. Driving J16 tests the bit1 path, not the optical bit0 path. Do not attach an external driver directly to TP1.
 
-Agree optical test conditions with the hardware designer, apply an optical clock at J6 and measure EXT_CLK_OPT / TP1 waveform and frequency. Use bit0 logging as supplementary evidence. A constant polled bit alone cannot establish a disconnected clock.
+| Register | Log field | Meaning |
+|---|---|---|
+| 0x0028 | `clock.count_per_ms` | Rising edges in the last completed 1 ms window, 17 bits; about 12,000 at 12 MHz |
+| Same | `clock.estimated_hz` | Count × 1,000, approximate frequency |
+| 0x002C bit0 | `clock.window_valid` | First window after reset completed; stays set after input stops |
+| 0x002C bit1 | `clock.active` | At least one rising edge; not a 12 MHz verdict |
+| 0x002C bit2 | `clock.near_12mhz` | Count between 10,800 and 13,200 inclusive, about ±10% |
 
-Only if the designer provides an isolated fixture or equivalent that guarantees all three static FPGA input levels without contention with U27 may `read --expect 0x1 --mask 0x7` or similar be used to test bit0 statically. **Do not directly attach an external driver to TP1 in the normal assembled circuit.** No STM32 comparison input exists for 12 MHz.
+Typical STATUS: 7 while receiving 12 MHz, 1 when stopped, 3 at 6 MHz. Zero after reset means measurement pending, not a stopped-test pass. Steady High/Low yields zero edges and no near-12MHz detection. Registers are neither cumulative nor sticky, do not clear on read, and are not reset by ADC flow clear.
+
+**Wait at least 3 ms after starting/stopping input, then read several times.** Switching partway through a window may produce one mixed count. The guided test waits 3 ms after Enter and samples three times, 10 ms apart:
+
+```sh
+python3 acc_input_client.py clock-test --report board01_acc_12mhz.json
+```
+
+1. Stop the J6 optical clock, then Enter. Require STATUS=1 three times.
+2. Apply a 12 MHz optical clock to J6, then Enter. Require STATUS=7 three times and inspect counts near 12,000 in the log.
+3. Stop again, then Enter. Require STATUS=1 three times and inspect the steady count returning to zero.
+
+Acceptance: `complete: true`, `passed: true`, three `steps`. Count and estimated Hz are saved in JSON. Run the separate `coax-test` for 96 kHz/TRIG static mapping and retain both reports.
+
+**Automatic pass/fail uses STATUS**, whose flags are obtained together in one READ. COUNT is a separate READ and can belong to a different completed window. Strict count/status correspondence is therefore not required; `clock.paired_snapshot: false` records this limitation. Count is supplementary diagnostic evidence. Investigate persistently unexpected counts under stable input with the logs and measured waveform.
+
+```sh
+# After starting input; command waits 3 ms before reading
+python3 acc_input_client.py read --count 5 --interval 0.01 --clock-expect on --report clock_on.json
+# After stopping input; requires VALID=1, ACTIVE=0 and NEAR=0, not merely absence of 12 MHz
+python3 acc_input_client.py read --count 5 --interval 0.01 --clock-expect off --report clock_off.json
+```
+
+`--expect` checks 0x0024 instantaneous levels; `--clock-expect` checks clock status. Do not use `--expect 1 --mask 1` for a running 12 MHz input. v2.0.1 retains level diagnostics but reports `clock.supported: false`; clock-test and clock-expect reject unsupported firmware. Update the STM32 image as well as the FPGA.
+
+This ±10% check uses the internal 120 MHz reference, not a precision frequency standard. Narrow glitches or signals below the optical receiver threshold are not guaranteed to be counted correctly. The designer suggests at least 25 ns each for High and Low. Investigate unstable results with measurements at the MAX10 input/TP1.
+
+The script never controls the optical source. `q` or Ctrl+C saves partial results; the operator must stop the source manually.
 
 ## Records and troubleshooting
 
 Save board identity, both firmware versions, STM32 Git commit, coax connections, source and measured voltage, JSON reports and instrument traces.
 
-- `ERR ACC_REQUIRES_V2_0_1_CAP_BIT6`: check firmware/capability; the new register was not accessed.
+- `ERR ACC_REQUIRES_V2_0_1_OR_V2_0_2_CAP_BIT6`: check firmware/capability; the new register was not accessed.
 - `ERR NOT_READY`: inspect FPGA configuration completion.
 - SPI error / `ERR FPGA ...`: failed communication, not a valid level observation.
-- `ERR ACC_RESERVED_BITS`: nonzero reserved bits; inspect version, protocol or communication.
+- `ERR ACC_RESERVED_BITS` / `ERR ACC_CLOCK_RESERVED_BITS`: nonzero reserved bits; inspect version, protocol or communication.
 - Fixed-level mismatch: inspect shared PA0/PD13 wiring, contacts and voltage.
 - Running-clock mismatch or unchanged polling: use held-level mapping tests and instruments.
 

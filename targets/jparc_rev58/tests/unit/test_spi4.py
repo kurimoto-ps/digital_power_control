@@ -99,17 +99,18 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(self.fw.command('INFO').split()[3], '0x00020000')
 
     def test_v201_identity_and_existing_register_test(self):
-        self.fw.regs.update({4: 0x20001, 8: 127})
-        self.with_server(lambda c: self.assertEqual(c.info()['version'], 0x20001))
-        self.with_server(lambda c: self.assertIn('PASS', client.run_test(c)))
+        for version, caps in [(0x20001, 127), (0x20002, 255)]:
+            self.fw.regs.update({4: version, 8: caps})
+            self.with_server(lambda c: self.assertEqual(c.info()['version'], version))
+            self.with_server(lambda c: self.assertIn('PASS', client.run_test(c)))
 
     def test_v2_dac_linked_channel_rejects_manual_write(self):
         class LinkedDAC:
             version = 0x20000
-            def info(self): return {'version': self.version, 'capabilities': 63 if self.version == 0x20000 else 127}
+            def info(self): return {'version': self.version, 'capabilities': 63 if self.version == 0x20000 else 127 if self.version == 0x20001 else 255}
             def read(self, addr): return {0x1c: 16, 0x60: 1}[addr]
             def write(self, addr, value): raise AssertionError('must not write')
-        for version in (0x20000, 0x20001):
+        for version in (0x20000, 0x20001, 0x20002):
             dac = LinkedDAC(); dac.version = version
             with self.assertRaisesRegex(client.TestError, 'ADC-linked'):
                 client.dac_set(dac, 1, 123)

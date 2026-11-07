@@ -1,0 +1,98 @@
+# STM32向け：12 MHz／96 kHz／TRIG入力のマッピング確認
+
+対象：rev58 MAX10、ファームウェアv2.0.2（VERSION=`0x00020002`）。目的は、基板の3本のACC信号が期待するMAX10ピンへ入っているかを、STM32からSPI4経由で確認すること。
+
+## 追加レジスタ
+
+`ACC_INPUT_LEVELS = 0x0024`、32 bit読出し専用。High=1、Low=0。
+
+| bit | 信号 | MAX10 | 基板接点／テストポイント | STM32との共有 |
+|---|---|---|---|---|
+| 0 | ACC_12MHZ | M9 | J7-75、TP1 | 資料上STM32への直結なし |
+| 1 | ACC_96KHZ | A7 | J7-77、TP2 | PA0 |
+| 2 | ACC_TRIG | A8 | J7-79、TP3 | PD13 |
+| 31:3 | 予約 | — | 常に0 | — |
+
+根拠：[rev58ピン表](../../board/rev58/rev58_pin_tables.md)、[接続抽出JSON](../../board/rev58/rev58_pin_connections.json)。MAX10側は3本とも入力専用、3.3-V LVTTL。ファームウェアの出力や内部クロックには使わない。
+
+12 MHzなどの非同期入力を120 MHzで3段同期し、SPI4 READのアドレス受付時点付近にレジスタ応答用として保持する。入力変化の反映には数十nsとSPI4の応答待ち時間がある。読み取り完了時点の値とは限らない。3本は独立同期なので、同時に変化する信号の厳密な時間関係は判断しない。
+
+**`0x0024`は立ち上がり履歴・周波数・回数・stickyフラグを持たない。12 MHzは下記の追加レジスタで動作確認する。** 読出しでクリアされない。短いTRIGは読出し時にLowなら見えず、継続する12 MHzもSPI4ポーリングとの位相関係で同じ値ばかりに見える場合がある。0／1だけではクロックの有無や12 MHz／96 kHzの識別を保証できない。周波数確認は測定器等で行う。
+
+## STM32側に必要な変更
+
+1. VERSION `0x0004`が`0x00020002`で、CAPABILITIES `0x0008`のbit6（`0x40`）が1であることを確認する。今回のCAPABILITIES全体は`0xFF`。12 MHzの回数測定はbit7（`0x80`）の有無でも判定する。bit6の有無で機能を判定し、旧版で未実装のレジスタを読まない。
+2. 既存SPI4の8バイトREAD関数で`0x0024`を読む診断処理を追加する。SPI4はMode0、MSB first、1 MHz推奨、最大2 MHz。8バイトを1回のNSS Low内で送受信する。応答byte3のstatus=0を確認し、byte4〜7を32 bit BEとして取り出す。
+3. 値を`& 1`、`& 2`、`& 4`で分け、ログや診断画面へ信号名とHigh／Lowを表示する。SPI4は既存設定操作と同じmutexで直列化する。
+
+SPI1の48バイトDMA設定・11CHの並び・CRC、ADC／DACレジスタ設定については、直前のv2.0から変更不要。まだ旧v1.3の受信処理なら、[全体仕様末尾の更新手順](FIRMWARE_SPEC_v2.md)も適用する。
+
+読出し例：
+
+```text
+TX: 03 00 24 00 00 00 00 00
+RX: 00 00 00 00 00 00 00 05
+→ 12 MHz入力High、96 kHz入力Low、TRIG入力High
+```
+
+既存ドライバを使うCコードの例（`spi4_read32`は既存実装に合わせる）：
+
+```c
+#include <stdbool.h>
+#include "mixed_adc_protocol.h"
+
+uint32_t levels;
+int rc = spi4_read32(MIX_REG_ACC_INPUT_LEVELS, &levels);
+if (rc == 0) {
+    bool clk12_high = (levels & MIX_ACC_12MHZ_HIGH) != 0;
+    bool clk96_high = (levels & MIX_ACC_96KHZ_HIGH) != 0;
+    bool trig_high  = (levels & MIX_ACC_TRIG_HIGH) != 0;
+    /* 信号名と一緒に診断ログへ記録する。boolにはstdbool.hが必要。 */
+}
+```
+
+## 実機で行うマッピング確認
+
+1. 外部から信号を与える場合、共有するSTM32 PA0／PD13は入力にする。STM32や別の外部回路が同時に出力しない状態を確認する。
+2. DCレベルを伝送できる経路では、可能ならクロック発生器を停止して、3本をLowへ固定する。SPI4読出しの下位3 bitが`000`であることを確認。
+3. 1本ずつHighへ固定し、12 MHz線だけなら`001`、96 kHz線だけなら`010`、TRIG線だけなら`100`になることを確認する。実入力が安定してからSPI4を読む。診断上は1 ms程度待てば十分な余裕がある。
+4. HighからLowに戻して対応bitが0へ戻ることも確認する。残りのbitまで動けば配線や信号の取り違えを調べる。
+5. 信号を固定できない場合は、測定器の波形とポーリング値を併せて見る。ただし同じ値が続くことだけを理由に未接続と判定しない。
+
+未接続ピンの浮いた値は接続確認に使わない。電圧は基板の3.3 V入力条件に合わせる。
+
+本作業は実機なしでRTL検証とSOF／POF生成まで。ファームウェアの書き込みと物理配線の確認は未実施。
+
+## v2.0.2追加：ACカップリング経路の12 MHz検出
+
+12 MHzの光受信経路がDCレベルを伝送できない場合、固定High／Low試験の代わりに12 MHzクロックを入れ、次の読出しを使う。96 kHz／TRIGは従来どおり`0x0024`で確認する。
+
+| アドレス | 名前 | 内容 |
+|---|---|---|
+| `0x0028` | ACC_12MHZ_COUNT、RO | 直前に完了した1 ms窓の立ち上がり回数。bits16:0、上位0。12 MHzなら約12,000（`0x2EE0`）。概算Hzは回数×1,000 |
+| `0x002C` | ACC_CLOCK_STATUS、RO | bit0 WINDOW_VALID、bit1 ACTIVE、bit2 NEAR_12MHZ。上位0 |
+
+- WINDOW_VALID：FPGA reset後、最初の1 ms窓が完了すれば1。入力停止後も1。reset時は回数・状態とも0へ戻る。
+- ACTIVE：直前の1 ms窓に立ち上がりが1回以上あった場合1。これは12 MHz判定ではない。
+- NEAR_12MHZ：直前窓の回数が**10,800〜13,200（端点含む）**なら1。約12 MHz±10%の配線診断用判定であり、高精度な周波数判定ではない。
+- 約12 MHz入力中はSTATUSの下位3 bitが通常`111`（7）、停止が続けば`001`（1）。6 MHzならACTIVE=1でもNEAR_12MHZ=0（STATUS=3）。固定HighやLowでは定常的に回数0となる。
+- 測定は内部120 MHzを基準に120,000サイクルごとに自動更新する。SPI4読出しでクリアされず、ADCのflow clearでもリセットしない。累積値や一度検出したことを保持するstickyではない。
+- 開始／停止が窓途中なら混在した回数を1窓だけ返す。安定判定には切替後**2 ms以上、推奨3 ms**待ち、何回か読んで確認する。STATUSだけで判定するなら1回のREADで3フラグがまとまって取得できる。COUNTとSTATUSを別READすると窓更新を挟む場合がある。
+- 同期回路への入力はデジタル波形が前提。High／Low幅に十分な余裕が必要で、目安は各25 ns以上。光受信器で閾値を越えない波形や短いグリッチを正確に測る保証はない。疑わしい場合はMAX10入力側の波形を測定する。
+
+STM32側へ追加する処理：
+
+```c
+uint32_t status;
+int rc = spi4_read32(MIX_REG_ACC_CLOCK_STATUS, &status);
+if (rc == 0) {
+    bool ready = (status & MIX_ACC_WINDOW_VALID) != 0;
+    bool clock_present = (status & MIX_ACC_CLOCK_NEAR_12MHZ) != 0;
+    /* ready=0は測定待ち。ready=1かつclock_present=1なら約12 MHzを検出。 */
+}
+/* 詳細表示用にMIX_REG_ACC_12MHZ_COUNTも読み、回数/1msを表示できる。 */
+```
+
+READ送信例はCOUNT=`03 00 28 00 00 00 00 00`、STATUS=`03 00 2C 00 00 00 00 00`。通常のSPI4応答status確認・BE変換を行う。期待する12 MHzを入れた後にNEAR_12MHZ=1、止めた後に0となることを確認する。入力を挿す場所を1本ずつ変えると、M9に入る経路かを識別できる。
+
+SPI1の48バイト受信・DMAと既存ADC／DAC制御は変更不要。レジスタ定義は[mixed_adc_protocol.h](stm32/mixed_adc_protocol.h)。

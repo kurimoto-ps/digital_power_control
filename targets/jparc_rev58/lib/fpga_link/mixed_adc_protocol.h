@@ -5,12 +5,18 @@
 #include <stdint.h>
 
 /* Firmware major 2 is incompatible with the old 8-byte SPI1 records. */
-#define MIXED_FIRMWARE_VERSION       UINT32_C(0x00020001)
+#define MIXED_FIRMWARE_VERSION       UINT32_C(0x00020002)
 #define MIXED_FRAME_BYTES            48u
 #define MIXED_FRAME_PAYLOAD_BYTES    46u
 #define MIXED_FRAME_FORMAT           0x02u
 #define MIXED_SPI1_HZ                20000000u
 
+#define MIX_REG_ACC_12MHZ_COUNT      0x0028u
+#define MIX_REG_ACC_CLOCK_STATUS     0x002cu
+#define MIX_ACC_WINDOW_VALID         1u
+#define MIX_ACC_CLOCK_ACTIVE         2u
+#define MIX_ACC_CLOCK_NEAR_12MHZ      4u
+#define MIX_CAP_ACC_CLOCK_MONITOR     0x80u
 #define MIX_REG_ACC_INPUT_LEVELS     0x0024u
 #define MIX_ACC_12MHZ_HIGH           1u
 #define MIX_ACC_96KHZ_HIGH           2u

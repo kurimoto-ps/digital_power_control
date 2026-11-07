@@ -21,5 +21,5 @@ v1.3用 `adc_dummy` は維持しています。
 `board_io_client.py` はPLCの32点対話式マッピング試験と母基板RS232Cの送受信試験用です。
 [日本語手順](../docs/PLC_UART_TEST.md) / [English](../docs/PLC_UART_TEST_en.md)。
 
-`acc_input_client.py` はFPGA v2.0.1のACC入力とSTM32 PA0/PD13の瞬時レベル診断用です。
+`acc_input_client.py` はFPGA v2.0.1/v2.0.2のACC入力とSTM32 PA0/PD13の瞬時レベル、およびv2.0.2の12 MHz回数・検出診断用です。
 [同軸試験手順](../docs/ACC_INPUT_TEST.md) / [English](../docs/ACC_INPUT_TEST_en.md)。

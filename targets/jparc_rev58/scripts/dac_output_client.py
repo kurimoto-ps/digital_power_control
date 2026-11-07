@@ -55,14 +55,14 @@ def main():
     try:
         with Client(a.host, a.port) as c:
             info = c.info()
-            if (info['version'], info['capabilities']) not in ((0x10003, 15), (0x20000, 63), (0x20001, 127)) or c.read(0x001c) != 16:
-                raise TestError('Requires integrated FPGA v1.3, v2.0 or v2.0.1 with 16 DAC channels')
+            if (info['version'], info['capabilities']) not in ((0x10003, 15), (0x20000, 63), (0x20001, 127), (0x20002, 255)) or c.read(0x001c) != 16:
+                raise TestError('Requires integrated FPGA v1.3 or v2.0/v2.0.1/v2.0.2 with 16 DAC channels')
             if a.command in ('set', 'set-voltage'):
                 code = a.code if a.command == 'set' else a.volts
                 dac_set(c, a.channel, code)
                 print(f'CH{a.channel} / CN{a.channel + 2}: code=0x{code:04x}, nominal={code_to_voltage(code):.9f} V', file=sys.stderr)
                 print(f'FPGA transmission complete for CH{a.channel}; measure analog output externally. Output is held after exit.', file=sys.stderr)
-            if info['version'] in (0x20000, 0x20001):
+            if info['version'] in (0x20000, 0x20001, 0x20002):
                 print(f'DAC source mask: {c.read(0x0060):#05x}; set columns are manual shadows', file=sys.stderr)
             status = c.read(0x0014)
             writer = csv.writer(sys.stdout)

@@ -1,6 +1,6 @@
 # J-PARC rev58 Zephyr development
 
-FPGA v2.0.1 is supported. See [ACC input diagnosis and coax wiring tests](docs/ACC_INPUT_TEST_en.md) for the 0x0024 monitor and STM32 PA0/PD13 comparison. J16/J17 test 96 kHz/TRIG; 12 MHz is the separate J6 optical path. Hardware tests remain pending.
+FPGA v2.0.2 is supported, including the 12 MHz count/status monitor. See [ACC input diagnosis and coax wiring tests](docs/ACC_INPUT_TEST_en.md) for the 0x0024 monitor and STM32 PA0/PD13 comparison. J16/J17 test 96 kHz/TRIG; 12 MHz is the separate J6 optical path. Hardware tests remain pending.
 
 
 PLC GPIO (16 inputs/16 outputs) and motherboard UART8 tests are now included in `mixed_adc`. See the [operator test procedure](docs/PLC_UART_TEST_en.md). Hardware verification is pending.

@@ -1,6 +1,6 @@
 # FPGA v2.0: eleven-channel reception and optical-link calibration
 
-FPGA v2.0.1 is supported. See [ACC input diagnosis and coax wiring tests](ACC_INPUT_TEST_en.md) for the 0x0024 monitor and STM32 PA0/PD13 comparison. J16/J17 test 96 kHz/TRIG; 12 MHz is the separate J6 optical path. Hardware tests remain pending.
+FPGA v2.0.2 is supported, including the 12 MHz count/status monitor. See [ACC input diagnosis and coax wiring tests](ACC_INPUT_TEST_en.md) for the 0x0024 monitor and STM32 PA0/PD13 comparison. J16/J17 test 96 kHz/TRIG; 12 MHz is the separate J6 optical path. Hardware tests remain pending.
 
 
 PLC GPIO (16 inputs/16 outputs) and motherboard UART8 tests are now included in `mixed_adc`. See the [operator test procedure](PLC_UART_TEST_en.md). Hardware verification is pending.
@@ -15,7 +15,7 @@ PLC GPIO (16 inputs/16 outputs) and motherboard UART8 tests are now included in 
 | FPGA | STM32 profile | Host scripts |
 |---|---|---|
 | v1.3 / `0x00010003` | Existing `adc_dummy` | `adc_dummy_client.py`, `adc_input_client.py` |
-| v2.0 / `0x00020000`, caps `0x3f`; v2.0.1 / `0x00020001`, caps `0x7f` | **`mixed_adc`** | **`mixed_adc_client.py`**, SPI4 and DAC scripts |
+| v2.0 / `0x00020000`, caps `0x3f`; v2.0.1 / `0x00020001`, caps `0x7f`; v2.0.2 / `0x00020002`, caps `0xff` | **`mixed_adc`** | **`mixed_adc_client.py`**, SPI4 and DAC scripts |
 
 The 48-byte v2 format is incompatible with the old eight-byte decoder. M7 owns Ethernet, SPI4 and SPI1 DMA; M4 remains disabled (BCM4 disabled, BCM7 enabled). The existing 8 MiB SDRAM startup test remains included. The DMA ring resides in internal AXI SRAM.
 
