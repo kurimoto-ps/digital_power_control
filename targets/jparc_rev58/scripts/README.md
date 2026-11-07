@@ -12,3 +12,8 @@ SDRAMとEthernet/SPI4の同時有効化は `./scripts/build.sh jparc_rev58 combi
 起動時のSDRAM全域試験に合格するとSPI4用TCPサーバーを開始します。
 
 FPGA v1.3の3系統ダミーADC受信は `adc_dummy` プロファイルと `scripts/adc_dummy_client.py` を使用します。[手順](../docs/ADC_DUMMY_TEST.md)。
+
+FPGA v2.0用には `build.sh mixed_adc` と `mixed_adc_client.py` を使用します。
+48バイト連続DMA試験、APPLY完了確認、光リンク位相・遅延調整、DAC連動については
+[日本語](../docs/MIXED_ADC_V2.md) / [English](../docs/MIXED_ADC_V2_en.md) を参照してください。
+v1.3用 `adc_dummy` は維持しています。

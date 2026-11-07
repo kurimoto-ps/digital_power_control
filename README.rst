@@ -16,7 +16,7 @@ Zephyr本体と依存モジュールは、共通のwest workspaceで管理しま
 
 Nucleoの構成・配線・通信仕様は ``targets/nucleo_h755zi_q/README.rst``、
 rev58の構成は ``targets/jparc_rev58/README.md`` を参照してください。
-rev58はM7単体の専用ボード定義と起動・周辺確認アプリを実装しています。実機動作は未確認です。
+rev58はM7単体の専用ボード定義と起動・周辺確認アプリを実装しています。v1.3の実機記録と、実機未確認のv2.0対応を区別して管理しています。
 
 Nucleoのビルドと書込みは、リポジトリ直下で実行します。
 
@@ -39,3 +39,7 @@ Nucleoの操作演習は ``docs/TRIAL_GUIDE.rst`` を参照してください。
 FPGA v1.3のADCダミー送信をSPI1の循環DMAで受信する試験は
 ``./scripts/build.sh jparc_rev58 adc_dummy`` でビルドします。
 ホスト操作は ``targets/jparc_rev58/docs/ADC_DUMMY_TEST.md`` を参照してください。
+
+FPGA v2.0の48バイト・11 CH受信は ``./scripts/build.sh jparc_rev58 mixed_adc``。
+ホスト試験と光リンク調整は ``targets/jparc_rev58/docs/MIXED_ADC_V2.md`` を参照してください。
+v2.0はビルド・ホスト試験までで、実機への書込み・動作確認は未実施です。

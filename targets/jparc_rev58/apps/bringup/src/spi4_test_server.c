@@ -13,6 +13,10 @@
 #include "adc_dummy_test.h"
 #endif
 
+#ifdef CONFIG_JPARC_MIXED_ADC_TEST
+#include "mixed_adc_test.h"
+#endif
+
 BUILD_ASSERT(IS_ENABLED(CONFIG_NET_CONTEXT_RCVTIMEO) &&
              IS_ENABLED(CONFIG_NET_CONTEXT_SNDTIMEO), "TCP client timeouts must be enabled");
 #define FPGA DT_NODELABEL(max10_spi4)
@@ -80,6 +84,9 @@ static void serve_client(int fd)
                 k_msleep(10);
 #ifdef CONFIG_JPARC_ADC_DUMMY_TEST
                 if (!adc_dummy_command(line, reply, transfer, NULL))
+#endif
+#ifdef CONFIG_JPARC_MIXED_ADC_TEST
+                if (!mixed_adc_command(line, reply, transfer, NULL))
 #endif
                 { spi4_command(line, reply, transfer, NULL); }
             }

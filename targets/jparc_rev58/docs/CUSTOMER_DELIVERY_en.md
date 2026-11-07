@@ -1,5 +1,8 @@
 # JPARC rev58 test software delivery
 
+> **Using FPGA v2.0?** See the [v2 profile, eleven-channel reception and optical calibration guide](MIXED_ADC_V2_en.md). Its 48-byte format is incompatible with v1.3. v2 support has build/host validation only, with no hardware verification.
+
+
 [日本語](CUSTOMER_DELIVERY.md)
 
 Date: 2026-10-25. Target: STM32H745 M7 `adc_dummy` profile and MAX10 integrated ADC/DAC firmware v1.3.

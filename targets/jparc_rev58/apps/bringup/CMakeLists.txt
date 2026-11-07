@@ -19,3 +19,7 @@ endif()
 if(CONFIG_JPARC_ADC_DUMMY_TEST)
   target_sources(app PRIVATE src/adc_dummy_test.c ${REV58_ROOT}/lib/fpga_link/adc_stream.c)
 endif()
+
+if(CONFIG_JPARC_MIXED_ADC_TEST)
+  target_sources(app PRIVATE src/mixed_adc_test.c ${REV58_ROOT}/lib/fpga_link/mixed_stream.c)
+endif()

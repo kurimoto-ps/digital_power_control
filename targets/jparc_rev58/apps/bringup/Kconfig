@@ -19,3 +19,7 @@ config JPARC_SPI4_TEST_PORT
 config JPARC_ADC_DUMMY_TEST
     bool "SPI1 continuous DMA dummy ADC test"
     depends on JPARC_SPI4_REGS_TEST && DMA && SPI_SLAVE
+
+config JPARC_MIXED_ADC_TEST
+    bool "FPGA v2 48-byte continuous DMA capture"
+    depends on JPARC_SPI4_REGS_TEST && DMA && SPI_SLAVE && !JPARC_ADC_DUMMY_TEST

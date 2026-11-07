@@ -1,5 +1,8 @@
 # Customer host-PC ADC and DAC tests
 
+> **Using FPGA v2.0?** See the [v2 profile, eleven-channel reception and optical calibration guide](MIXED_ADC_V2_en.md). Its 48-byte format is incompatible with v1.3. v2 support has build/host validation only, with no hardware verification.
+
+
 [日本語](CUSTOMER_IO_TEST.md)
 
 Target: rev58 STM32 `adc_dummy` and integrated FPGA v1.3. See [delivery configuration and scope](CUSTOMER_DELIVERY_en.md).

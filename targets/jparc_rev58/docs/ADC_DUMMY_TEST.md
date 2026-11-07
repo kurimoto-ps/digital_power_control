@@ -1,5 +1,8 @@
 # FPGA v1.3 ダミーADC → SPI1 DMA → Ethernet試験
 
+> **FPGA v2.0を使用する場合:** [v2専用プロファイル・11 CH受信・光リンク調整手順](MIXED_ADC_V2.md)を参照してください。v1.3の8バイト受信とは非互換です。v2対応はビルド・ホスト試験までで、実機未確認です。
+
+
 [English version](ADC_DUMMY_TEST_en.md)
 
 FPGAの3系統ダミー生成をSPI4から設定し、20 MHz SPI1をSTM32 M7が

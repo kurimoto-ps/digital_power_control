@@ -1,7 +1,7 @@
 Project status
 ##############
 
-Last updated: 2026-10-25
+Last updated: 2026-11-07
 
 Purpose
 *******
@@ -388,3 +388,29 @@ Customer work report (2026-10-26)
 * Editable HTML and a PyMuPDF renderer are included. Four A4 pages were rendered
   and visually inspected; Japanese fonts, recorded values and image hashes were
   checked. No firmware or connected-board state changed for this report.
+
+
+rev58 FPGA v2.0 mixed ADC support (2026-11-07)
+=============================================
+
+* New isolated ``mixed_adc`` profile retains Ethernet/SPI4 and the SDRAM startup
+  test. M7 owns continuous SPI1 slave DMA during bounded captures; M4 stays off.
+  The existing v1.3 ``adc_dummy`` profile remains available.
+* Forty-eight-byte frames carry three downsampled ADC24 and eight ADC16 channels.
+  The supplied decoder is archived verbatim. CRC, frame sequence, ADC24
+  known/fresh/sequence/age, rate, DMA errors and FPGA losses are checked.
+* Host ``mixed_adc_client.py`` applies timing/phase/negation with completion-ID
+  and applied-register checks, captures statistics/latest values, compares known
+  ADC16 references, and explicitly selects per-channel DAC linkage at 0x0060.
+  MCU capture cleanup applies acquisition disable even after host disconnection.
+* SPI4 and manual DAC clients accept v2.0; manual writes through the DAC helper
+  reject ADC-linked channels. Capture requires all DAC channels manual.
+* Japanese/English ``MIXED_ADC_V2`` manuals document optical wiring, phase/delay
+  sweeps, expected-code tests, counter semantics, stop/hold behavior and limits.
+* No hardware was available. No programming or physical calibration was done.
+  Prior v1.3 hardware results are not v2.0 acceptance evidence. Continuous
+  Ethernet export of every frame is not implemented; capture returns summaries.
+* Validation: 42 host tests passed. All eight rev58 profiles built and passed
+  clock/VOS1, RAM and netlist artifact checks: bringup, sdram, ethernet, spi,
+  spi4_regs, combined, adc_dummy and mixed_adc. The v2 image uses 130884 bytes
+  of flash and 93424 bytes of AXI RAM, plus the existing 16 KiB SRAM3 allocation.

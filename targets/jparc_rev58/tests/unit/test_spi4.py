@@ -79,6 +79,33 @@ class ProtocolTests(unittest.TestCase):
     def setUp(self):
         self.fw = Firmware(self.library)
 
+    def test_v2_identity_and_masked_registers(self):
+        regs = {0: 0x4a503538, 4: 0x20000, 8: 63, 12: 16, 16: 0}
+        masks = {0x60: 0x7ff, 0x500: 1, 0x504: 0xffff, 0x508: 0xffff,
+                 0x50c: 3, 0x510: 1, 0x514: 0xffffffff}
+        def transfer(ctx, tx, rx):
+            packet = bytes(tx[:8]); addr = int.from_bytes(packet[1:3], 'big')
+            result = 0
+            if packet[0] == 2:
+                regs[addr] = int.from_bytes(packet[4:], 'big') & masks[addr]
+            else:
+                result = regs.get(addr, 0)
+            for i, value in enumerate(b'\0' * 4 + result.to_bytes(4, 'big')): rx[i] = value
+            return 0
+        self.fw.callback = CALLBACK(transfer)
+        self.with_server(lambda c: self.assertEqual(c.info()['version'], 0x20000))
+        for addr, mask in masks.items():
+            self.with_server(lambda c: self.assertEqual(c.write(addr, 0xffffffff), mask))
+        self.assertEqual(self.fw.command('INFO').split()[3], '0x00020000')
+
+    def test_v2_dac_linked_channel_rejects_manual_write(self):
+        class LinkedDAC:
+            def info(self): return {'version': 0x20000, 'capabilities': 63}
+            def read(self, addr): return {0x1c: 16, 0x60: 1}[addr]
+            def write(self, addr, value): raise AssertionError('must not write')
+        with self.assertRaisesRegex(client.TestError, 'ADC-linked'):
+            client.dac_set(LinkedDAC(), 1, 123)
+
     def test_reference_vectors_and_write_readback(self):
         self.assertEqual(self.fw.command('READ 0'), 'OK READ 0x0000 0x4a503538\n')
         self.assertEqual(self.fw.frames[0], bytes.fromhex('03 00 00 00 00 00 00 00'))
@@ -211,7 +238,7 @@ class ProtocolTests(unittest.TestCase):
     def test_dac_command_waits_for_initialized_and_sent_code(self):
         class FakeDAC:
             def __init__(self): self.writes = []; self.polls = 0
-            def info(self): return {'capabilities': 15}
+            def info(self): return {'version': 0x10003, 'capabilities': 15}
             def write(self, addr, code): self.writes.append((addr, code))
             def read(self, addr):
                 if addr == 0x001c: return 16

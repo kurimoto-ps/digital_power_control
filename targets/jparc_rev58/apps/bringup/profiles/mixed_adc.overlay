@@ -1,0 +1,10 @@
+#include "combined.overlay"
+#include <zephyr/dt-bindings/dma/stm32_dma.h>
+&dma1 { status = "okay"; };
+&dmamux1 { status = "okay"; };
+&spi1 {
+    status = "okay";
+    /* Exclusive to the circular RX module: DMAMUX1 channel 0 / DMA1 stream 0. */
+    dmas = <&dmamux1 0 37 (STM32_DMA_PERIPH_RX | STM32_DMA_PRIORITY_VERY_HIGH)>;
+    dma-names = "rx";
+};

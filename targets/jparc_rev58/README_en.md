@@ -1,5 +1,8 @@
 # J-PARC rev58 Zephyr development
 
+> **Using FPGA v2.0?** See the [v2 profile, eleven-channel reception and optical calibration guide](docs/MIXED_ADC_V2_en.md). Its 48-byte format is incompatible with v1.3. v2 support has build/host validation only, with no hardware verification.
+
+
 [日本語](README.md)
 
 Target: STM32H745XIH6 + MAX10 (10M16DCF484I7G). This directory contains the dedicated board definition and M7-only startup/peripheral test application.

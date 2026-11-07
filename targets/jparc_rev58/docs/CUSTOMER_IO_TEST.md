@@ -1,5 +1,8 @@
 # お客様ホストPCでのADC・DAC試験
 
+> **FPGA v2.0を使用する場合:** [v2専用プロファイル・11 CH受信・光リンク調整手順](MIXED_ADC_V2.md)を参照してください。v1.3の8バイト受信とは非互換です。v2対応はビルド・ホスト試験までで、実機未確認です。
+
+
 [English version](CUSTOMER_IO_TEST_en.md)
 
 対象：rev58 STM32 `adc_dummy`、FPGA統合版v1.3。構成・検証範囲は [CUSTOMER_DELIVERY.md](CUSTOMER_DELIVERY.md)。

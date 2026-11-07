@@ -55,13 +55,15 @@ def main():
     try:
         with Client(a.host, a.port) as c:
             info = c.info()
-            if info['version'] != 0x10003 or info['capabilities'] != 15 or c.read(0x001c) != 16:
-                raise TestError('Requires integrated FPGA v1.3 with 16 DAC channels')
+            if (info['version'], info['capabilities']) not in ((0x10003, 15), (0x20000, 63)) or c.read(0x001c) != 16:
+                raise TestError('Requires integrated FPGA v1.3 or v2.0 with 16 DAC channels')
             if a.command in ('set', 'set-voltage'):
                 code = a.code if a.command == 'set' else a.volts
                 dac_set(c, a.channel, code)
                 print(f'CH{a.channel} / CN{a.channel + 2}: code=0x{code:04x}, nominal={code_to_voltage(code):.9f} V', file=sys.stderr)
                 print(f'FPGA transmission complete for CH{a.channel}; measure analog output externally. Output is held after exit.', file=sys.stderr)
+            if info['version'] == 0x20000:
+                print(f'DAC source mask: {c.read(0x0060):#05x}; set columns are manual shadows', file=sys.stderr)
             status = c.read(0x0014)
             writer = csv.writer(sys.stdout)
             writer.writerow(['channel', 'dac', 'ic', 'output', 'connector_group', 'exact_connector',

@@ -1,5 +1,8 @@
 # FPGA v1.3 dummy ADC → SPI1 DMA → Ethernet test
 
+> **Using FPGA v2.0?** See the [v2 profile, eleven-channel reception and optical calibration guide](MIXED_ADC_V2_en.md). Its 48-byte format is incompatible with v1.3. v2 support has build/host validation only, with no hardware verification.
+
+
 [日本語](ADC_DUMMY_TEST.md)
 
 Configure three FPGA dummy sources through SPI4 and receive their 20 MHz SPI1 stream continuously on STM32 M7 using circular DMA. Only test results are returned to the host. The startup 8 MiB SDRAM test and existing Ethernet/SPI4 service remain enabled.

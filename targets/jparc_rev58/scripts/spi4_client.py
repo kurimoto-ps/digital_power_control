@@ -25,7 +25,7 @@ class Client:
     def request(self, command):
         # Never retry writes: a lost reply may follow a completed FPGA write.
         self.sock.sendall((command + '\n').encode('ascii'))
-        raw = self.stream.readline(256)
+        raw = self.stream.readline(2048)
         if not raw.endswith(b'\n'):
             raise TestError('Disconnected or oversized/incomplete reply')
         try:
@@ -44,8 +44,8 @@ class Client:
             values = [int(p, 0) for p in parts[2:]]
         except ValueError as exc:
             raise TestError('Invalid INFO values') from exc
-        if (values[0] != 0x4A503538 or values[1] not in range(0x10000, 0x10004) or
-                values[2] != (1 << (values[1] - 0x10000 + 1)) - 1 or
+        if (values[0] != 0x4A503538 or values[1] not in (0x10000, 0x10001, 0x10002, 0x10003, 0x20000) or
+                values[2] != {0x10000: 1, 0x10001: 3, 0x10002: 7, 0x10003: 15, 0x20000: 63}.get(values[1]) or
                 values[3] != 16 or not 0 <= values[4] <= 0xffffffff):
             raise TestError('Unexpected FPGA identity/capabilities: ' + repr(values))
         return dict(zip(('device_id', 'version', 'capabilities', 'dummy_count', 'write_count'), values))
@@ -66,7 +66,10 @@ class Client:
         expected = value
         if value is not None:
             if 0x0200 <= addr <= 0x023c: expected &= 0xffff
-            if addr in (0x0400, 0x0480): expected &= 1
+            if addr == 0x0060: expected &= 0x7ff
+            if addr in (0x0504, 0x0508): expected &= 0xffff
+            if addr == 0x050c: expected &= 3
+            if addr in (0x0400, 0x0480, 0x0500, 0x0510): expected &= 1
             if 0x0484 <= addr <= 0x048c: expected &= 0xffffff
         if value is not None and actual != expected:
             raise TestError(f'Readback mismatch: expected {value:#010x}, got {actual:#010x}')
@@ -84,6 +87,8 @@ def dac_set(client, channel, code):
     if not info['capabilities'] & 2 or client.read(0x001c) != 16:
         raise TestError('FPGA does not support 16-channel DAC output')
     index = channel - 1
+    if info['version'] == 0x20000 and client.read(0x0060) & (1 << index):
+        raise TestError('This DAC channel is ADC-linked; select manual mode explicitly first')
     client.write(0x0200 + 4 * index, code)
     chip = index // 4
     deadline = time.monotonic() + 1
