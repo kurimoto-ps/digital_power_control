@@ -17,6 +17,10 @@
 #include "mixed_adc_test.h"
 #endif
 
+#ifdef CONFIG_JPARC_BOARD_IO_TEST
+#include "board_io_test.h"
+#endif
+
 BUILD_ASSERT(IS_ENABLED(CONFIG_NET_CONTEXT_RCVTIMEO) &&
              IS_ENABLED(CONFIG_NET_CONTEXT_SNDTIMEO), "TCP client timeouts must be enabled");
 #define FPGA DT_NODELABEL(max10_spi4)
@@ -76,19 +80,26 @@ static void serve_client(int fd)
         if (k_uptime_get() > deadline) { send_reply(fd, "ERR TIMEOUT\n"); return; }
         if (c == '\n') {
             line[used] = '\0';
-            int done = gpio_pin_get_dt(&confdone);
-            if (done <= 0) {
-                strcpy(reply, "ERR NOT_READY\n");
-            } else {
-                /* Conservative 10 ms settling on every command, including after reconfiguration. */
-                k_msleep(10);
+#ifdef CONFIG_JPARC_BOARD_IO_TEST
+            if (board_io_command(line, reply)) {
+                /* GPIO/UART tests do not depend on FPGA configuration. */
+            } else
+#endif
+            {
+                int done = gpio_pin_get_dt(&confdone);
+                if (done <= 0) {
+                    strcpy(reply, "ERR NOT_READY\n");
+                } else {
+                    /* Conservative 10 ms settling on every command, including after reconfiguration. */
+                    k_msleep(10);
 #ifdef CONFIG_JPARC_ADC_DUMMY_TEST
-                if (!adc_dummy_command(line, reply, transfer, NULL))
+                    if (!adc_dummy_command(line, reply, transfer, NULL))
 #endif
 #ifdef CONFIG_JPARC_MIXED_ADC_TEST
-                if (!mixed_adc_command(line, reply, transfer, NULL))
+                    if (!mixed_adc_command(line, reply, transfer, NULL))
 #endif
-                { spi4_command(line, reply, transfer, NULL); }
+                    { spi4_command(line, reply, transfer, NULL); }
+                }
             }
             if (!send_reply(fd, reply)) { return; }
             used = 0;
@@ -146,6 +157,10 @@ int spi4_test_server_start(void)
         !net_if_ipv4_set_netmask_by_addr(iface, &addr, &mask)) { return -ENOMEM; }
     rc = net_if_up(iface);
     if (rc && rc != -EALREADY) { return rc; }
+#ifdef CONFIG_JPARC_BOARD_IO_TEST
+    rc = board_io_init();
+    if (rc) { return rc; }
+#endif
     k_thread_create(&server_thread, server_stack, K_THREAD_STACK_SIZEOF(server_stack),
                     server, NULL, NULL, NULL, 7, 0, K_NO_WAIT);
     return 0;

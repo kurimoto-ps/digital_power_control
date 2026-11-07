@@ -1,0 +1,45 @@
+/ {
+    zephyr,user {
+        plc-input-gpios = <&gpiod 6 GPIO_ACTIVE_HIGH>,
+            <&gpiod 3 GPIO_ACTIVE_HIGH>,
+            <&gpiof 10 GPIO_ACTIVE_HIGH>,
+            <&gpioc 11 GPIO_ACTIVE_HIGH>,
+            <&gpiob 7 GPIO_ACTIVE_HIGH>,
+            <&gpioc 9 GPIO_ACTIVE_HIGH>,
+            <&gpioh 10 GPIO_ACTIVE_HIGH>,
+            <&gpiog 3 GPIO_ACTIVE_HIGH>,
+            <&gpioh 12 GPIO_ACTIVE_HIGH>,
+            <&gpiog 2 GPIO_ACTIVE_HIGH>,
+            <&gpioh 9 GPIO_ACTIVE_HIGH>,
+            <&gpioi 3 GPIO_ACTIVE_HIGH>,
+            <&gpioi 2 GPIO_ACTIVE_HIGH>,
+            <&gpioj 7 GPIO_ACTIVE_HIGH>,
+            <&gpioi 1 GPIO_ACTIVE_HIGH>,
+            <&gpioi 0 GPIO_ACTIVE_HIGH>;
+        plc-output-gpios = <&gpioe 3 GPIO_ACTIVE_HIGH>,
+            <&gpiog 12 GPIO_ACTIVE_HIGH>,
+            <&gpiok 2 GPIO_ACTIVE_HIGH>,
+            <&gpioa 3 GPIO_ACTIVE_HIGH>,
+            <&gpiof 8 GPIO_ACTIVE_HIGH>,
+            <&gpioh 2 GPIO_ACTIVE_HIGH>,
+            <&gpioi 12 GPIO_ACTIVE_HIGH>,
+            <&gpioh 14 GPIO_ACTIVE_HIGH>,
+            <&gpioh 15 GPIO_ACTIVE_HIGH>,
+            <&gpioi 4 GPIO_ACTIVE_HIGH>,
+            <&gpiok 5 GPIO_ACTIVE_HIGH>,
+            <&gpiog 9 GPIO_ACTIVE_HIGH>,
+            <&gpiob 9 GPIO_ACTIVE_HIGH>,
+            <&gpiod 5 GPIO_ACTIVE_HIGH>,
+            <&gpiod 7 GPIO_ACTIVE_HIGH>,
+            <&gpiod 4 GPIO_ACTIVE_HIGH>;
+    };
+};
+/* Motherboard J5 pin2 -> ADM3202 R1O -> J8.70/PJ8 (receive).
+ * J8.72/PJ9 -> ADM3202 T1I -> J5 pin3 (transmit): swap is essential. */
+&uart8 {
+    status = "okay";
+    pinctrl-0 = <&uart8_tx_pj8 &uart8_rx_pj9>;
+    pinctrl-names = "default";
+    tx-rx-swap;
+    current-speed = <115200>;
+};

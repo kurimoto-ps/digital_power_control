@@ -107,6 +107,35 @@ if 'CONFIG_JPARC_ADC_DUMMY_TEST=y' in config or 'CONFIG_JPARC_MIXED_ADC_TEST=y' 
             rx[0].data['channel'] == 0 and rx[0].data['slot'] == 37,
             'SPI1_RX reserves DMAMUX1 channel 0 / DMA1 stream 0 / request 37')
 
+if 'CONFIG_JPARC_BOARD_IO_TEST=y' in config:
+    expected_in = 'PD6 PD3 PF10 PC11 PB7 PC9 PH10 PG3 PH12 PG2 PH9 PI3 PI2 PJ7 PI1 PI0'.split()
+    expected_out = 'PE3 PG12 PK2 PA3 PF8 PH2 PI12 PH14 PH15 PI4 PK5 PG9 PB9 PD5 PD7 PD4'.split()
+    user = edt.get_node('/zephyr,user')
+    for prop, physicals, first in [('plc-input-gpios', expected_in, 49),
+                                   ('plc-output-gpios', expected_out, 17)]:
+        specs = user.props[prop].val
+        require(len(specs) == 16, prop + ' size')
+        for i, (spec, physical) in enumerate(zip(specs, physicals)):
+            require(spec.controller == node['gpio' + physical[1].lower()] and
+                    spec.data == {'pin': int(physical[2:]), 'flags': 0}, prop + ' mapping ' + str(i))
+            require(physical not in seen, 'PLC pin collision ' + physical)
+            seen.add(physical)
+            require(re.search(r'\bJ8[.]' + str(first + 2*i) + r'\b', pins[physical]['direct_connections']),
+                    'PLC pin vs netlist ' + physical)
+    require(node['uart8'].status == 'okay' and value('uart8', 'tx-rx-swap') and
+            value('uart8', 'current-speed') == 115200, 'UART8 mode/swap/baud')
+    uart_pins = set()
+    for conf in node['uart8'].pinctrls[0].conf_nodes:
+        mux = conf.props['pinmux'].val
+        physical = 'P' + chr(ord('A') + ((mux >> 9) & 31)) + str((mux >> 5) & 15)
+        require(physical not in seen and mux & 31 == 8, 'UART pin/AF collision')
+        seen.add(physical); uart_pins.add(physical)
+    require(uart_pins == {'PJ8', 'PJ9'}, 'UART8 pins')
+    for physical, contact in [('PJ8', 70), ('PJ9', 72)]:
+        require(re.search(r'\bJ8[.]' + str(contact) + r'\b', pins[physical]['direct_connections']),
+                'UART vs netlist ' + physical)
+    require('CONFIG_UART_CONSOLE=y' not in config, 'UART8 must not carry console output')
+
 patched = args.build_dir / 'jparc_rev58/clock_stm32_ll_h7_vos1.c'
 source = patched.read_text()
 require('PWR_REGULATOR_VOLTAGE_SCALE0' not in source and

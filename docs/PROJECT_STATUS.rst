@@ -414,3 +414,25 @@ rev58 FPGA v2.0 mixed ADC support (2026-11-07)
   clock/VOS1, RAM and netlist artifact checks: bringup, sdram, ethernet, spi,
   spi4_regs, combined, adc_dummy and mixed_adc. The v2 image uses 130884 bytes
   of flash and 93424 bytes of AXI RAM, plus the existing 16 KiB SRAM3 allocation.
+
+
+rev58 PLC GPIO / motherboard UART wiring tests (2026-11-07)
+=========================================================
+
+* ``mixed_adc`` now enables 16 PLC inputs and 16 outputs, initialized low,
+  plus interrupt-driven UART8 at 115200/8N1 without flow control. Existing
+  ADC/SPI4/DAC/Ethernet and SDRAM startup-test functionality is retained.
+* UART8 uses TX/RX swap: PJ8 receives from motherboard J5 pin2 via ADM3202,
+  while PJ9 transmits to J5 pin3. GPIO/UART commands bypass FPGA readiness checks.
+* ``board_io_client.py plc-test`` guides 32 one-hot mapping checks, including
+  return to zero, full-mask comparison, partial reports and best-effort output
+  cleanup. Individual output commands hold their setting across disconnection.
+* UART host commands send/receive raw hex bytes and report overflow/error counts;
+  there is no UART console or automatic echo. Japanese/English operator guides
+  include connector mapping, cross-cable wiring and exact serial test payloads.
+* Hardware is unavailable: no flashing, physical GPIO/PLC/RS232 verification or
+  simultaneous ADC/UART load testing has been performed. Operational PLC
+  sequence logic is not implemented.
+* Validation: 49 host tests passed; all eight rev58 profiles built and passed
+  artifact checks. The mixed_adc check now covers 88 active peripheral pins,
+  including all 32 PLC GPIOs and the swapped UART8 pair, against the rev58 netlist.

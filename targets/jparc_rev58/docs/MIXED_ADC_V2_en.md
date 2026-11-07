@@ -1,5 +1,8 @@
 # FPGA v2.0: eleven-channel reception and optical-link calibration
 
+PLC GPIO (16 inputs/16 outputs) and motherboard UART8 tests are now included in `mixed_adc`. See the [operator test procedure](PLC_UART_TEST_en.md). Hardware verification is pending.
+
+
 2026-11-07. **Build and host tests only. Neither this STM32 image nor FPGA v2.0 was programmed during this work. The combined system has not been hardware-tested.** Previous v1.3 acceptance records do not validate v2.0.
 
 [日本語・詳細手順](MIXED_ADC_V2.md) · [Archived FPGA specification, Japanese](hardware/mixed_v2/FIRMWARE_SPEC_v2.md)

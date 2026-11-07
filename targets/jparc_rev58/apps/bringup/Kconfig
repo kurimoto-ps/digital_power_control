@@ -23,3 +23,7 @@ config JPARC_ADC_DUMMY_TEST
 config JPARC_MIXED_ADC_TEST
     bool "FPGA v2 48-byte continuous DMA capture"
     depends on JPARC_SPI4_REGS_TEST && DMA && SPI_SLAVE && !JPARC_ADC_DUMMY_TEST
+
+config JPARC_BOARD_IO_TEST
+    bool "PLC GPIO and motherboard UART mapping tests"
+    depends on JPARC_SPI4_REGS_TEST && GPIO && SERIAL && UART_INTERRUPT_DRIVEN

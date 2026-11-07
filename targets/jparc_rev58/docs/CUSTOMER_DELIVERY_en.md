@@ -1,5 +1,8 @@
 # JPARC rev58 test software delivery
 
+PLC GPIO (16 inputs/16 outputs) and motherboard UART8 tests are now included in `mixed_adc`. See the [operator test procedure](PLC_UART_TEST_en.md). Hardware verification is pending.
+
+
 > **Using FPGA v2.0?** See the [v2 profile, eleven-channel reception and optical calibration guide](MIXED_ADC_V2_en.md). Its 48-byte format is incompatible with v1.3. v2 support has build/host validation only, with no hardware verification.
 
 

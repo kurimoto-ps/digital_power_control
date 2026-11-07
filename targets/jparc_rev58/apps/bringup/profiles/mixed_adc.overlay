@@ -8,3 +8,5 @@
     dmas = <&dmamux1 0 37 (STM32_DMA_PERIPH_RX | STM32_DMA_PRIORITY_VERY_HIGH)>;
     dma-names = "rx";
 };
+
+#include "plc_uart.overlay"

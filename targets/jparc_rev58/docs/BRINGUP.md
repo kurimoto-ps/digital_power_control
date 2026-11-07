@@ -6,7 +6,7 @@
 
 専用ボード `jparc_rev58/stm32h745xx/m7` とM7単体の試験アプリを用意した。
 基板なしでのビルド確認用であり、起動・通信・SDRAM性能の実機合格を意味しない。
-M4アプリ、運用用FPGAプロトコル、周期制御、PLC出力、UART8、ADC3、HRTIMは未実装。
+M4アプリ、運用用FPGAプロトコル、周期制御、運用用PLC制御、ADC3、HRTIMは未実装。
 
 ソースは `apps/bringup/`、ボード定義は `boards/jparc/jparc_rev58/`。
 NucleoのLED、UART、PWM、Ethernetピン割当は継承していない。
@@ -171,3 +171,6 @@ python3 targets/jparc_rev58/scripts/verify_build.py ../build-jparc-rev58-spi
 有効なFMC/RMII/SPI端子のAF・重複・提供ネットリストの接続先を検査する。
 この検査は実配線や電気的動作を検証するものではない。
 `CONFIG_ASSERT=y` によりビルド中に表示されるassert有効化のCMake警告は意図した設定。
+
+`mixed_adc` にはPLC GPIOとUART8の配線試験機能があります（実機未確認）。
+[試験手順](PLC_UART_TEST.md)を参照してください。UART8はログ用コンソールではありません。

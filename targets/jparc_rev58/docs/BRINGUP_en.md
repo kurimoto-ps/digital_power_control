@@ -115,3 +115,5 @@ python3 targets/jparc_rev58/scripts/verify_build.py ../build-jparc-rev58-spi
 ```
 
 Checks cover generated Devicetree power/clocks/SDRAM, ELF RAM placement, VOS1 source compilation, FMC/RMII/SPI AFs, duplicate pins and supplied netlist connectivity. They do not validate physical wiring/electrical behavior. The CMake warning for `CONFIG_ASSERT=y` is intentional.
+
+The `mixed_adc` profile now includes PLC GPIO and UART8 wiring tests (not yet hardware-verified); see [operator instructions](PLC_UART_TEST_en.md). UART8 is a test-data interface, not a logging console.

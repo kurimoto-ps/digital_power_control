@@ -17,3 +17,6 @@ FPGA v2.0用には `build.sh mixed_adc` と `mixed_adc_client.py` を使用し�
 48バイト連続DMA試験、APPLY完了確認、光リンク位相・遅延調整、DAC連動については
 [日本語](../docs/MIXED_ADC_V2.md) / [English](../docs/MIXED_ADC_V2_en.md) を参照してください。
 v1.3用 `adc_dummy` は維持しています。
+
+`board_io_client.py` はPLCの32点対話式マッピング試験と母基板RS232Cの送受信試験用です。
+[日本語手順](../docs/PLC_UART_TEST.md) / [English](../docs/PLC_UART_TEST_en.md)。
