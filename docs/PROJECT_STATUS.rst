@@ -1,7 +1,18 @@
 Project status
 ##############
 
-Last updated: 2026-11-07
+Last updated: 2026-11-09
+
+Customer additional-test documentation (rev58)
+********************************************
+
+The entry point is ``targets/jparc_rev58/docs/ADDITIONAL_TESTS.md``
+(with an English counterpart). It assumes MAX10 v2.0.2 has been installed
+using a separately supplied procedure and the existing Docker/Git environment.
+Repository updates, preservation of local edits, and one-time STM32 build,
+verification and programming are centralized there. Individual test pages
+contain test operations and link in order: PLC/UART, ACC inputs, mixed ADC.
+This documentation change does not alter firmware or add hardware test results.
 
 Purpose
 *******

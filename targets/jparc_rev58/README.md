@@ -1,5 +1,7 @@
 # J-PARC rev58 Zephyr開発
 
+**顧客向け追加確認試験：** [表紙・概要と共通準備](docs/ADDITIONAL_TESTS.md)から、PLC/UART → ACC入力 → 混在ADCの順に進めてください。
+
 FPGA v2.0.2にも対応しました。[ACC入力診断・同軸配線試験](docs/ACC_INPUT_TEST.md)で0x0024とSTM32 PA0/PD13、および0x0028/0x002Cによる12 MHz検出を確認できます。J16/J17は96 kHz／TRIG、12 MHzは別のJ6光経路です。実機試験は未実施です。
 
 

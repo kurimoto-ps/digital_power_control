@@ -1,9 +1,8 @@
 # 12 MHz・96 kHz・TRIG入力：FPGA／STM32配線確認
 
-対象：FPGA **v2.0.2**＋STM32 **mixed_adc**、rev58＋マザーボードTEP521C。
-[English](ACC_INPUT_TEST_en.md) / [FPGA設計者の仕様（保存版）](hardware/acc_v202/ACC_INPUT_MONITOR_STM32.md)
+試験 2/3 — [追加確認試験の表紙](ADDITIONAL_TESTS.md) / [English](ACC_INPUT_TEST_en.md) / [前の試験](PLC_UART_TEST.md) / [次の試験](MIXED_ADC_V2.md)
 
-**ビルドとホスト模擬試験まで確認済みです。今回実機には書き込んでおらず、以下の実機試験は未実施です。**
+表紙の共通準備を完了してから実施してください。以下のコマンドは、既存Docker環境の `targets/jparc_rev58/scripts` で実行します。3試験を通してFPGA v2.0.2と今回のSTM32 `mixed_adc` イメージを使用します。今回の追加機能はビルド・ホスト試験まで確認済みで、以下の実機試験は試験者に実施していただくものです。
 
 ## 1. 同軸で確認できる範囲
 
@@ -33,32 +32,15 @@ PA0・PD13は既存周辺ピンと重複しません。この版ではタイマ�
 
 0x0024とSTM32 GPIOは瞬時レベル診断です。96 kHzの周波数・パルス幅・エッジ回数・TRIG到来履歴は取得しません。12 MHzについては、別の0x0028/0x002Cで直前1 ms窓の立ち上がり回数と約12 MHz検出を読みます。短いTRIGを取りこぼす可能性があり、0x0024の12 MHz/96 kHz瞬時値は同じ値に見え続ける場合もあります。クロックの存在や周波数はオシロスコープ等で確認します。
 
-## 3. 準備
+## 3. 試験開始時の確認
 
-FPGA側へ設計者提供のv2.0.2、STM32側へ今回のmixed_adcをそれぞれ書き込む必要があります。以下のflashコマンドは実機作業者向けで、今回こちらでは実行していません。
-
-```sh
-# Zephyr開発環境、リポジトリ直下
-./scripts/build.sh jparc_rev58 mixed_adc
-python3 targets/jparc_rev58/scripts/verify_build.py ../build-jparc-rev58-mixed_adc
-./scripts/flash.sh jparc_rev58 mixed_adc
-```
-
-試験PCはPython 3標準ライブラリのみ使用します。
+PLC/UART試験を終了し、PLC試験出力が全点Lowに戻っていることを確認します。ADC captureを含む他のホスト操作を止めてから読み出します。
 
 ```sh
-git clone https://github.com/kurimoto-ps/digital_power_control.git
-cd digital_power_control
-git switch feature/jparc-rev58-zephyr-layout
-# 既存cloneなら、このブランチで git pull --ff-only
-cd targets/jparc_rev58/scripts
-python3 spi4_client.py info
 python3 acc_input_client.py read
 ```
 
-FPGAの期待値はVERSION=`0x00020002`、CAPABILITIES=`0x000000ff`です。ホスト有線LANは `192.168.100.1/24`、STM32は `192.168.100.58:4244/TCP`。別IPならサブコマンドの前に `--host IP` を指定します。
-
-GPIO初期化が完了してEthernetコマンドが応答する状態で試験を始めます。試験中は他のスクリプトによる操作を止めてください。ADC capture中は同じTCPサーバが占有されるため診断の応答が待たされます。機能は同じイメージ内で共存しますが、同時刻の並列測定を提供するものではありません。
+同一イメージで機能を併用できますが、同時測定ではありません。[FPGA側モニタ仕様](hardware/acc_v202/ACC_INPUT_MONITOR_STM32.md)も参照できます。
 
 ## 4. 同軸入力の結線とレベル
 
@@ -163,3 +145,7 @@ python3 acc_input_client.py read --count 5 --interval 0.01 --clock-expect off --
 - クロック／短いTRIGでの不一致や変化なし：固定レベルに切り替えて配線試験を行うか、測定器で確認。
 
 今回のホスト試験はSPI4応答・GPIO値のモデルでプロトコルと判定を検証したもので、物理配線や実際の入力電圧・波形を検証した結果ではありません。
+
+---
+
+[追加確認試験の表紙](ADDITIONAL_TESTS.md) / [English](ACC_INPUT_TEST_en.md) / [前の試験](PLC_UART_TEST.md) / [次の試験](MIXED_ADC_V2.md)

@@ -1,50 +1,18 @@
 # FPGA v2.0: eleven-channel reception and optical-link calibration
 
-FPGA v2.0.2 is supported, including the 12 MHz count/status monitor. See [ACC input diagnosis and coax wiring tests](ACC_INPUT_TEST_en.md) for the 0x0024 monitor and STM32 PA0/PD13 comparison. J16/J17 test 96 kHz/TRIG; 12 MHz is the separate J6 optical path. Hardware tests remain pending.
+Test 3/3 — [Additional tests overview](ADDITIONAL_TESTS_en.md) / [日本語](MIXED_ADC_V2.md) / [Previous](ACC_INPUT_TEST_en.md)
 
+Complete the common preparation on the overview page first. All commands below run in `targets/jparc_rev58/scripts` inside the existing Docker environment. Use FPGA v2.0.2 and the current STM32 `mixed_adc` image throughout all three tests. These additional hardware tests remain to be performed by the operator.
 
-PLC GPIO (16 inputs/16 outputs) and motherboard UART8 tests are now included in `mixed_adc`. See the [operator test procedure](PLC_UART_TEST_en.md). Hardware verification is pending.
+## Start the test
 
-
-2026-11-07. **Build and host tests only. Neither this STM32 image nor FPGA v2.0 was programmed during this work. The combined system has not been hardware-tested.** Previous v1.3 acceptance records do not validate v2.0.
-
-[日本語・詳細手順](MIXED_ADC_V2.md) · [Archived FPGA specification, Japanese](hardware/mixed_v2/FIRMWARE_SPEC_v2.md)
-
-## Select matching firmware
-
-| FPGA | STM32 profile | Host scripts |
-|---|---|---|
-| v1.3 / `0x00010003` | Existing `adc_dummy` | `adc_dummy_client.py`, `adc_input_client.py` |
-| v2.0 / `0x00020000`, caps `0x3f`; v2.0.1 / `0x00020001`, caps `0x7f`; v2.0.2 / `0x00020002`, caps `0xff` | **`mixed_adc`** | **`mixed_adc_client.py`**, SPI4 and DAC scripts |
-
-The 48-byte v2 format is incompatible with the old eight-byte decoder. M7 owns Ethernet, SPI4 and SPI1 DMA; M4 remains disabled (BCM4 disabled, BCM7 enabled). The existing 8 MiB SDRAM startup test remains included. The DMA ring resides in internal AXI SRAM.
-
-Build from the repository root in the Zephyr development environment:
+Finish ACC testing and stop its signal generators and polling clients. This test uses the v2 48-byte format, not the earlier v1.3 eight-byte ADC procedure. M7 handles Ethernet, SPI4 and SPI1 DMA; M4 remains disabled (BCM4 off, BCM7 on). The 8 MiB SDRAM startup test remains included; the SPI1 ring uses internal AXI SRAM.
 
 ```sh
-./scripts/build.sh jparc_rev58 mixed_adc
-python3 targets/jparc_rev58/scripts/verify_build.py ../build-jparc-rev58-mixed_adc
-```
-
-Outputs: `../build-jparc-rev58-mixed_adc/zephyr/zephyr.hex` and `zephyr.elf`.
-When hardware becomes available, the STM32 programming command is below; **it was not executed**. The Quartus operator must program FPGA v2.0 separately.
-
-```sh
-./scripts/flash.sh jparc_rev58 mixed_adc
-```
-
-Customer host requirements: Python 3 standard library only; no SDK or pip packages.
-
-```sh
-git clone https://github.com/kurimoto-ps/digital_power_control.git
-cd digital_power_control
-git switch feature/jparc-rev58-zephyr-layout
-cd targets/jparc_rev58/scripts
-python3 spi4_client.py info
 python3 mixed_adc_client.py status
 ```
 
-Set the host wired interface to `192.168.100.1/24`; the STM32 listens at `192.168.100.58:4244/TCP`. An alternative address can be supplied as `--host IP` before the subcommand. The server handles one connection at a time. Configuration writes and their APPLY checks use a single connection, preventing another host from interleaving shadow-register writes. Failed writes are never retried automatically.
+Use one client at a time. Do not change registers from another client during APPLY. Failed writes are not retried automatically. See the [archived v2 specification](hardware/mixed_v2/FIRMWARE_SPEC_v2.md).
 
 ## Reception and validation
 
@@ -158,12 +126,12 @@ Automatic DAC updates continue with SPI1 transmission disabled. Acquisition with
 
 `stop` disables acquisition via APPLY. Neither STREAM_CONTROL=0 nor ADS_CONTROL=0 alone stops new ADC acquisition. Neither stopping nor disconnecting TCP is a DAC zero-output or safety-stop operation.
 
-## Validation and remaining work
+## Finish and retain evidence
 
-Host tests exercise the actual C decoder with the specification vector, fragmented streams, corruption/resynchronization, gaps, wraps, ADC24 freshness inconsistencies, age and signed ADC16 values. Register-model tests cover APPLY waiting, ID wrap, rejection, timeout and applied-value mismatch; legacy regression tests are retained.
+Record the board ID, Git commit, FPGA version, capture JSON, applied phase/delay/conversion/period settings, input voltages, ADC readings and measured DAC voltages. Record untested items and failures explicitly. ADC16 range and optical-link margins require measurements; earlier v1.3 results do not validate this version.
 
-```sh
-python3 -m unittest discover -s targets/jparc_rev58/tests/unit -v
-```
+Stop acquisition, return DAC channels to manual mode and explicitly set the agreed final output voltages. `stop` alone does not zero outputs; the example above leaves CN3 at 1 V. Confirm the final voltages with an external instrument.
 
-Still required on hardware: programming both images, SPI1 circular DMA and cleanup, optical phase/delay/conversion calibration, all eleven channel mappings, ADC/DAC voltage checks, environmental/cable margins and power-cycle behavior. Record measured settings and the ADC16 input range after testing. Historical delivery reports remain historical records.
+---
+
+[Additional tests overview](ADDITIONAL_TESTS_en.md) / [日本語](MIXED_ADC_V2.md) / [Previous](ACC_INPUT_TEST_en.md)

@@ -1,49 +1,18 @@
 # FPGA v2.0：11 CH受信・光リンク調整手順
 
-FPGA v2.0.2にも対応しました。[ACC入力診断・同軸配線試験](ACC_INPUT_TEST.md)で0x0024とSTM32 PA0/PD13、および0x0028/0x002Cによる12 MHz検出を確認できます。J16/J17は96 kHz／TRIG、12 MHzは別のJ6光経路です。実機試験は未実施です。
+試験 3/3 — [追加確認試験の表紙](ADDITIONAL_TESTS.md) / [English](MIXED_ADC_V2_en.md) / [前の試験](ACC_INPUT_TEST.md)
 
+表紙の共通準備を完了してから実施してください。以下のコマンドは、既存Docker環境の `targets/jparc_rev58/scripts` で実行します。3試験を通してFPGA v2.0.2と今回のSTM32 `mixed_adc` イメージを使用します。今回の追加機能はビルド・ホスト試験まで確認済みで、以下の実機試験は試験者に実施していただくものです。
 
-`mixed_adc` にPLC用16入力・16出力と母基板経由UART8の試験機能を追加しました。[試験者向け手順書](PLC_UART_TEST.md)を参照してください。実機確認は未実施です。
+## 試験開始時の確認
 
-
-2026-11-07。**この変更はビルド・ホスト試験までです。FPGA v2.0と本STM32版の組合せを実機で検証していません。書込みも実施していません。** 従来のv1.3実機試験記録はv2.0の動作保証ではありません。
-
-[English](MIXED_ADC_V2_en.md) · [提供されたv2仕様の保存版](hardware/mixed_v2/FIRMWARE_SPEC_v2.md)
-
-## ソフトの選択と準備
-
-| FPGA | STM32プロファイル | ホスト側 |
-|---|---|---|
-| v1.3 / `0x00010003` | `adc_dummy`（従来のまま） | `adc_dummy_client.py`、`adc_input_client.py` |
-| v2.0 / `0x00020000`・`0x3f`、v2.0.1 / `0x00020001`・`0x7f`、v2.0.2 / `0x00020002`・`0xff` | **`mixed_adc`** | **`mixed_adc_client.py`**、SPI4/DACスクリプト |
-
-v2の48バイトフレームを旧8バイトデコーダでは受信できません。新旧プロファイルを混ぜないでください。M7がEthernet・SPI4・SPI1 DMAを担当し、M4は起動しません（BCM4無効、BCM7有効）。SDRAM 8 MiB起動試験も従来どおり含みます。SPI1リング自体は内蔵AXI SRAMに配置します。
-
-開発環境で、リポジトリ直下からビルドします。
+ACC試験を終了し、その信号源・繰返し読出しを停止します。今回はv2の48バイト受信を確認します。従来実施したv1.3の8バイトADC試験とは異なります。M7がEthernet・SPI4・SPI1 DMAを担当し、M4は起動しません（BCM4無効、BCM7有効）。SDRAM 8 MiB起動試験も含みます。SPI1リング自体は内蔵AXI SRAMに配置します。
 
 ```sh
-./scripts/build.sh jparc_rev58 mixed_adc
-python3 targets/jparc_rev58/scripts/verify_build.py ../build-jparc-rev58-mixed_adc
-```
-
-生成物は `../build-jparc-rev58-mixed_adc/zephyr/zephyr.hex` と `zephyr.elf`。将来実機が揃った際のSTM32書込みコマンドは以下です（今回未実行）。FPGA側にはQuartus担当者がv2.0を書き込む必要があります。
-
-```sh
-./scripts/flash.sh jparc_rev58 mixed_adc
-```
-
-顧客ホストはPython 3標準ライブラリだけで実行できます。Zephyr SDKや追加pipパッケージは不要です。
-
-```sh
-git clone https://github.com/kurimoto-ps/digital_power_control.git
-cd digital_power_control
-git switch feature/jparc-rev58-zephyr-layout
-cd targets/jparc_rev58/scripts
-python3 spi4_client.py info
 python3 mixed_adc_client.py status
 ```
 
-ホスト有線LANを `192.168.100.1/24` に設定し、STM32 `192.168.100.58:4244/TCP` に接続します。他のIPを使う場合は `--host IP` をサブコマンドの前に指定します。TCPサーバは1接続ずつ処理します。各操作は同一接続で行い、APPLY途中に他クライアントがレジスタを書き換えないようにしています。失敗した書込みの自動再試行はしません。
+クライアントは1つずつ操作し、APPLY途中に他クライアントからレジスタを書き換えないでください。失敗した書込みの自動再試行はしません。[提供されたv2仕様の保存版](hardware/mixed_v2/FIRMWARE_SPEC_v2.md)も参照できます。
 
 ## 受信する内容と検査
 
@@ -163,12 +132,12 @@ DAC連動はSPI1送信停止中も動きます。SPI1を送信しない状態で
 
 `stop` は取得をAPPLYで止めます。0x0400=0だけ、または0x0500=0だけでは新ADC取得を停止できません。停止やTCP切断をDACのゼロ出力・安全停止として使用しないでください。
 
-## 今回の検証と残る実機確認
+## 終了と記録
 
-ホスト試験は実際のCデコーダに仕様のCRC付き例、分割受信、破損と再同期、フレーム欠落、通番周回、ADC24更新不整合、age、符号付きADC16を投入します。APPLYは模擬レジスタで完了待ち、ID周回、拒否、タイムアウト、適用値不一致を検査します。既存v1用の回帰試験も実行します。
+基板識別、Gitコミット、FPGA版、captureのJSON、採用した位相・遅延・変換待ち・周期、入力電圧とADC読出し値、DAC実測電圧を記録してください。未実施・不合格項目も区別します。ADC16入力レンジと光リンク調整の余裕は実測で確認してください。従来v1.3の実績は今回の版の合格を意味しません。
 
-```sh
-python3 -m unittest discover -s targets/jparc_rev58/tests/unit -v
-```
+取得を停止し、DACを手動へ戻して、試験者間で決めた終了時の電圧を明示的に設定してください。`stop` だけではゼロになりません。上記の例ではCN3に1 Vが残ります。最終出力は外部計測器でも確認してください。
 
-残る確認はFPGA/STM32への書込み、実機SPI1 DMAと終了処理、光位相・遅延・変換待ち、11 CH対応、ADC/DAC電圧、温度・ケーブル条件、電源再投入です。採用した光調整値とADC16入力レンジは実測後に本資料へ追記してください。過去の納品報告書の実績を今回の実績に置き換えていません。
+---
+
+[追加確認試験の表紙](ADDITIONAL_TESTS.md) / [English](MIXED_ADC_V2_en.md) / [前の試験](ACC_INPUT_TEST.md)

@@ -1,12 +1,8 @@
 # PLC 16入力・16出力とRS232C：配線対応の実機試験
 
-FPGA v2.0.2にも対応しました。[ACC入力診断・同軸配線試験](ACC_INPUT_TEST.md)で0x0024とSTM32 PA0/PD13、および0x0028/0x002Cによる12 MHz検出を確認できます。J16/J17は96 kHz／TRIG、12 MHzは別のJ6光経路です。実機試験は未実施です。
+試験 1/3 — [追加確認試験の表紙](ADDITIONAL_TESTS.md) / [English](PLC_UART_TEST_en.md) / [次の試験](ACC_INPUT_TEST.md)
 
-
-対象：rev58＋マザーボードTEP521C、STM32 `mixed_adc` イメージ。2026-11-07追加。
-[English](PLC_UART_TEST_en.md)／[ADC・DACを含む全体構成](MIXED_ADC_V2.md)
-
-**本機能はビルド・ホスト試験まで確認済みです。今回実機書込み・PLC接続試験・RS232C試験はしていません。** 以下は試験者が実機で実施する手順です。
+表紙の共通準備を完了してから実施してください。以下のコマンドは、既存Docker環境の `targets/jparc_rev58/scripts` で実行します。3試験を通してFPGA v2.0.2と今回のSTM32 `mixed_adc` イメージを使用します。今回の追加機能はビルド・ホスト試験まで確認済みで、以下の実機試験は試験者に実施していただくものです。
 
 ## 1. 今回追加したもの
 
@@ -19,30 +15,15 @@ Ethernet、SPI4、v2 ADC受信試験、DAC操作、SDRAM 8 MiB起動試験は同
 
 出力は**次に変更するまで保持**します。TCP切断ではゼロへ戻りません。対話式試験は正常終了・通常の中断時に全出力をLowに戻しますが、通信断・PC強制終了では確認できない場合があります。試験ではPLCを試験モードにし、対象信号で機械や電源が運転しない状態にしてください。これは起動前の浮遊状態や故障時まで含む安全出力機能ではありません。
 
-## 2. 準備
-
-STM32には今回の `mixed_adc` をビルドして書き込んでください。以前の同名イメージにはPLC/UARTコマンドがありません。以下は開発環境で実行するコマンドで、今回こちらでは書込みを実行していません。
+## 2. 試験開始時の確認
 
 ```sh
-./scripts/build.sh jparc_rev58 mixed_adc
-python3 targets/jparc_rev58/scripts/verify_build.py ../build-jparc-rev58-mixed_adc
-./scripts/flash.sh jparc_rev58 mixed_adc
-```
-
-試験者のホストPCはPython 3のみ必要です。追加pipパッケージは不要です。
-
-```sh
-git clone https://github.com/kurimoto-ps/digital_power_control.git
-cd digital_power_control
-git switch feature/jparc-rev58-zephyr-layout
-# 既存cloneの場合はこのブランチで git pull --ff-only
-cd targets/jparc_rev58/scripts
 python3 board_io_client.py plc-read
 ```
 
-ホスト有線LANは `192.168.100.1/24`、STM32は `192.168.100.58:4244/TCP`。別IPならサブコマンドの前に `--host IP` を指定します。GPIO値はJSON内では10進数、対話式のマスク入力・比較表示は16進数です。bit0は最下位です。
+GPIO値はJSON内では10進数、対話式のマスク入力・比較表示は16進数です。bit0は最下位です。
 
-試験中は他のホストスクリプトによる同時操作を止めます。特にADC capture中はTCPサーバがその試験を処理するため、PLC/UARTの応答が遅れます。UART受信割込みは動きますが、1,024バイトを超えて未読データを送ればあふれます。本機能は大容量のシリアル収録ではありません。
+試験中は他のホストスクリプトによる同時操作を止めます。ADC capture中はTCPサーバがその試験を処理するため、PLC/UARTの応答が遅れます。UART受信割込みは動きますが、1,024バイトを超えて未読データを送ればあふれます。本機能は大容量のシリアル収録ではありません。
 
 ## 3. PLC配線表
 
@@ -182,3 +163,7 @@ python3 board_io_client.py uart-status
 ```
 
 基板番号、ソフトのGitコミット、PLC機種・アドレス対応、ケーブル、32点のJSON、UART受信JSON、外部端末の送信受信ログを保存してください。ホスト試験の成功を、この実機配線試験の成功として記録しないでください。
+
+---
+
+[追加確認試験の表紙](ADDITIONAL_TESTS.md) / [English](PLC_UART_TEST_en.md) / [次の試験](ACC_INPUT_TEST.md)

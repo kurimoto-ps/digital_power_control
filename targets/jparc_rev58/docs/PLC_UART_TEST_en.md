@@ -1,41 +1,22 @@
 # PLC 16-input/16-output mapping and motherboard RS232 tests
 
-FPGA v2.0.2 is supported, including the 12 MHz count/status monitor. See [ACC input diagnosis and coax wiring tests](ACC_INPUT_TEST_en.md) for the 0x0024 monitor and STM32 PA0/PD13 comparison. J16/J17 test 96 kHz/TRIG; 12 MHz is the separate J6 optical path. Hardware tests remain pending.
+Test 1/3 — [Additional tests overview](ADDITIONAL_TESTS_en.md) / [日本語](PLC_UART_TEST.md) / [Next](ACC_INPUT_TEST_en.md)
 
+Complete the common preparation on the overview page first. All commands below run in `targets/jparc_rev58/scripts` inside the existing Docker environment. Use FPGA v2.0.2 and the current STM32 `mixed_adc` image throughout all three tests. These additional hardware tests remain to be performed by the operator.
 
-Added 2026-11-07 for rev58 + TEP521C motherboard, STM32 **mixed_adc** profile.
-[日本語・配線表](PLC_UART_TEST.md) / [ADC/DAC system guide](MIXED_ADC_V2_en.md).
-
-**Build and host validation only. Programming, PLC wiring verification and physical RS232 tests have not been performed in this change.** This document describes the tests to perform on hardware.
-
-## Features and preparation
+## Features
 
 M7 now provides sixteen PLC inputs, sixteen outputs and UART8 at **115200 baud, 8 data bits, no parity, one stop bit, no flow control**. Ethernet, SPI4, FPGA v2 ADC capture, DAC control and the 8 MiB SDRAM startup test remain in the same image. GPIO/UART commands do not require FPGA CONF_DONE or a matching FPGA version. UART receives through interrupts into a 1024-byte ring; each Ethernet read drains up to 128 bytes and each send accepts up to 32 bytes. This is a wiring test interface, not a PLC operating sequence or a high-volume serial recorder.
 
 Outputs initialize low and then **hold until explicitly changed**. TCP disconnection does not clear outputs. The guided test attempts to restore all outputs low on completion or ordinary interruption; communication loss or forced host termination can prevent confirmation. Put the PLC and connected equipment in a test state where these signals cannot start machinery or power equipment. This is not a safety-output function covering reset-time floating pins or faults.
 
-In the Zephyr development environment, build and, when hardware is available, program:
+## Start the test
 
 ```sh
-./scripts/build.sh jparc_rev58 mixed_adc
-python3 targets/jparc_rev58/scripts/verify_build.py ../build-jparc-rev58-mixed_adc
-./scripts/flash.sh jparc_rev58 mixed_adc
-```
-
-Programming above was not executed during this work. Older images named mixed_adc do not contain these new commands.
-
-The operator PC only needs Python 3 standard library:
-
-```sh
-git clone https://github.com/kurimoto-ps/digital_power_control.git
-cd digital_power_control
-git switch feature/jparc-rev58-zephyr-layout
-# Existing clones: git pull --ff-only on this branch
-cd targets/jparc_rev58/scripts
 python3 board_io_client.py plc-read
 ```
 
-Host wired address: `192.168.100.1/24`; STM32: `192.168.100.58:4244/TCP`. Specify `--host IP` before the subcommand if needed. JSON GPIO numbers are decimal; interactive masks are hexadecimal, with bit0 least significant. Do not operate other clients concurrently. ADC capture occupies the TCP server while running; UART interrupts still receive, but more than 1024 unread bytes will overflow.
+GPIO numbers in JSON are decimal; interactive masks are hexadecimal, with bit0 least significant. Do not operate other clients concurrently. ADC capture occupies the TCP server; UART interrupts still receive, but more than 1024 unread bytes will overflow.
 
 ## PLC signal mapping
 
@@ -164,3 +145,7 @@ python3 board_io_client.py uart-status
 ```
 
 Record board identity, Git commit, PLC model/address mapping, cables, the 32-point JSON report, UART receive JSON and external terminal logs. Host-model success is not a substitute for these hardware tests.
+
+---
+
+[Additional tests overview](ADDITIONAL_TESTS_en.md) / [日本語](PLC_UART_TEST.md) / [Next](ACC_INPUT_TEST_en.md)

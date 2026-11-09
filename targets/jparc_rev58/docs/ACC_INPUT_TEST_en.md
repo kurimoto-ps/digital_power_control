@@ -1,9 +1,8 @@
 # ACC 12 MHz / 96 kHz / TRIG wiring checks: FPGA and STM32
 
-For FPGA **v2.0.2**, STM32 **mixed_adc**, rev58 and TEP521C motherboard.
-[日本語](ACC_INPUT_TEST.md) / [Archived FPGA designer specification](hardware/acc_v202/ACC_INPUT_MONITOR_STM32.md).
+Test 2/3 — [Additional tests overview](ADDITIONAL_TESTS_en.md) / [日本語](ACC_INPUT_TEST.md) / [Previous](PLC_UART_TEST_en.md) / [Next](MIXED_ADC_V2_en.md)
 
-**Build and host-model validation only. Neither image was programmed during this work; the physical tests below have not been performed.**
+Complete the common preparation on the overview page first. All commands below run in `targets/jparc_rev58/scripts` inside the existing Docker environment. Use FPGA v2.0.2 and the current STM32 `mixed_adc` image throughout all three tests. These additional hardware tests remain to be performed by the operator.
 
 ## Signal paths and coax-test coverage
 
@@ -31,32 +30,15 @@ The server reads STM32 GPIO, then FPGA levels, then STM32 GPIO again. All SPI4 a
 
 GPIO and 0x0024 measure instantaneous levels only. There is no 96 kHz frequency/pulse-width measurement or trigger history. v2.0.2 separately measures 12 MHz rising edges over completed 1 ms windows. Short TRIG pulses may be missed and repeated clock reads can appear constant because of sampling phase. Use an oscilloscope or equivalent for clock presence/frequency verification.
 
-## Preparation
+## Start the test
 
-Program FPGA v2.0.2 supplied by the designer and the current STM32 mixed_adc image. The flash command below is for the later hardware operator and was not executed in this work.
-
-```sh
-# Zephyr development environment, repository root
-./scripts/build.sh jparc_rev58 mixed_adc
-python3 targets/jparc_rev58/scripts/verify_build.py ../build-jparc-rev58-mixed_adc
-./scripts/flash.sh jparc_rev58 mixed_adc
-```
-
-The operator PC only needs Python 3 standard library:
+Finish the PLC/UART test and confirm all PLC test outputs are low. Stop other host operations, including ADC capture, before reading:
 
 ```sh
-git clone https://github.com/kurimoto-ps/digital_power_control.git
-cd digital_power_control
-git switch feature/jparc-rev58-zephyr-layout
-# Existing clone: git pull --ff-only on this branch
-cd targets/jparc_rev58/scripts
-python3 spi4_client.py info
 python3 acc_input_client.py read
 ```
 
-Expected VERSION=`0x00020002`, CAPABILITIES=`0x000000ff`. Host wired IP: `192.168.100.1/24`; STM32: `192.168.100.58:4244/TCP`. Use `--host IP` before the subcommand if necessary.
-
-Start after GPIO initialization and a successful Ethernet response. Stop concurrent host operations during the wiring test. An ADC capture occupies the same TCP server and delays other requests; coexistence in one image does not provide parallel simultaneous measurements.
+Coexistence in one image does not mean simultaneous measurements. See the [FPGA monitor specification](hardware/acc_v202/ACC_INPUT_MONITOR_STM32.md).
 
 ## Coax connection and fixed levels
 
@@ -152,3 +134,7 @@ Save board identity, both firmware versions, STM32 Git commit, coax connections,
 - Running-clock mismatch or unchanged polling: use held-level mapping tests and instruments.
 
 Host models validate command handling and comparisons, not physical wiring, voltage or waveforms.
+
+---
+
+[Additional tests overview](ADDITIONAL_TESTS_en.md) / [日本語](ACC_INPUT_TEST.md) / [Previous](PLC_UART_TEST_en.md) / [Next](MIXED_ADC_V2_en.md)
